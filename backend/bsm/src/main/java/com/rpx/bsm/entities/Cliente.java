@@ -15,7 +15,7 @@ import java.util.Objects;
 @Getter
 @Setter
 @NoArgsConstructor
-public class Cliente implements Serializable{
+public class Cliente implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY) //Auto incremento
@@ -26,9 +26,25 @@ public class Cliente implements Serializable{
     @OneToOne(mappedBy = "cliente", cascade = CascadeType.ALL)
     private Usuario usuario;
 
-    public Cliente(String nome, String telefone) {
+    @OneToOne(mappedBy = "profissional", cascade = CascadeType.ALL)
+    private Usuario usuarioProf;
+
+    private String cep;
+    private String endreço;
+    private String bairro;
+    private String complemento;
+    private String cidade;
+
+    public Cliente(String nome, String telefone, Usuario usuario, Usuario usuarioProf, String cep, String endreço, String bairro, String complemento, String cidade) {
         this.nome = nome;
         this.telefone = telefone;
+        this.usuario = usuario;
+        this.usuarioProf = usuarioProf;
+        this.cep = cep;
+        this.endreço = endreço;
+        this.bairro = bairro;
+        this.complemento = complemento;
+        this.cidade = cidade;
     }
 
     @Override

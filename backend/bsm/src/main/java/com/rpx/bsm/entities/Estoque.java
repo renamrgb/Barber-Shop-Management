@@ -7,38 +7,37 @@ import lombok.Setter;
 
 import javax.persistence.*;
 import java.io.Serializable;
-import java.util.HashSet;
 import java.util.Objects;
-import java.util.Set;
 
 @Entity
-@Table(name = "procedimento")
+@Table(name = "estoque")
 @Getter
 @Setter
 @NoArgsConstructor
-public class Procedimento implements Serializable {
+public class Estoque implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY) //Auto incremento
     private Long Id;
-    private String descricao;
-    private Double valor;
+
+    private Integer quantidade;
 
     @JsonIgnore
-    @ManyToMany(mappedBy = "procedimentos") //Nome do set
-    private Set<Profissional> profissionais = new HashSet<>();
+    @OneToOne
+    @JoinColumn(name = "produto_id")
+    private Produto produto;
 
-    public Procedimento(String descricao, Double valor) {
-        this.descricao = descricao;
-        this.valor = valor;
+    public Estoque(Integer quantidade, Produto produto) {
+        this.quantidade = quantidade;
+        this.produto = produto;
     }
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        Procedimento that = (Procedimento) o;
-        return Objects.equals(Id, that.Id);
+        Estoque estoque = (Estoque) o;
+        return Objects.equals(Id, estoque.Id);
     }
 
     @Override
@@ -48,6 +47,10 @@ public class Procedimento implements Serializable {
 
     @Override
     public String toString() {
-        return "Procedimento{" + "Id=" + Id + ", descricao='" + descricao + '\'' + ", valor=" + valor + '}';
+        return "Estoque{" +
+                "Id=" + Id +
+                ", quantidade=" + quantidade +
+                ", produto=" + produto +
+                '}';
     }
 }

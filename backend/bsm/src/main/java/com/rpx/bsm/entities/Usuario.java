@@ -25,19 +25,25 @@ public class Usuario implements Serializable {
     private Boolean admin;
     private Boolean ativo;
 
+
     @JsonIgnore
     @OneToOne
     @JoinColumn(name = "cliente_id")
     private Cliente cliente;
 
+    @JsonIgnore
+    @OneToOne
+    @JoinColumn(name = "profissional_id")
+    private Profissional profissional;
 
-    public Usuario(Long id, String nome, String email, String senha, Boolean admin, Boolean ativo) {
-        Id = id;
+    public Usuario(String nome, String email, String senha, Boolean admin, Boolean ativo, Cliente cliente, Profissional profissional) {
         this.nome = nome;
         this.email = email;
         this.senha = senha;
         this.admin = admin;
         this.ativo = ativo;
+        this.cliente = cliente;
+        this.profissional = profissional;
     }
 
     @Override
@@ -55,6 +61,15 @@ public class Usuario implements Serializable {
 
     @Override
     public String toString() {
-        return "Usuario{" + "Id=" + Id + ", nome='" + nome + '\'' + ", email='" + email + '\'' + ", senha='" + senha + '\'' + ", admin=" + admin + ", ativo=" + ativo + '}';
+        return "Usuario{" +
+                "Id=" + Id +
+                ", nome='" + nome + '\'' +
+                ", email='" + email + '\'' +
+                ", senha='" + senha + '\'' +
+                ", admin=" + admin +
+                ", ativo=" + ativo +
+                ", cliente=" + cliente +
+                ", profissional=" + profissional +
+                '}';
     }
 }

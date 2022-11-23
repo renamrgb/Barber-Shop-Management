@@ -1,12 +1,15 @@
 package com.rpx.bsm.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.util.HashSet;
 import java.util.Objects;
+import java.util.Set;
 
 @Entity
 @Table(name = "profissional")
@@ -21,6 +24,13 @@ public class Profissional implements Serializable {
 
     private String nome;
     private String telefone;
+
+    @ManyToMany
+    @JoinTable(name = "profissionaisProcedimentos",
+            joinColumns = @JoinColumn(name = "profissional_id"),
+            inverseJoinColumns = @JoinColumn(name = "procedimento_id")
+    )
+    private Set<Procedimento> procedimentos = new HashSet<>();
 
     public Profissional(String nome, String telefone) {
         this.nome = nome;

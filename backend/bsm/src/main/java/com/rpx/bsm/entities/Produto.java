@@ -18,14 +18,15 @@ public class Produto implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY) //Auto incremento
     private Long Id;
-
     private String titulo;
-
     private Double valor;
+    @OneToOne(mappedBy = "produto", cascade = CascadeType.ALL)
+    private Estoque estoque;
 
-    public Produto(String titulo, Double valor) {
+    public Produto(String titulo, Double valor, Estoque estoque) {
         this.titulo = titulo;
         this.valor = valor;
+        this.estoque = estoque;
     }
 
     @Override
