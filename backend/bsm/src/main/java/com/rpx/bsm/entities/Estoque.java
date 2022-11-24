@@ -32,6 +32,10 @@ public class Estoque implements Serializable {
         this.produto = produto;
     }
 
+    public Estoque(Integer quantidade) {
+        this.quantidade = quantidade;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
