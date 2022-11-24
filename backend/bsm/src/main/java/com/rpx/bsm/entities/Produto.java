@@ -20,7 +20,8 @@ public class Produto implements Serializable {
     private Long Id;
     private String titulo;
     private Double valor;
-    @OneToOne(mappedBy = "produto", cascade = CascadeType.ALL)
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "estoque_id")
     private Estoque estoque;
 
     public Produto(String titulo, Double valor, Estoque estoque) {

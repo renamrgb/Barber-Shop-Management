@@ -1,4 +1,4 @@
-package com.rpx.bsm.service;
+package com.rpx.bsm.services;
 
 import com.rpx.bsm.entities.Produto;
 import com.rpx.bsm.repositories.ProdutoRepository;
@@ -17,5 +17,8 @@ public class ProdutoService {
         return repository.findAll();
     }
 
+    public Produto insert(Produto obj) {
+        return repository.save(obj);
+    }
 
 }

@@ -30,7 +30,6 @@ public class TestConfig implements CommandLineRunner {
         prod1.setTitulo("Produto teste 1");
         prod1.setValor(100.00);
         eProd1.setQuantidade(1);
-        eProd1.setProduto(prod1);
         prod1.setEstoque(eProd1);
         produtoRepository.save(prod1);
 

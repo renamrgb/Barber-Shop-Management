@@ -3,6 +3,7 @@ package com.rpx.bsm.entities;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.NonNull;
 import lombok.Setter;
 
 import javax.persistence.*;
@@ -20,6 +21,7 @@ public class Cliente implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY) //Auto incremento
     private Long Id;
+    @NonNull
     private String nome;
     private String telefone;
 
@@ -30,18 +32,18 @@ public class Cliente implements Serializable {
     private Usuario usuarioProf;
 
     private String cep;
-    private String endreço;
+    private String endreco;
     private String bairro;
     private String complemento;
     private String cidade;
 
-    public Cliente(String nome, String telefone, Usuario usuario, Usuario usuarioProf, String cep, String endreço, String bairro, String complemento, String cidade) {
+    public Cliente(String nome, String telefone, Usuario usuario, Usuario usuarioProf, String cep, String endreco, String bairro, String complemento, String cidade) {
         this.nome = nome;
         this.telefone = telefone;
         this.usuario = usuario;
         this.usuarioProf = usuarioProf;
         this.cep = cep;
-        this.endreço = endreço;
+        this.endreco = endreco;
         this.bairro = bairro;
         this.complemento = complemento;
         this.cidade = cidade;
@@ -53,6 +55,13 @@ public class Cliente implements Serializable {
                 "Id=" + Id +
                 ", nome='" + nome + '\'' +
                 ", telefone='" + telefone + '\'' +
+                ", usuario=" + usuario +
+                ", usuarioProf=" + usuarioProf +
+                ", cep='" + cep + '\'' +
+                ", endreco='" + endreco + '\'' +
+                ", bairro='" + bairro + '\'' +
+                ", complemento='" + complemento + '\'' +
+                ", cidade='" + cidade + '\'' +
                 '}';
     }
 

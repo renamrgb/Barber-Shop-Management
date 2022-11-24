@@ -1,6 +1,5 @@
 package com.rpx.bsm.entities;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -21,16 +20,6 @@ public class Estoque implements Serializable {
     private Long Id;
 
     private Integer quantidade;
-
-    @JsonIgnore
-    @OneToOne
-    @JoinColumn(name = "produto_id")
-    private Produto produto;
-
-    public Estoque(Integer quantidade, Produto produto) {
-        this.quantidade = quantidade;
-        this.produto = produto;
-    }
 
     public Estoque(Integer quantidade) {
         this.quantidade = quantidade;
@@ -54,7 +43,6 @@ public class Estoque implements Serializable {
         return "Estoque{" +
                 "Id=" + Id +
                 ", quantidade=" + quantidade +
-                ", produto=" + produto +
                 '}';
     }
 }
