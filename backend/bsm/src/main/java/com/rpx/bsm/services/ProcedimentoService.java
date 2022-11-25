@@ -1,7 +1,7 @@
 package com.rpx.bsm.services;
 
-import com.rpx.bsm.entities.*;
-import com.rpx.bsm.repositories.ProdutoRepository;
+import com.rpx.bsm.entities.Procedimento;
+import com.rpx.bsm.repositories.ProcedimentoRepository;
 import com.rpx.bsm.resources.exceptions.DatabaseException;
 import com.rpx.bsm.resources.exceptions.ResourceNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,16 +13,16 @@ import javax.persistence.EntityNotFoundException;
 import java.util.List;
 
 @Service
-public class ProdutoService {
+public class ProcedimentoService {
 
     @Autowired
-    private ProdutoRepository repository;
+    private ProcedimentoRepository repository;
 
-    public List<Produto> findAll() {
+    public List<Procedimento> findAll() {
         return repository.findAll();
     }
 
-    public Produto insert(Produto obj) {
+    public Procedimento insert(Procedimento obj) {
         return repository.save(obj);
     }
 
@@ -36,9 +36,9 @@ public class ProdutoService {
         }
     }
 
-    public Produto update(Long id, Produto obj) {
+    public Procedimento update(Long id, Procedimento obj) {
         try {
-            Produto entity = repository.getReferenceById(id);
+            Procedimento entity = repository.getReferenceById(id);
             updateData(entity, obj);
             return repository.save(entity);
         } catch (EntityNotFoundException e) {
@@ -46,10 +46,10 @@ public class ProdutoService {
         }
     }
 
-    private void updateData(Produto entity, Produto obj) {
-        entity.setTitulo(obj.getTitulo());
+    private void updateData(Procedimento entity, Procedimento obj) {
+        entity.setDescricao(obj.getDescricao());
+        entity.setAtivo(obj.getAtivo());
         entity.setValor(obj.getValor());
-        entity.setEstoque(obj.getEstoque());
     }
 
 }

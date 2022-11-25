@@ -25,13 +25,26 @@ public class Cliente implements Serializable {
     private String nome;
     private String telefone;
 
+    private String cpf;
+    private String rg;
+
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "endereco_id")
     private Endereco endereco;
 
-    public Cliente(@NonNull String nome, String telefone, Usuario usuario, Usuario usuarioProf) {
+    public Cliente(@NonNull String nome, String telefone, String cpf, String rg) {
         this.nome = nome;
         this.telefone = telefone;
+        this.cpf = cpf;
+        this.rg = rg;
+    }
+
+    public Cliente(@NonNull String nome, String telefone, String cpf, String rg, Endereco endereco) {
+        this.nome = nome;
+        this.telefone = telefone;
+        this.cpf = cpf;
+        this.rg = rg;
+        this.endereco = endereco;
     }
 
     @Override

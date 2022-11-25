@@ -20,6 +20,9 @@ public class Produto implements Serializable {
     private Long Id;
     private String titulo;
     private Double valor;
+
+    private String marca;
+
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "estoque_id")
     private Estoque estoque;
@@ -45,7 +48,7 @@ public class Produto implements Serializable {
 
     @Override
     public String toString() {
-        return "Produto{" +
+        return "Procedimento{" +
                 "Id=" + Id +
                 ", titulo='" + titulo + '\'' +
                 ", valor=" + valor +

@@ -1,41 +1,30 @@
 package com.rpx.bsm.entities;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.NonNull;
 import lombok.Setter;
 
 import javax.persistence.*;
 import java.io.Serializable;
-import java.util.HashSet;
 import java.util.Objects;
-import java.util.Set;
 
 @Entity
-@Table(name = "procedimento")
+@Table(name = "modeloMensagem")
 @Getter
 @Setter
 @NoArgsConstructor
-public class Procedimento implements Serializable {
+public class ModeloMensagem  implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY) //Auto incremento
     private Long Id;
-    @NonNull
-    private String descricao;
-    @NonNull
-    private Double valor;
-    @NonNull
+    private String titulo;
+    private String mensagem;
     private Boolean ativo;
 
-    @JsonIgnore
-    @ManyToMany(mappedBy = "procedimentos") //Nome do set
-    private Set<Profissional> profissionais = new HashSet<>();
-
-    public Procedimento(String descricao, Double valor, Boolean ativo) {
-        this.descricao = descricao;
-        this.valor = valor;
+    public ModeloMensagem(String titulo, String mensagem, Boolean ativo) {
+        this.titulo = titulo;
+        this.mensagem = mensagem;
         this.ativo = ativo;
     }
 
@@ -43,7 +32,7 @@ public class Procedimento implements Serializable {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        Procedimento that = (Procedimento) o;
+        ModeloMensagem that = (ModeloMensagem) o;
         return Objects.equals(Id, that.Id);
     }
 
@@ -54,6 +43,11 @@ public class Procedimento implements Serializable {
 
     @Override
     public String toString() {
-        return "Procedimento{" + "Id=" + Id + ", descricao='" + descricao + '\'' + ", valor=" + valor + '}';
+        return "ModeloMensagem{" +
+                "Id=" + Id +
+                ", titulo='" + titulo + '\'' +
+                ", texto='" + mensagem + '\'' +
+                ", ativo=" + ativo +
+                '}';
     }
 }
