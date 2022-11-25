@@ -25,6 +25,8 @@ public class Profissional implements Serializable {
     private String nome;
     private String telefone;
 
+    private Boolean ativo;
+
     @ManyToMany
     @JoinTable(name = "profissionaisProcedimentos",
             joinColumns = @JoinColumn(name = "profissional_id"),
@@ -32,9 +34,10 @@ public class Profissional implements Serializable {
     )
     private Set<Procedimento> procedimentos = new HashSet<>();
 
-    public Profissional(String nome, String telefone) {
+    public Profissional(String nome, String telefone, Boolean ativo) {
         this.nome = nome;
         this.telefone = telefone;
+        this.ativo = ativo;
     }
 
     @Override

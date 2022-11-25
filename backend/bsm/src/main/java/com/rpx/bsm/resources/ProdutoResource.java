@@ -27,4 +27,26 @@ public class ProdutoResource {
         return ResponseEntity.ok().body(obj);
     }
 
+    @DeleteMapping(value = "/{id}")
+    public ResponseEntity<Void> delete(@PathVariable Long id){
+        service.delete(id);
+        return ResponseEntity.noContent().build();
+    }
+
+    @PutMapping(value = "/{id}")
+    public ResponseEntity<Produto> update(@PathVariable Long id, @RequestBody Produto obj){
+        obj = service.update(id, obj);
+        return ResponseEntity.ok().body(obj);
+    }
+
+    public static class ResourceNotFoundException extends RuntimeException{
+
+        private static  final long serialVersionUID = 1L;
+
+        public ResourceNotFoundException(Object id){
+            super("Resouce not found. Id "+ id);
+        }
+
+    }
+
 }

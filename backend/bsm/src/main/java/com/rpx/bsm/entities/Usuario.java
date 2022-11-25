@@ -25,14 +25,11 @@ public class Usuario implements Serializable {
     private Boolean admin;
     private Boolean ativo;
 
-
-    @JsonIgnore
-    @OneToOne
+    @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "cliente_id")
     private Cliente cliente;
 
-    @JsonIgnore
-    @OneToOne
+    @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "profissional_id")
     private Profissional profissional;
 

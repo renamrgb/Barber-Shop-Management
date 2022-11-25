@@ -1,7 +1,7 @@
 package com.rpx.bsm.services;
 
-import com.rpx.bsm.entities.Produto;
-import com.rpx.bsm.repositories.ProdutoRepository;
+import com.rpx.bsm.entities.Usuario;
+import com.rpx.bsm.repositories.UsuarioRepository;
 import com.rpx.bsm.resources.exceptions.DatabaseException;
 import com.rpx.bsm.resources.exceptions.ResourceNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,18 +11,17 @@ import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityNotFoundException;
 import java.util.List;
-
 @Service
-public class ProdutoService {
+public class UsuarioService {
 
     @Autowired
-    private ProdutoRepository repository;
+    private UsuarioRepository repository;
 
-    public List<Produto> findAll() {
+    public List<Usuario> findAll() {
         return repository.findAll();
     }
 
-    public Produto insert(Produto obj) {
+    public Usuario insert(Usuario obj) {
         return repository.save(obj);
     }
 
@@ -36,9 +35,9 @@ public class ProdutoService {
         }
     }
 
-    public Produto update(Long id, Produto obj) {
+    public Usuario update(Long id, Usuario obj) {
         try {
-            Produto entity = repository.getReferenceById(id);
+            Usuario entity = repository.getReferenceById(id);
             updateData(entity, obj);
             return repository.save(entity);
         }catch (EntityNotFoundException e){
@@ -46,10 +45,14 @@ public class ProdutoService {
         }
     }
 
-    private void updateData(Produto entity, Produto obj) {
-        entity.setTitulo(obj.getTitulo());
-        entity.setValor(obj.getValor());
-        entity.setEstoque(obj.getEstoque());
+    private void updateData(Usuario entity, Usuario obj) {
+        entity.setNome(obj.getNome());
+        entity.setEmail(obj.getEmail());
+        entity.setSenha(obj.getSenha());
+        entity.setAtivo(obj.getAdmin());
+        entity.setAtivo(obj.getAdmin());
+        entity.setCliente(obj.getCliente());
+        entity.setProfissional(obj.getProfissional());
     }
     
 }

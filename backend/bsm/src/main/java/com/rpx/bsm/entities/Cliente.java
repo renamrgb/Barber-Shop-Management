@@ -25,28 +25,13 @@ public class Cliente implements Serializable {
     private String nome;
     private String telefone;
 
-    @OneToOne(mappedBy = "cliente", cascade = CascadeType.ALL)
-    private Usuario usuario;
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "endereco_id")
+    private Endereco endereco;
 
-    @OneToOne(mappedBy = "profissional", cascade = CascadeType.ALL)
-    private Usuario usuarioProf;
-
-    private String cep;
-    private String endreco;
-    private String bairro;
-    private String complemento;
-    private String cidade;
-
-    public Cliente(String nome, String telefone, Usuario usuario, Usuario usuarioProf, String cep, String endreco, String bairro, String complemento, String cidade) {
+    public Cliente(@NonNull String nome, String telefone, Usuario usuario, Usuario usuarioProf) {
         this.nome = nome;
         this.telefone = telefone;
-        this.usuario = usuario;
-        this.usuarioProf = usuarioProf;
-        this.cep = cep;
-        this.endreco = endreco;
-        this.bairro = bairro;
-        this.complemento = complemento;
-        this.cidade = cidade;
     }
 
     @Override
@@ -54,15 +39,7 @@ public class Cliente implements Serializable {
         return "Cliente{" +
                 "Id=" + Id +
                 ", nome='" + nome + '\'' +
-                ", telefone='" + telefone + '\'' +
-                ", usuario=" + usuario +
-                ", usuarioProf=" + usuarioProf +
-                ", cep='" + cep + '\'' +
-                ", endreco='" + endreco + '\'' +
-                ", bairro='" + bairro + '\'' +
-                ", complemento='" + complemento + '\'' +
-                ", cidade='" + cidade + '\'' +
-                '}';
+                ", telefone='" + telefone + '\'';
     }
 
     @Override

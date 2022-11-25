@@ -19,7 +19,7 @@ public class FormaPagamento implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY) //Auto incremento
     private Long Id;
     private String descricao;
-    private boolean ativo;
+    private Boolean ativo;
 
     public FormaPagamento(String descricao, boolean ativo) {
         this.descricao = descricao;
