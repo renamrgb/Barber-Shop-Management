@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 @Configuration
 @Profile("test")
@@ -24,7 +25,8 @@ public class TestConfig implements CommandLineRunner {
 
     @Autowired
     private ProcedimentoRepository procedimentoRepository;
-
+    @Autowired
+    private BCryptPasswordEncoder bCryptPasswordEncoder;
     @Override
     public void run(String... args) throws Exception {
 
@@ -49,8 +51,9 @@ public class TestConfig implements CommandLineRunner {
         u.setAdmin(true);
         u.setEmail("rafael8paulo@gmail.com");
         u.setAtivo(true);
-        u.setSenha("12345678");
+        u.setSenha(bCryptPasswordEncoder.encode("12345678"));
         u.setCliente(cli);
+        u.setNivelAcesso(new NivelAcesso("ROLE_ADMIN"));
         Profissional prof = new Profissional("Rafael", "18997101710", true);
         u.setProfissional(prof);
         usuarioRepository.save(u);

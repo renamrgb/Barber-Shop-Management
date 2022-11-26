@@ -16,9 +16,7 @@ public class NivelAcesso {
     public NivelAcesso() {
     }
 
-    public NivelAcesso(Long id, String authority) {
-        super();
-        this.id = id;
+    public NivelAcesso(String authority) {
         this.authority = authority;
     }
 
