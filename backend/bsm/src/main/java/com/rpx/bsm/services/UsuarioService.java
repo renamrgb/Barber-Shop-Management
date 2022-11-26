@@ -4,15 +4,19 @@ import com.rpx.bsm.entities.Usuario;
 import com.rpx.bsm.repositories.UsuarioRepository;
 import com.rpx.bsm.resources.exceptions.DatabaseException;
 import com.rpx.bsm.resources.exceptions.ResourceNotFoundException;
+import lombok.extern.log4j.Log4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityNotFoundException;
 import java.util.List;
 @Service
-public class UsuarioService {
+public class UsuarioService implements UserDetailsService {
 
     @Autowired
     private UsuarioRepository repository;
@@ -54,5 +58,15 @@ public class UsuarioService {
         entity.setCliente(obj.getCliente());
         entity.setProfissional(obj.getProfissional());
     }
-    
+
+    @Override
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        Usuario user = repository.findByEmail(username);
+        if (user == null) {
+            System.err.println("User not found: " + username);
+            throw new UsernameNotFoundException("Email not found");
+        }
+        System.out.println("User found: " + username);
+        return user;
+    }
 }

@@ -4,27 +4,35 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
 import java.io.Serializable;
-import java.util.Objects;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Entity
 @Table(name = "usuario")
 @Getter
 @Setter
 @NoArgsConstructor
-public class Usuario implements Serializable {
+public class Usuario implements UserDetails, Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY) //Auto incremento
     private Long Id;
     private String nome;
+    @Column(unique = true)
     private String email;
     private String senha;
     private Boolean admin;
     private Boolean ativo;
 
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "nivelacesso_id")
+    private NivelAcesso nivelAcesso;
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "cliente_id")
     private Cliente cliente;
@@ -68,5 +76,42 @@ public class Usuario implements Serializable {
                 ", cliente=" + cliente +
                 ", profissional=" + profissional +
                 '}';
+    }
+
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return Collections.singleton(new SimpleGrantedAuthority(
+                nivelAcesso.getAuthority()
+        ));
+    }
+
+    @Override
+    public String getPassword() {
+        return senha;
+    }
+
+    @Override
+    public String getUsername() {
+        return email;
+    }
+
+    @Override
+    public boolean isAccountNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isAccountNonLocked() {
+        return true;
+    }
+
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return true;
     }
 }
