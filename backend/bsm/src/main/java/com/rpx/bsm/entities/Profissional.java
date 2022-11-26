@@ -1,6 +1,5 @@
 package com.rpx.bsm.entities;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -21,11 +20,13 @@ public class Profissional implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY) //Auto incremento
     private Long Id;
-
     private String nome;
     private String telefone;
-
     private Boolean ativo;
+
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "endereco_id")
+    private Endereco endereco;
 
     @ManyToMany
     @JoinTable(name = "profissionaisProcedimentos",
@@ -55,6 +56,13 @@ public class Profissional implements Serializable {
 
     @Override
     public String toString() {
-        return "Profissional{" + "Id=" + Id + ", nome='" + nome + '\'' + ", telefone='" + telefone + '\'' + '}';
+        return "Profissional{" +
+                "Id=" + Id +
+                ", nome='" + nome + '\'' +
+                ", telefone='" + telefone + '\'' +
+                ", ativo=" + ativo +
+                ", endereco=" + endereco +
+                ", procedimentos=" + procedimentos +
+                '}';
     }
 }

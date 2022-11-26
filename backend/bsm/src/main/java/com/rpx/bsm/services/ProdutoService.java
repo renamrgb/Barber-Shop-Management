@@ -49,7 +49,7 @@ public class ProdutoService {
     private void updateData(Produto entity, Produto obj) {
         entity.setTitulo(obj.getTitulo());
         entity.setValor(obj.getValor());
-        entity.setEstoque(obj.getEstoque());
+        entity.setQuantidade(obj.getQuantidade());
     }
 
 }

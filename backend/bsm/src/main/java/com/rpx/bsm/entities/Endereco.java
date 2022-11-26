@@ -18,15 +18,15 @@ public class Endereco implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY) //Auto incremento
     private Integer id;
     private String cep;
-    private String endereco;
+    private String logradouro;
     private String bairro;
     private String complemento;
     private String cidade;
     private String uf;
 
-    public Endereco(String cep, String endereco, String bairro, String complemento, String cidade, String uf) {
+    public Endereco(String cep, String logradouro, String bairro, String complemento, String cidade, String uf) {
         this.cep = cep;
-        this.endereco = endereco;
+        this.logradouro = logradouro;
         this.bairro = bairro;
         this.complemento = complemento;
         this.cidade = cidade;
@@ -50,7 +50,7 @@ public class Endereco implements Serializable {
     public String toString() {
         return "Endereco{" +
                 "cep='" + cep + '\'' +
-                ", endereco='" + endereco + '\'' +
+                ", endereco='" + logradouro + '\'' +
                 ", bairro='" + bairro + '\'' +
                 ", complemento='" + complemento + '\'' +
                 ", cidade='" + cidade + '\'' +

@@ -23,14 +23,13 @@ public class Produto implements Serializable {
 
     private String marca;
 
-    @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "estoque_id")
-    private Estoque estoque;
+    private  Integer quantidade;
 
-    public Produto(String titulo, Double valor, Estoque estoque) {
+    public Produto(String titulo, Double valor, String marca, Integer quantidade) {
         this.titulo = titulo;
         this.valor = valor;
-        this.estoque = estoque;
+        this.marca = marca;
+        this.quantidade = quantidade;
     }
 
     @Override

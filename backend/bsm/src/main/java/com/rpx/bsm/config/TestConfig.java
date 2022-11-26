@@ -28,12 +28,11 @@ public class TestConfig implements CommandLineRunner {
     @Override
     public void run(String... args) throws Exception {
 
-        Estoque eProd1 = new Estoque();
+
         Produto prod1 = new Produto();
-        prod1.setTitulo("Usuario teste 1");
+        prod1.setTitulo("Produto teste 1");
         prod1.setValor(100.00);
-        eProd1.setQuantidade(1);
-        prod1.setEstoque(eProd1);
+        prod1.setQuantidade(1);
         prod1.setMarca("Marca Teste 1");
         produtoRepository.save(prod1);
 
