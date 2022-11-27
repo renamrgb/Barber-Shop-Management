@@ -1,5 +1,6 @@
 package com.rpx.bsm.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
@@ -14,44 +15,26 @@ import java.util.Objects;
 @Table(name = "cliente")
 @Getter
 @Setter
-@NoArgsConstructor
 public class Cliente implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY) //Auto incremento
     private Long Id;
-    @NonNull
-    private String nome;
-    private String telefone;
-
-    private String cpf;
-    private String rg;
-
     @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "endereco_id")
-    private Endereco endereco;
+    @JoinColumn(name = "usuario_id")
+    private Usuario usuario;
 
-    public Cliente(@NonNull String nome, String telefone, String cpf, String rg) {
-        this.nome = nome;
-        this.telefone = telefone;
-        this.cpf = cpf;
-        this.rg = rg;
-    }
 
-    public Cliente(@NonNull String nome, String telefone, String cpf, String rg, Endereco endereco) {
-        this.nome = nome;
-        this.telefone = telefone;
-        this.cpf = cpf;
-        this.rg = rg;
-        this.endereco = endereco;
+    public Cliente() {
+        this.usuario = new Usuario();
     }
 
     @Override
     public String toString() {
         return "Cliente{" +
                 "Id=" + Id +
-                ", nome='" + nome + '\'' +
-                ", telefone='" + telefone + '\'';
+                ", usuario=" + usuario +
+                '}';
     }
 
     @Override

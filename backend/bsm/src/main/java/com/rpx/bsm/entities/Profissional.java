@@ -20,26 +20,17 @@ public class Profissional implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY) //Auto incremento
     private Long Id;
-    private String nome;
-    private String telefone;
     private Boolean ativo;
 
     @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "endereco_id")
-    private Endereco endereco;
-
+    @JoinColumn(name = "usuario_id")
+    private Usuario usuario;
     @ManyToMany
     @JoinTable(name = "profissionaisProcedimentos",
             joinColumns = @JoinColumn(name = "profissional_id"),
             inverseJoinColumns = @JoinColumn(name = "procedimento_id")
     )
     private Set<Procedimento> procedimentos = new HashSet<>();
-
-    public Profissional(String nome, String telefone, Boolean ativo) {
-        this.nome = nome;
-        this.telefone = telefone;
-        this.ativo = ativo;
-    }
 
     @Override
     public boolean equals(Object o) {
@@ -58,10 +49,7 @@ public class Profissional implements Serializable {
     public String toString() {
         return "Profissional{" +
                 "Id=" + Id +
-                ", nome='" + nome + '\'' +
-                ", telefone='" + telefone + '\'' +
                 ", ativo=" + ativo +
-                ", endereco=" + endereco +
                 ", procedimentos=" + procedimentos +
                 '}';
     }

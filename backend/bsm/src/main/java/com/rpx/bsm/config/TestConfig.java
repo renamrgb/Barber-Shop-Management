@@ -1,6 +1,7 @@
 package com.rpx.bsm.config;
 
 import com.rpx.bsm.entities.*;
+import com.rpx.bsm.enums.NivelAcessoEnum;
 import com.rpx.bsm.repositories.FormaPagamentoRepository;
 import com.rpx.bsm.repositories.ProcedimentoRepository;
 import com.rpx.bsm.repositories.ProdutoRepository;
@@ -43,20 +44,17 @@ public class TestConfig implements CommandLineRunner {
         procedimentoRepository.save(proc1);
         /*============================================================================================================*/
         Cliente cli = new Cliente();
-        cli.setNome("Rafael Paulo");
-        cli.setTelefone("18997101710");
-        cli.setEndereco(new Endereco("19210000", "Rua das hortencias", "Jardim das Flores", "", "Tarabai", "SP"));
         Usuario u = new Usuario();
+        u.setNome("Rafael Paulo");
+        u.setTelefone("18997101710");
         u.setNome("Rafael Paulo");
         u.setAdmin(true);
         u.setEmail("rafael8paulo@gmail.com");
         u.setAtivo(true);
         u.setSenha(bCryptPasswordEncoder.encode("12345678"));
-        u.setCliente(cli);
-        u.setNivelAcesso(new NivelAcesso("ROLE_ADMIN"));
-        Profissional prof = new Profissional("Rafael", "18997101710", true);
-        u.setProfissional(prof);
-        usuarioRepository.save(u);
+        u.setNivelAcesso(new NivelAcesso(NivelAcessoEnum.ROLE_ADMIN));
+        //Profissional prof = new Profissional("Rafael", "18997101710", true);
+//        usuarioRepository.save(u);
         /*============================================================================================================*/
 
         FormaPagamento fp = new FormaPagamento("Cartão de Credito", true);

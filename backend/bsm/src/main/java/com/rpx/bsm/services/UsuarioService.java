@@ -12,6 +12,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityNotFoundException;
 import java.util.List;
@@ -24,7 +25,7 @@ public class UsuarioService implements UserDetailsService {
     public List<Usuario> findAll() {
         return repository.findAll();
     }
-
+    @Transactional
     public Usuario insert(Usuario obj) {
         return repository.save(obj);
     }
@@ -55,8 +56,6 @@ public class UsuarioService implements UserDetailsService {
         entity.setSenha(obj.getSenha());
         entity.setAtivo(obj.getAdmin());
         entity.setAtivo(obj.getAdmin());
-        entity.setCliente(obj.getCliente());
-        entity.setProfissional(obj.getProfissional());
     }
 
     @Override

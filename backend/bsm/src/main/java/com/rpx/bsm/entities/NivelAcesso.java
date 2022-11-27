@@ -1,5 +1,7 @@
 package com.rpx.bsm.entities;
 
+import com.rpx.bsm.enums.NivelAcessoEnum;
+
 import javax.persistence.*;
 
 @Entity
@@ -11,12 +13,13 @@ public class NivelAcesso {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private String authority;
+    @Enumerated(EnumType.STRING)
+    private NivelAcessoEnum authority;
 
     public NivelAcesso() {
     }
 
-    public NivelAcesso(String authority) {
+    public NivelAcesso(NivelAcessoEnum authority) {
         this.authority = authority;
     }
 
@@ -28,11 +31,11 @@ public class NivelAcesso {
         this.id = id;
     }
 
-    public String getAuthority() {
+    public NivelAcessoEnum getAuthority() {
         return authority;
     }
 
-    public void setAuthority(String authority) {
+    public void setAuthority(NivelAcessoEnum authority) {
         this.authority = authority;
     }
 
