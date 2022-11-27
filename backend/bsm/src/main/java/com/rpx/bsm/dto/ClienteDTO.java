@@ -13,12 +13,11 @@ public class ClienteDTO  implements Serializable {
     private Long id;
     private String nome;
     private String email;
-    private Boolean ativo;
     private String telefone;
     private String cpf;
     private String rg;
     private EnderecoDTO endereco;
-
+    private Boolean ativo;
     public ClienteDTO() {
         this.endereco = new EnderecoDTO();
     }

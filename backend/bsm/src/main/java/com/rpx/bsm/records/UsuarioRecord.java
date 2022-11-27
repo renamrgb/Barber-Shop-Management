@@ -1,12 +1,19 @@
 package com.rpx.bsm.records;
 
+import org.hibernate.validator.constraints.Length;
+
+import javax.validation.constraints.Email;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Size;
+
 public record UsuarioRecord(
-        String nome,
-        String email,
-        String senha,
-        String telefone,
-        String cpf,
-        String rg,
-        EnderecoRecord endereco
+        @NotBlank @Length(min = 2, max = 60) String nome,
+        @Email @Length(min = 2, max = 60) String email,
+        @NotBlank @Length(min = 2, max = 10) String senha,
+        @Length(min = 2, max = 11) String telefone,
+        @Length(min = 2, max = 11) String cpf,
+        @Length(min = 2, max = 11) String rg,
+        EnderecoRecord endereco,
+        @NotBlank Boolean ativo
 ) {
 }

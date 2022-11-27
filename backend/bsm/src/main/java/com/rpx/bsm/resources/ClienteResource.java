@@ -2,13 +2,13 @@ package com.rpx.bsm.resources;
 
 import com.rpx.bsm.dto.ClienteDTO;
 import com.rpx.bsm.records.ClienteRecord;
-import com.rpx.bsm.entities.Cliente;
 import com.rpx.bsm.services.ClienteService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import javax.validation.Valid;
 import java.net.URI;
 import java.util.List;
 
@@ -26,7 +26,7 @@ public class ClienteResource {
     }
 
     @PostMapping
-    public ResponseEntity<ClienteDTO> insert(@RequestBody ClienteRecord obj) {
+    public ResponseEntity<ClienteDTO> insert(@Valid @RequestBody ClienteRecord obj) {
         ClienteDTO cli = service.insert(obj);
         URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(cli.getId()).toUri();
         return ResponseEntity.created(uri).body(cli);
@@ -39,9 +39,9 @@ public class ClienteResource {
     }
 
     @PutMapping(value = "/{id}")
-    public ResponseEntity<Cliente> update(@PathVariable Long id, @RequestBody Cliente obj) {
-        obj = service.update(id, obj);
-        return ResponseEntity.ok().body(obj);
+    public ResponseEntity<ClienteDTO> update(@PathVariable Long id, @RequestBody ClienteRecord obj) {
+        ClienteDTO objDto = service.update(id, obj);
+        return ResponseEntity.ok().body(objDto);
     }
 
     public static class ResourceNotFoundException extends RuntimeException {

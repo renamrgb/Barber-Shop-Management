@@ -1,11 +1,13 @@
 package com.rpx.bsm.records;
 
+import org.hibernate.validator.constraints.Length;
+
 public record EnderecoRecord(
-        String cep,
-        String logradouro,
-        String bairro,
-        String complemento,
-        String cidade,
-        String uf
+        @Length(min = 2, max = 8) String cep,
+        @Length(min = 2, max = 60) String logradouro,
+        @Length(min = 2, max = 30) String bairro,
+        @Length(min = 2, max = 60) String complemento,
+        @Length(min = 2, max = 45) String cidade,
+        @Length(min = 2, max = 2) String uf
 ) {
 }

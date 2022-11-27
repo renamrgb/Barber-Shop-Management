@@ -13,6 +13,7 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityNotFoundException;
 import java.util.List;
@@ -32,8 +33,7 @@ public class ClienteService {
     }
 
     public ClienteDTO insert(ClienteRecord obj) {
-        //        return repository.save(converteEmRecord(obj));
-        return converteEmDTO(repository.save(converteEmRecord(obj)));
+        return converteEmDTO(repository.save(converteEmEntidade(obj)));
     }
 
     public void delete(Long id) {
@@ -45,23 +45,23 @@ public class ClienteService {
             throw new DatabaseException(e.getMessage());
         }
     }
-
-    public Cliente update(Long id, Cliente obj) {
+    @Transactional
+    public ClienteDTO update(Long id, ClienteRecord obj) {
         try {
             Cliente entity = repository.getReferenceById(id);
-//            updateData(entity, obj);
-            return repository.save(entity);
+            updateData(obj, entity);
+            return converteEmDTO(repository.save(entity));
         } catch (EntityNotFoundException e) {
             throw new ResourceNotFoundException(id);
         }
     }
 
 //    private void updateData(Cliente entity, Cliente obj) {
-//        entity.setDescricao(obj.getDescricao());
+//        entity.set(obj.getDescricao());
 //        entity.setAtivo(obj.getAtivo());
 //    }
 
-    private Cliente converteEmRecord(ClienteRecord record) {
+    private Cliente converteEmEntidade(ClienteRecord record) {
 
         Cliente cli = new Cliente();
 
@@ -86,6 +86,28 @@ public class ClienteService {
         return cli;
     }
 
+    private Cliente updateData(ClienteRecord record, Cliente entidade) {
+
+
+        entidade.getUsuario().setNome(record.usuario().nome());
+        entidade.getUsuario().setEmail(record.usuario().email());
+        entidade.getUsuario().setSenha(bCryptPasswordEncoder.encode(record.usuario().senha()));
+        entidade.getUsuario().setTelefone(record.usuario().telefone());
+        entidade.getUsuario().setCpf(record.usuario().cpf());
+        entidade.getUsuario().setRg(record.usuario().rg());
+        entidade.getUsuario().setAtivo(record.usuario().ativo());
+//        entidade.getUsuario().setAdmin(true);
+
+        entidade.getUsuario().getEndereco().setCep(record.usuario().endereco().cep());
+        entidade.getUsuario().getEndereco().setLogradouro(record.usuario().endereco().logradouro());
+        entidade.getUsuario().getEndereco().setBairro(record.usuario().endereco().bairro());
+        entidade.getUsuario().getEndereco().setComplemento(record.usuario().endereco().complemento());
+        entidade.getUsuario().getEndereco().setCidade(record.usuario().endereco().cidade());
+        entidade.getUsuario().getEndereco().setUf(record.usuario().endereco().uf());
+
+        return entidade;
+    }
+
     private ClienteDTO converteEmDTO(Cliente cliente) {
 
         ClienteDTO cli = new ClienteDTO();
@@ -95,6 +117,7 @@ public class ClienteService {
         cli.setTelefone(cliente.getUsuario().getTelefone());
         cli.setCpf(cliente.getUsuario().getCpf());
         cli.setRg(cliente.getUsuario().getRg());
+        cli.setAtivo(cliente.getUsuario().getAtivo());
 
         cli.getEndereco().setCep(cliente.getUsuario().getEndereco().getCep());
         cli.getEndereco().setLogradouro(cliente.getUsuario().getEndereco().getLogradouro());
