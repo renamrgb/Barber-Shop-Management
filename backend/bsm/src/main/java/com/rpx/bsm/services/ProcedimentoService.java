@@ -1,6 +1,11 @@
 package com.rpx.bsm.services;
 
+import com.rpx.bsm.dto.ProcedimentoDTO;
+import com.rpx.bsm.entities.Cliente;
 import com.rpx.bsm.entities.Procedimento;
+import com.rpx.bsm.enums.NivelAcessoEnum;
+import com.rpx.bsm.records.ClienteRecord;
+import com.rpx.bsm.records.ProcedimentoRecord;
 import com.rpx.bsm.repositories.ProcedimentoRepository;
 import com.rpx.bsm.resources.exceptions.DatabaseException;
 import com.rpx.bsm.resources.exceptions.ResourceNotFoundException;
@@ -8,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityNotFoundException;
 import java.util.List;
@@ -22,8 +28,8 @@ public class ProcedimentoService {
         return repository.findAll();
     }
 
-    public Procedimento insert(Procedimento obj) {
-        return repository.save(obj);
+    public ProcedimentoDTO insert(ProcedimentoRecord obj) {
+        return converteEmDTO(repository.save(converteEmEntidade(obj)));
     }
 
     public void delete(Long id) {
@@ -36,20 +42,44 @@ public class ProcedimentoService {
         }
     }
 
-    public Procedimento update(Long id, Procedimento obj) {
+    @Transactional
+    public ProcedimentoDTO update(Long id, ProcedimentoRecord obj) {
         try {
             Procedimento entity = repository.getReferenceById(id);
             updateData(entity, obj);
-            return repository.save(entity);
+            return converteEmDTO(repository.save(entity));
         } catch (EntityNotFoundException e) {
             throw new ResourceNotFoundException(id);
         }
     }
 
-    private void updateData(Procedimento entity, Procedimento obj) {
-        entity.setDescricao(obj.getDescricao());
-        entity.setAtivo(obj.getAtivo());
-        entity.setValor(obj.getValor());
+    private void updateData(Procedimento entity, ProcedimentoRecord record) {
+        entity.setDescricao(record.descricao());
+        entity.setAtivo(record.ativo());
+        entity.setValor(record.valor());
+    }
+
+    private Procedimento converteEmEntidade(ProcedimentoRecord record) {
+
+        Procedimento entidade = new Procedimento();
+
+        entidade.setDescricao(record.descricao());
+        entidade.setValor(record.valor());
+        entidade.setAtivo(record.ativo());
+
+        return entidade;
+    }
+
+    private ProcedimentoDTO converteEmDTO(Procedimento entidade) {
+
+        ProcedimentoDTO dto = new ProcedimentoDTO(
+                entidade.getId(),
+                entidade.getDescricao(),
+                entidade.getValor(),
+                entidade.getAtivo()
+        );
+
+        return dto;
     }
 
 }

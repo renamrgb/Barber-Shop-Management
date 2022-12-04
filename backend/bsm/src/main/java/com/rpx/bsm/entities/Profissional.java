@@ -14,14 +14,12 @@ import java.util.Set;
 @Table(name = "profissional")
 @Getter
 @Setter
-@NoArgsConstructor
 public class Profissional implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY) //Auto incremento
     private Long Id;
     private Boolean ativo;
-
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "usuario_id")
     private Usuario usuario;
@@ -31,6 +29,10 @@ public class Profissional implements Serializable {
             inverseJoinColumns = @JoinColumn(name = "procedimento_id")
     )
     private Set<Procedimento> procedimentos = new HashSet<>();
+
+    public Profissional() {
+        this.usuario = new Usuario();
+    }
 
     @Override
     public boolean equals(Object o) {

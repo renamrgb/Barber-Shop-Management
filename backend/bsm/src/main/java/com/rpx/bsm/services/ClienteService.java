@@ -1,6 +1,5 @@
 package com.rpx.bsm.services;
 
-import ch.qos.logback.core.net.server.Client;
 import com.rpx.bsm.dto.ClienteDTO;
 import com.rpx.bsm.records.ClienteRecord;
 import com.rpx.bsm.entities.Cliente;
@@ -14,7 +13,6 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
 import javax.persistence.EntityNotFoundException;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -45,6 +43,7 @@ public class ClienteService {
             throw new DatabaseException(e.getMessage());
         }
     }
+
     @Transactional
     public ClienteDTO update(Long id, ClienteRecord obj) {
         try {
@@ -55,11 +54,6 @@ public class ClienteService {
             throw new ResourceNotFoundException(id);
         }
     }
-
-//    private void updateData(Cliente entity, Cliente obj) {
-//        entity.set(obj.getDescricao());
-//        entity.setAtivo(obj.getAtivo());
-//    }
 
     private Cliente converteEmEntidade(ClienteRecord record) {
 

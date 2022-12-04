@@ -1,4 +1,4 @@
-package com.rpx.bsm.services.exceptions;
+package com.rpx.bsm.resources.exceptions;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import java.time.Instant;
