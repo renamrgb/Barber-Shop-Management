@@ -189,56 +189,56 @@ export default [
   //   to: '/charts',
   //   icon: 'cil-chart-pie',
   // },
-  // {
-  //   component: 'CNavGroup',
-  //   name: 'Icons',
-  //   to: '/icons',
-  //   icon: 'cil-star',
-  //   items: [
-  //     {
-  //       component: 'CNavItem',
-  //       name: 'CoreUI Icons',
-  //       to: '/icons/coreui-icons',
-  //       badge: {
-  //         color: 'info',
-  //         text: 'NEW',
-  //       },
-  //     },
-  //     {
-  //       component: 'CNavItem',
-  //       name: 'Brands',
-  //       to: '/icons/brands',
-  //     },
-  //     {
-  //       component: 'CNavItem',
-  //       name: 'Flags',
-  //       to: '/icons/flags',
-  //     },
-  //   ],
-  // },
-  // {
-  //   component: 'CNavGroup',
-  //   name: 'Notifications',
-  //   to: '/notifications',
-  //   icon: 'cil-bell',
-  //   items: [
-  //     {
-  //       component: 'CNavItem',
-  //       name: 'Alerts',
-  //       to: '/notifications/alerts',
-  //     },
-  //     {
-  //       component: 'CNavItem',
-  //       name: 'Badges',
-  //       to: '/notifications/badges',
-  //     },
-  //     {
-  //       component: 'CNavItem',
-  //       name: 'Modals',
-  //       to: '/notifications/modals',
-  //     },
-  //   ],
-  // },
+  {
+    component: 'CNavGroup',
+    name: 'Icons',
+    to: '/icons',
+    icon: 'cil-star',
+    items: [
+      {
+        component: 'CNavItem',
+        name: 'CoreUI Icons',
+        to: '/icons/coreui-icons',
+        badge: {
+          color: 'info',
+          text: 'NEW',
+        },
+      },
+      {
+        component: 'CNavItem',
+        name: 'Brands',
+        to: '/icons/brands',
+      },
+      {
+        component: 'CNavItem',
+        name: 'Flags',
+        to: '/icons/flags',
+      },
+    ],
+  },
+  {
+    component: 'CNavGroup',
+    name: 'Notifications',
+    to: '/notifications',
+    icon: 'cil-bell',
+    items: [
+      {
+        component: 'CNavItem',
+        name: 'Alerts',
+        to: '/notifications/alerts',
+      },
+      {
+        component: 'CNavItem',
+        name: 'Badges',
+        to: '/notifications/badges',
+      },
+      {
+        component: 'CNavItem',
+        name: 'Modals',
+        to: '/notifications/modals',
+      },
+    ],
+  },
   // {
   //   component: 'CNavItem',
   //   name: 'Widgets',

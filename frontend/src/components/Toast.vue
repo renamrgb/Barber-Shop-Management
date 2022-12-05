@@ -1,11 +1,10 @@
-<template>
-  <CButton color="primary" @click="createToast">Send a toast</CButton>
+<template>  
   <CToaster placement="top-end">
     <CToast v-for="(toast, index) in toasts" :key="index">
-      <CToastHeader closeButton>
+      <!-- <CToastHeader closeButton>
         <span class="me-auto fw-bold">{{ toast.title }}</span>
         <small>7 min ago</small>
-      </CToastHeader>
+      </CToastHeader> -->
       <CToastBody>
         {{ toast.content }}
       </CToastBody>
@@ -20,10 +19,10 @@ export default {
     }
   },
   methods: {
-    createToast() {
+    createToast(mensagem) {
       this.toasts.push({
-        title: 'new toast',
-        content: 'Lorem ipsum dolor cet emit',
+        // title: titulo,
+        content: mensagem,
       })
     },
   },

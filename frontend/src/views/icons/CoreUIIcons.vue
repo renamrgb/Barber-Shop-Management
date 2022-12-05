@@ -37,5 +37,8 @@ export default {
       toKebabCase,
     }
   },
+  mounted(){
+    console.log(this.icons);
+  }
 }
 </script>

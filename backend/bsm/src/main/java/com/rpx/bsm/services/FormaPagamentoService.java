@@ -1,6 +1,7 @@
 package com.rpx.bsm.services;
 
 import com.rpx.bsm.entities.FormaPagamento;
+import com.rpx.bsm.records.FormaDePagamentoRecord;
 import com.rpx.bsm.repositories.FormaPagamentoRepository;
 import com.rpx.bsm.resources.exceptions.DatabaseException;
 import com.rpx.bsm.resources.exceptions.ResourceNotFoundException;
@@ -10,7 +11,9 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityNotFoundException;
+import javax.transaction.Transactional;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class FormaPagamentoService {
@@ -22,8 +25,8 @@ public class FormaPagamentoService {
         return repository.findAll();
     }
 
-    public FormaPagamento insert(FormaPagamento obj) {
-        return repository.save(obj);
+    public FormaPagamento insert(FormaDePagamentoRecord obj) {
+        return repository.save(converteEmEntidade(obj));
     }
 
     public void delete(Long id) {
@@ -35,11 +38,11 @@ public class FormaPagamentoService {
             throw new DatabaseException(e.getMessage());
         }
     }
-
-    public FormaPagamento update(Long id, FormaPagamento obj) {
+    @Transactional
+    public FormaPagamento update(Long id, FormaDePagamentoRecord obj) {
         try {
             FormaPagamento entity = repository.getReferenceById(id);
-            updateData(entity, obj);
+            updateData(entity, converteEmEntidade(obj));
             return repository.save(entity);
         } catch (EntityNotFoundException e) {
             throw new ResourceNotFoundException(id);
@@ -49,6 +52,15 @@ public class FormaPagamentoService {
     private void updateData(FormaPagamento entity, FormaPagamento obj) {
         entity.setDescricao(obj.getDescricao());
         entity.setAtivo(obj.getAtivo());
+    }
+
+    private FormaPagamento converteEmEntidade(FormaDePagamentoRecord record){
+        FormaPagamento fp = new FormaPagamento(record.descricao(), record.ativo());
+        return fp;
+    }
+    public FormaPagamento findById(Long id) {
+        Optional<FormaPagamento> obj = repository.findById(id);
+        return obj.get();
     }
 
 }

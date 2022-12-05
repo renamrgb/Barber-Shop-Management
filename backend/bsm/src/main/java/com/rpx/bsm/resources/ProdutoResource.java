@@ -1,6 +1,5 @@
 package com.rpx.bsm.resources;
 
-import com.rpx.bsm.entities.Procedimento;
 import com.rpx.bsm.entities.Produto;
 import com.rpx.bsm.services.ProdutoService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,13 +43,10 @@ public class ProdutoResource {
     }
 
     public static class ResourceNotFoundException extends RuntimeException {
-
         private static final long serialVersionUID = 1L;
-
         public ResourceNotFoundException(Object id) {
             super("Resouce not found. Id " + id);
         }
-
     }
 
 }

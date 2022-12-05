@@ -12,7 +12,7 @@ const routes = [
     children: [
       {
         path: '/dashboard',
-        name: 'Dashboard',        
+        name: 'Dashboard',
         component: () =>
           import(/* webpackChunkName: "dashboard" */ '@/views/Dashboard.vue'),
       },
@@ -157,45 +157,19 @@ const routes = [
           },
           {
             path: '/forms/forma-pagamento',
-            name: 'Forma Pamento',
+            name: 'Forma Pagamento',
+            component: () => import('@/views/list/FormaPagamento.vue'),
+          },
+          {
+            path: '/forms/forma-pagamento/cadastro/:id',
+            name: 'Alterar forma de pagamento',
             component: () => import('@/views/forms/FormaPagamento.vue'),
-          }       
-          //,
-          // {
-          //   path: '/forms/select',
-          //   name: 'Select',
-          //   component: () => import('@/views/forms/Select.vue'),
-          // },
-          // {
-          //   path: '/forms/checks-radios',
-          //   name: 'Checks & Radios',
-          //   component: () => import('@/views/forms/ChecksRadios.vue'),
-          // },
-          // {
-          //   path: '/forms/range',
-          //   name: 'Range',
-          //   component: () => import('@/views/forms/Range.vue'),
-          // },
-          // {
-          //   path: '/forms/input-group',
-          //   name: 'Input Group',
-          //   component: () => import('@/views/forms/InputGroup.vue'),
-          // },
-          // {
-          //   path: '/forms/floating-labels',
-          //   name: 'Floating Labels',
-          //   component: () => import('@/views/forms/FloatingLabels.vue'),
-          // },
-          // {
-          //   path: '/forms/layout',
-          //   name: 'Layout',
-          //   component: () => import('@/views/forms/Layout.vue'),
-          // },
-          // {
-          //   path: '/forms/validation',
-          //   name: 'Validation',
-          //   component: () => import('@/views/forms/Validation.vue'),
-          // },
+          },
+          {
+            path: '/forms/forma-pagamento/cadastro',
+            name: 'Cadastrar forma de pagamento',
+            component: () => import('@/views/forms/FormaPagamento.vue'),
+          },
         ],
       },
       {

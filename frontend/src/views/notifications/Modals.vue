@@ -45,47 +45,14 @@
             slide down and fade in from the top of the page.
           </p>
           <DocsExample href="components/modal.html#live-demo">
-            <CButton
-              color="primary"
-              @click="
-                () => {
-                  visibleLiveDemo = true
-                }
-              "
-              >Launch demo modal</CButton
-            >
-            <CModal
-              :visible="visibleLiveDemo"
-              @close="
-                () => {
-                  visibleLiveDemo = false
-                }
-              "
-            >
-              <CModalHeader
-                dismiss
-                @close="
-                  () => {
-                    visibleLiveDemo = false
-                  }
-                "
-              >
+            <CButton color="primary" @click="() => {visibleLiveDemo = true}">Launch demo modal</CButton>
+            <CModal :visible="visibleLiveDemo" @close=" () => { visibleLiveDemo = false }">
+              <CModalHeader dismiss @close=" () => { visibleLiveDemo = false }">
                 <CModalTitle>Modal title</CModalTitle>
               </CModalHeader>
-              <CModalBody
-                >Woohoo, you're reading this text in a modal!</CModalBody
-              >
+              <CModalBody>Woohoo, you're reading this text in a modal!</CModalBody>
               <CModalFooter>
-                <CButton
-                  color="secondary"
-                  @click="
-                    () => {
-                      visibleLiveDemo = false
-                    }
-                  "
-                >
-                  Close
-                </CButton>
+                <CButton color="secondary" @click="() => { visibleLiveDemo = false }">Close</CButton>
                 <CButton color="primary">Save changes</CButton>
               </CModalFooter>
             </CModal>
