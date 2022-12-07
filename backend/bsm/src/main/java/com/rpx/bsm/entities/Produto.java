@@ -20,12 +20,21 @@ public class Produto implements Serializable {
     private Long Id;
     private String titulo;
     private Double valor;
-
     private String marca;
+    private Integer quantidade;
 
-    private  Integer quantidade;
+    private Boolean ativo;
 
-    public Produto(String titulo, Double valor, String marca, Integer quantidade) {
+    public Produto(String titulo, Double valor, String marca, Integer quantidade, Boolean ativo) {
+        this.titulo = titulo;
+        this.valor = valor;
+        this.marca = marca;
+        this.quantidade = quantidade;
+        this.ativo = ativo;
+    }
+
+    public Produto(Long id, String titulo, Double valor, String marca, Integer quantidade) {
+        Id = id;
         this.titulo = titulo;
         this.valor = valor;
         this.marca = marca;

@@ -37,6 +37,7 @@ public class TestConfig implements CommandLineRunner {
         prod1.setValor(100.00);
         prod1.setQuantidade(1);
         prod1.setMarca("Marca Teste 1");
+        prod1.setAtivo(true);
         produtoRepository.save(prod1);
 
         /*============================================================================================================*/

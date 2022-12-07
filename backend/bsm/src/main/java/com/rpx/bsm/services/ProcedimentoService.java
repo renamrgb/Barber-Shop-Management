@@ -1,10 +1,7 @@
 package com.rpx.bsm.services;
 
 import com.rpx.bsm.dto.ProcedimentoDTO;
-import com.rpx.bsm.entities.Cliente;
 import com.rpx.bsm.entities.Procedimento;
-import com.rpx.bsm.enums.NivelAcessoEnum;
-import com.rpx.bsm.records.ClienteRecord;
 import com.rpx.bsm.records.ProcedimentoRecord;
 import com.rpx.bsm.repositories.ProcedimentoRepository;
 import com.rpx.bsm.resources.exceptions.DatabaseException;
@@ -17,6 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityNotFoundException;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class ProcedimentoService {
@@ -80,6 +78,10 @@ public class ProcedimentoService {
         );
 
         return dto;
+    }
+    public Procedimento findById(Long id) {
+        Optional<Procedimento> obj = repository.findById(id);
+        return obj.get();
     }
 
 }

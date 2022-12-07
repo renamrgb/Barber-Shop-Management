@@ -69,12 +69,12 @@ export default {
       }
       if (res.status == 201) {
         this.$refs.toast.createToast(
-          'Forma de pagamento cadastrada com sucesso!',
+          'Cadastrado com sucesso!',
         )
         this.$router.push('/forms/forma-pagamento')
       } else if (res.status == 200) {
         this.$refs.toast.createToast(
-          'Forma de pagamento alterada com sucesso!',
+          'Alterado com sucesso!',
         )
       } else {
         let vetErros = res.response.data.fieldErrors

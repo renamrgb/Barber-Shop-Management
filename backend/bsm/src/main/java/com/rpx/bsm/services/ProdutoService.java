@@ -1,6 +1,7 @@
 package com.rpx.bsm.services;
 
 import com.rpx.bsm.entities.*;
+import com.rpx.bsm.records.ProdutoRecord;
 import com.rpx.bsm.repositories.ProdutoRepository;
 import com.rpx.bsm.resources.exceptions.DatabaseException;
 import com.rpx.bsm.resources.exceptions.ResourceNotFoundException;
@@ -10,7 +11,9 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityNotFoundException;
+import javax.transaction.Transactional;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class ProdutoService {
@@ -22,8 +25,8 @@ public class ProdutoService {
         return repository.findAll();
     }
 
-    public Produto insert(Produto obj) {
-        return repository.save(obj);
+    public Produto insert(ProdutoRecord record) {
+        return repository.save(this.converterEmentidade(record));
     }
 
     public void delete(Long id) {
@@ -35,11 +38,11 @@ public class ProdutoService {
             throw new DatabaseException(e.getMessage());
         }
     }
-
-    public Produto update(Long id, Produto obj) {
+    @Transactional
+    public Produto update(Long id, ProdutoRecord record) {
         try {
             Produto entity = repository.getReferenceById(id);
-            updateData(entity, obj);
+            updateData(entity, this.converterEmentidade(record));
             return repository.save(entity);
         } catch (EntityNotFoundException e) {
             throw new ResourceNotFoundException(id);
@@ -50,6 +53,14 @@ public class ProdutoService {
         entity.setTitulo(obj.getTitulo());
         entity.setValor(obj.getValor());
         entity.setQuantidade(obj.getQuantidade());
+    }
+
+    private Produto converterEmentidade(ProdutoRecord record) {
+        return new Produto(record.titulo(), record.valor(), record.marca(), record.quantidade(), record.ativo());
+    }
+    public Produto findById(Long id) {
+        Optional<Produto> obj = repository.findById(id);
+        return obj.get();
     }
 
 }

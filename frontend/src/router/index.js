@@ -170,6 +170,36 @@ const routes = [
             name: 'Cadastrar forma de pagamento',
             component: () => import('@/views/forms/FormaPagamento.vue'),
           },
+          {
+            path: '/forms/produto',
+            name: 'Produto',
+            component: () => import('@/views/list/Produto.vue'),
+          },
+          {
+            path: '/forms/produto/cadastro',
+            name: 'Cadastrar produto',
+            component: () => import('@/views/forms/Produto.vue'),
+          },
+          {
+            path: '/forms/produto/cadastro/:id',
+            name: 'Alterar produto',
+            component: () => import('@/views/forms/Produto.vue'),
+          },
+          {
+            path: '/forms/procedimento',
+            name: 'Procedimentos',
+            component: () => import('@/views/list/Procedimento.vue'),
+          },
+          {
+            path: '/forms/procedimento/cadastro',
+            name: 'Cadastrar Procedimento',
+            component: () => import('@/views/forms/Procedimento.vue'),
+          },
+          {
+            path: '/forms/procedimento/cadastro/:id',
+            name: 'Alterar Procedimento',
+            component: () => import('@/views/forms/Procedimento.vue'),
+          },
         ],
       },
       {

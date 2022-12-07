@@ -1,57 +1,68 @@
 package com.rpx.bsm.resources;
 
-import com.rpx.bsm.entities.Produto;
 import com.rpx.bsm.entities.TipoDespesa;
-import com.rpx.bsm.services.ProdutoService;
-import com.rpx.bsm.services.TipoDespesaService;
+import com.rpx.bsm.records.TipoDespesaRecord;
+import com.rpx.bsm.repositories.TipoDespesaRepository;
+import com.rpx.bsm.resources.exceptions.DatabaseException;
+import com.rpx.bsm.resources.exceptions.ResourceNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
+import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
-import java.net.URI;
+import javax.persistence.EntityNotFoundException;
+import javax.transaction.Transactional;
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping(value = "/tipoDespesas")
 public class TipoDespesaResource {
 
     @Autowired
-    private TipoDespesaService service;
+    private TipoDespesaRepository repository;
 
-    @GetMapping
-    public ResponseEntity<List<TipoDespesa>> findAll() {
-        List<TipoDespesa> list = service.findAll();
-        return ResponseEntity.ok().body(list);
+    public List<TipoDespesa> findAll() {
+        return repository.findAll();
     }
 
-    @PostMapping
-    public ResponseEntity<TipoDespesa> insert(@RequestBody TipoDespesa obj) {
-        obj = service.insert(obj);
-        URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(obj.getId()).toUri();
-        return ResponseEntity.ok().body(obj);
+    public TipoDespesa insert(TipoDespesaRecord obj) {
+        return repository.save(converteEmEntidade(obj));
     }
 
-    @DeleteMapping(value = "/{id}")
-    public ResponseEntity<Void> delete(@PathVariable Long id) {
-        service.delete(id);
-        return ResponseEntity.noContent().build();
-    }
-
-    @PutMapping(value = "/{id}")
-    public ResponseEntity<TipoDespesa> update(@PathVariable Long id, @RequestBody TipoDespesa obj) {
-        obj = service.update(id, obj);
-        return ResponseEntity.ok().body(obj);
-    }
-
-    public static class ResourceNotFoundException extends RuntimeException {
-
-        private static final long serialVersionUID = 1L;
-
-        public ResourceNotFoundException(Object id) {
-            super("Resouce not found. Id " + id);
+    public void delete(Long id) {
+        try {
+            repository.deleteById(id);
+        } catch (EmptyResultDataAccessException e) {
+            throw new ResourceNotFoundException(id);
+        } catch (DataIntegrityViolationException e) {
+            throw new DatabaseException(e.getMessage());
         }
+    }
+    @Transactional
+    public TipoDespesa update(Long id, TipoDespesaRecord obj) {
+        try {
+            TipoDespesa entity = repository.getReferenceById(id);
+            updateData(entity, converteEmEntidade(obj));
+            return repository.save(entity);
+        } catch (EntityNotFoundException e) {
+            throw new ResourceNotFoundException(id);
+        }
+    }
 
+    private void updateData(TipoDespesa entity, TipoDespesa obj) {
+        entity.setDescricao(obj.getDescricao());
+        entity.setAtivo(obj.getAtivo());
+    }
+
+    private TipoDespesa converteEmEntidade(TipoDespesaRecord record){
+        TipoDespesa obj = new TipoDespesa(record.descricao(), record.ativo());
+        return obj;
+    }
+    public TipoDespesa findById(Long id) {
+        Optional<TipoDespesa> obj = repository.findById(id);
+        return obj.get();
     }
 
 }

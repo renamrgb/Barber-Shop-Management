@@ -148,6 +148,16 @@ export default [
       },
       {
         component: 'CNavItem',
+        name: 'Produto',
+        to: '/forms/produto',
+      },
+      {
+        component: 'CNavItem',
+        name: 'Procedimento',
+        to: '/forms/procedimento',
+      },
+      {
+        component: 'CNavItem',
         name: 'Select',
         to: '/forms/select',
       },
