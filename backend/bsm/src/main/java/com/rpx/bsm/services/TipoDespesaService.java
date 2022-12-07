@@ -1,8 +1,7 @@
 package com.rpx.bsm.services;
 
-import com.rpx.bsm.entities.Produto;
 import com.rpx.bsm.entities.TipoDespesa;
-import com.rpx.bsm.repositories.ProdutoRepository;
+import com.rpx.bsm.records.TipoDespesaRecord;
 import com.rpx.bsm.repositories.TipoDespesaRepository;
 import com.rpx.bsm.resources.exceptions.DatabaseException;
 import com.rpx.bsm.resources.exceptions.ResourceNotFoundException;
@@ -12,7 +11,9 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityNotFoundException;
+import javax.transaction.Transactional;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class TipoDespesaService {
@@ -24,8 +25,8 @@ public class TipoDespesaService {
         return repository.findAll();
     }
 
-    public TipoDespesa insert(TipoDespesa obj) {
-        return repository.save(obj);
+    public TipoDespesa insert(TipoDespesaRecord record) {
+        return repository.save(this.converterEmentidade(record));
     }
 
     public void delete(Long id) {
@@ -37,11 +38,11 @@ public class TipoDespesaService {
             throw new DatabaseException(e.getMessage());
         }
     }
-
-    public TipoDespesa update(Long id, TipoDespesa obj) {
+    @Transactional
+    public TipoDespesa update(Long id, TipoDespesaRecord record) {
         try {
             TipoDespesa entity = repository.getReferenceById(id);
-            updateData(entity, obj);
+            updateData(entity, this.converterEmentidade(record));
             return repository.save(entity);
         } catch (EntityNotFoundException e) {
             throw new ResourceNotFoundException(id);
@@ -51,6 +52,14 @@ public class TipoDespesaService {
     private void updateData(TipoDespesa entity, TipoDespesa obj) {
         entity.setDescricao(obj.getDescricao());
         entity.setAtivo(obj.getAtivo());
+    }
+
+    private TipoDespesa converterEmentidade(TipoDespesaRecord record) {
+        return new TipoDespesa(record.descricao(), record.ativo());
+    }
+    public TipoDespesa findById(Long id) {
+        Optional<TipoDespesa> obj = repository.findById(id);
+        return obj.get();
     }
 
 }

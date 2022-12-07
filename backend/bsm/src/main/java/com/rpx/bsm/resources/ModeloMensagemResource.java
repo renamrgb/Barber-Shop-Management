@@ -1,14 +1,14 @@
 package com.rpx.bsm.resources;
 
 import com.rpx.bsm.entities.ModeloMensagem;
-import com.rpx.bsm.entities.Produto;
+import com.rpx.bsm.records.ModeloMensagemRecord;
 import com.rpx.bsm.services.ModeloMensagemService;
-import com.rpx.bsm.services.ProdutoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import javax.validation.Valid;
 import java.net.URI;
 import java.util.List;
 
@@ -26,9 +26,15 @@ public class ModeloMensagemResource {
     }
 
     @PostMapping
-    public ResponseEntity<ModeloMensagem> insert(@RequestBody ModeloMensagem obj) {
-        obj = service.insert(obj);
+    public ResponseEntity<ModeloMensagem> insert(@Valid @RequestBody ModeloMensagemRecord record) {
+        ModeloMensagem obj = service.insert(record);
         URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(obj.getId()).toUri();
+        return ResponseEntity.created(uri).body(obj);
+    }
+
+    @GetMapping(value = "/{id}")
+    public ResponseEntity<ModeloMensagem> findById(@PathVariable Long id){
+        ModeloMensagem obj = service.findById(id);
         return ResponseEntity.ok().body(obj);
     }
 
@@ -39,8 +45,8 @@ public class ModeloMensagemResource {
     }
 
     @PutMapping(value = "/{id}")
-    public ResponseEntity<ModeloMensagem> update(@PathVariable Long id, @RequestBody ModeloMensagem obj) {
-        obj = service.update(id, obj);
+    public ResponseEntity<ModeloMensagem> update(@PathVariable Long id, @Valid @RequestBody ModeloMensagemRecord record) {
+        ModeloMensagem obj = service.update(id, record);
         return ResponseEntity.ok().body(obj);
     }
 

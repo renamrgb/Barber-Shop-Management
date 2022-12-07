@@ -149,12 +149,7 @@ const routes = [
           },
         },
         redirect: '/forms/form-control',
-        children: [
-          {
-            path: '/forms/form-control',
-            name: 'Form Control',
-            component: () => import('@/views/forms/FormControl.vue'),
-          },
+        children: [          
           {
             path: '/forms/forma-pagamento',
             name: 'Forma Pagamento',
@@ -199,6 +194,51 @@ const routes = [
             path: '/forms/procedimento/cadastro/:id',
             name: 'Alterar Procedimento',
             component: () => import('@/views/forms/Procedimento.vue'),
+          },
+          {
+            path: '/forms/tipoDespesas',
+            name: 'Tipo de despesa',
+            component: () => import('@/views/list/TipoDespesa.vue'),
+          },
+          {
+            path: '/forms/tipoDespesas/cadastro',
+            name: 'Cadastrar Tipo de despesa',
+            component: () => import('@/views/forms/TipoDespesa.vue'),
+          },
+          {
+            path: '/forms/tipoDespesas/cadastro/:id',
+            name: 'Alterar Tipo de despesa',
+            component: () => import('@/views/forms/TipoDespesa.vue'),
+          },
+          {
+            path: '/forms/modeloMensagem',
+            name: 'Modelo Mensagem',
+            component: () => import('@/views/list/ModeloMensagem.vue'),
+          },
+          {
+            path: '/forms/modeloMensagem/cadastro',
+            name: 'Cadastrar Modelo Mensagem',
+            component: () => import('@/views/forms/ModeloMensagem.vue'),
+          },
+          {
+            path: '/forms/modeloMensagem/cadastro/:id',
+            name: 'Alterar Modelo Mensagem',
+            component: () => import('@/views/forms/ModeloMensagem.vue'),
+          },
+          {
+            path: '/forms/tipoProdutoProcedimento',
+            name: 'Modelo Tipo Produto ou Procedimento',
+            component: () => import('@/views/list/TipoProdutoProcedimento.vue'),
+          },
+          {
+            path: '/forms/tipoProdutoProcedimento/cadastro',
+            name: 'Cadastrar Tipo Produto ou Procedimento',
+            component: () => import('@/views/forms/TipoProdutoProcedimento.vue'),
+          },
+          {
+            path: '/forms/tipoProdutoProcedimento/cadastro/:id',
+            name: 'Alterar Modelo Tipo Produto ou Procedimento',
+            component: () => import('@/views/forms/TipoProdutoProcedimento.vue'),
           },
         ],
       },

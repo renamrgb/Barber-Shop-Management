@@ -1,6 +1,5 @@
 package com.rpx.bsm.repositories;
 
-import com.rpx.bsm.entities.Produto;
 import com.rpx.bsm.entities.TipoDespesa;
 import org.springframework.data.jpa.repository.JpaRepository;
 

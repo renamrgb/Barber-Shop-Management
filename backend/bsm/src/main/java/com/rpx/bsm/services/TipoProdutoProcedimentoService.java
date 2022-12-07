@@ -1,8 +1,8 @@
 package com.rpx.bsm.services;
 
-import com.rpx.bsm.entities.*;
-import com.rpx.bsm.records.ProdutoRecord;
-import com.rpx.bsm.repositories.ProdutoRepository;
+import com.rpx.bsm.entities.TipoProdutoProcedimento;
+import com.rpx.bsm.records.TipoProdutoProcedimentoRecord;
+import com.rpx.bsm.repositories.TipoProdutoProcedimentoRepository;
 import com.rpx.bsm.resources.exceptions.DatabaseException;
 import com.rpx.bsm.resources.exceptions.ResourceNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,16 +16,16 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
-public class ProdutoService {
+public class TipoProdutoProcedimentoService {
 
     @Autowired
-    private ProdutoRepository repository;
+    private TipoProdutoProcedimentoRepository repository;
 
-    public List<Produto> findAll() {
+    public List<TipoProdutoProcedimento> findAll() {
         return repository.findAll();
     }
 
-    public Produto insert(ProdutoRecord record) {
+    public TipoProdutoProcedimento insert(TipoProdutoProcedimentoRecord record) {
         return repository.save(this.converterEmentidade(record));
     }
 
@@ -39,9 +39,9 @@ public class ProdutoService {
         }
     }
     @Transactional
-    public Produto update(Long id, ProdutoRecord record) {
+    public TipoProdutoProcedimento update(Long id, TipoProdutoProcedimentoRecord record) {
         try {
-            Produto entity = repository.getReferenceById(id);
+            TipoProdutoProcedimento entity = repository.getReferenceById(id);
             updateData(entity, this.converterEmentidade(record));
             return repository.save(entity);
         } catch (EntityNotFoundException e) {
@@ -49,18 +49,16 @@ public class ProdutoService {
         }
     }
 
-    private void updateData(Produto entity, Produto obj) {
-        entity.setTitulo(obj.getTitulo());
-        entity.setValor(obj.getValor());
-        entity.setQuantidade(obj.getQuantidade());
+    private void updateData(TipoProdutoProcedimento entity, TipoProdutoProcedimento obj) {
+        entity.setDescricao(obj.getDescricao());
         entity.setAtivo(obj.getAtivo());
     }
 
-    private Produto converterEmentidade(ProdutoRecord record) {
-        return new Produto(record.titulo(), record.valor(), record.marca(), record.quantidade(), record.ativo());
+    private TipoProdutoProcedimento converterEmentidade(TipoProdutoProcedimentoRecord record) {
+        return new TipoProdutoProcedimento(record.descricao(), record.ativo());
     }
-    public Produto findById(Long id) {
-        Optional<Produto> obj = repository.findById(id);
+    public TipoProdutoProcedimento findById(Long id) {
+        Optional<TipoProdutoProcedimento> obj = repository.findById(id);
         return obj.get();
     }
 

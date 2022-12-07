@@ -135,12 +135,7 @@ export default [
     name: 'Cadastros',
     to: '/forms',
     icon: 'cil-notes',
-    items: [
-      {
-        component: 'CNavItem',
-        name: 'Form Control',
-        to: '/forms/form-control',
-      },
+    items: [      
       {
         component: 'CNavItem',
         name: 'Forma de pagamento',
@@ -158,39 +153,19 @@ export default [
       },
       {
         component: 'CNavItem',
-        name: 'Select',
-        to: '/forms/select',
+        name: 'Tipo de Despesa',
+        to: '/forms/tipoDespesas',
+      },   
+      {
+        component: 'CNavItem',
+        name: 'Modelo de mensagem',
+        to: '/forms/modeloMensagem',
       },
       {
         component: 'CNavItem',
-        name: 'Checks & Radios',
-        to: '/forms/checks-radios',
-      },
-      {
-        component: 'CNavItem',
-        name: 'Range',
-        to: '/forms/range',
-      },
-      {
-        component: 'CNavItem',
-        name: 'Input Group',
-        to: '/forms/input-group',
-      },
-      {
-        component: 'CNavItem',
-        name: 'Floating Labels',
-        to: '/forms/floating-labels',
-      },
-      {
-        component: 'CNavItem',
-        name: 'Layout',
-        to: '/forms/layout',
-      },
-      {
-        component: 'CNavItem',
-        name: 'Validation',
-        to: '/forms/validation',
-      },
+        name: 'Produto/procedimento',
+        to: '/forms/tipoProdutoProcedimento',
+      },       
     ],
   },
   // {
