@@ -33,6 +33,10 @@ public class Procedimento implements Serializable {
     @ManyToMany(mappedBy = "procedimentos") //Nome do set
     private Set<Profissional> profissionais = new HashSet<>();
 
+    public Procedimento(Long id) {
+        Id = id;
+    }
+
     public Procedimento(String descricao, Double valor, Boolean ativo) {
         this.descricao = descricao;
         this.valor = valor;

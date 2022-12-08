@@ -1,8 +1,11 @@
 package com.rpx.bsm.services;
 
+import com.rpx.bsm.dto.ProcedimentoDTO;
 import com.rpx.bsm.dto.ProfissionalDTO;
+import com.rpx.bsm.entities.Procedimento;
 import com.rpx.bsm.entities.Profissional;
 import com.rpx.bsm.enums.NivelAcessoEnum;
+import com.rpx.bsm.records.ProcedimentoIdRecord;
 import com.rpx.bsm.records.ProfissionalRecord;
 import com.rpx.bsm.repositories.ProfissionalRepository;
 import com.rpx.bsm.resources.exceptions.DatabaseException;
@@ -66,7 +69,7 @@ public class ProfissionalService {
         entidade.getUsuario().setTelefone(record.usuario().telefone());
         entidade.getUsuario().setCpf(record.usuario().cpf());
         entidade.getUsuario().setRg(record.usuario().rg());
-        entidade.getUsuario().setAtivo(true);
+        entidade.getUsuario().setAtivo(record.usuario().ativo());
         entidade.getUsuario().setAdmin(true);
 
         entidade.getUsuario().getEndereco().setCep(record.usuario().endereco().cep());
@@ -77,6 +80,10 @@ public class ProfissionalService {
         entidade.getUsuario().getEndereco().setUf(record.usuario().endereco().uf());
 
         entidade.getUsuario().getNivelAcesso().setAuthority(NivelAcessoEnum.ROLE_ADMIN);
+
+        for (ProcedimentoIdRecord p : record.procedimentos()) {
+            entidade.getProcedimentos().add(new Procedimento(p.id()));
+        }
 
         return entidade;
     }
@@ -91,7 +98,6 @@ public class ProfissionalService {
         entidade.getUsuario().setCpf(record.usuario().cpf());
         entidade.getUsuario().setRg(record.usuario().rg());
         entidade.getUsuario().setAtivo(record.usuario().ativo());
-//        entidade.getUsuario().setAdmin(true);
 
         entidade.getUsuario().getEndereco().setCep(record.usuario().endereco().cep());
         entidade.getUsuario().getEndereco().setLogradouro(record.usuario().endereco().logradouro());
@@ -99,6 +105,9 @@ public class ProfissionalService {
         entidade.getUsuario().getEndereco().setComplemento(record.usuario().endereco().complemento());
         entidade.getUsuario().getEndereco().setCidade(record.usuario().endereco().cidade());
         entidade.getUsuario().getEndereco().setUf(record.usuario().endereco().uf());
+        for (ProcedimentoIdRecord p : record.procedimentos()) {
+            entidade.getProcedimentos().add(new Procedimento(p.id()));
+        }
 
         return entidade;
     }
@@ -120,6 +129,9 @@ public class ProfissionalService {
         dto.getEndereco().setComplemento(profissional.getUsuario().getEndereco().getComplemento());
         dto.getEndereco().setCidade(profissional.getUsuario().getEndereco().getCidade());
         dto.getEndereco().setUf(profissional.getUsuario().getEndereco().getUf());
+        for (Procedimento p : profissional.getProcedimentos()) {
+            dto.getProcedimentos().add(new ProcedimentoDTO(p.getId()));
+        }
 
         return dto;
     }
