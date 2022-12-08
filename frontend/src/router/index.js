@@ -240,6 +240,21 @@ const routes = [
             name: 'Alterar Modelo Tipo Produto ou Procedimento',
             component: () => import('@/views/forms/TipoProdutoProcedimento.vue'),
           },
+          {
+            path: '/forms/cliente',
+            name: 'Cliente',
+            component: () => import('@/views/list/Cliente.vue'),
+          },
+          {
+            path: '/forms/cliente/cadastro',
+            name: 'Cadastrar Cliente',
+            component: () => import('@/views/forms/Cliente.vue'),
+          },
+          {
+            path: '/forms/cliente/cadastro/:id',
+            name: 'Alterar Cliente',
+            component: () => import('@/views/forms/Cliente.vue'),
+          },
         ],
       },
       {
