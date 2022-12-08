@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import javax.persistence.EntityNotFoundException;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -65,7 +66,7 @@ public class ClienteService {
         cli.getUsuario().setTelefone(record.usuario().telefone());
         cli.getUsuario().setCpf(record.usuario().cpf());
         cli.getUsuario().setRg(record.usuario().rg());
-        cli.getUsuario().setAtivo(true);
+        cli.getUsuario().setAtivo(record.usuario().ativo());
         cli.getUsuario().setAdmin(true);
 
         cli.getUsuario().getEndereco().setCep(record.usuario().endereco().cep());
@@ -90,7 +91,6 @@ public class ClienteService {
         entidade.getUsuario().setCpf(record.usuario().cpf());
         entidade.getUsuario().setRg(record.usuario().rg());
         entidade.getUsuario().setAtivo(record.usuario().ativo());
-//        entidade.getUsuario().setAdmin(true);
 
         entidade.getUsuario().getEndereco().setCep(record.usuario().endereco().cep());
         entidade.getUsuario().getEndereco().setLogradouro(record.usuario().endereco().logradouro());
@@ -121,6 +121,12 @@ public class ClienteService {
         cli.getEndereco().setUf(cliente.getUsuario().getEndereco().getUf());
 
         return cli;
+    }
+
+    public Cliente findById(Long id) {
+        Optional<Cliente> obj = repository.findById(id);
+        Cliente entity = obj.orElseThrow(() -> new ResourceNotFoundException(id));
+        return entity;
     }
 
 }
