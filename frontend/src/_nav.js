@@ -179,61 +179,55 @@ export default [
     ],
   },
   // {
-  //   component: 'CNavItem',
-  //   name: 'Charts',
-  //   to: '/charts',
-  //   icon: 'cil-chart-pie',
+  //   component: 'CNavGroup',
+  //   name: 'Icons',
+  //   to: '/icons',
+  //   icon: 'cil-star',
+  //   items: [
+  //     {
+  //       component: 'CNavItem',
+  //       name: 'CoreUI Icons',
+  //       to: '/icons/coreui-icons',
+  //       badge: {
+  //         color: 'info',
+  //         text: 'NEW',
+  //       },
+  //     },
+  //     {
+  //       component: 'CNavItem',
+  //       name: 'Brands',
+  //       to: '/icons/brands',
+  //     },
+  //     {
+  //       component: 'CNavItem',
+  //       name: 'Flags',
+  //       to: '/icons/flags',
+  //     },
+  //   ],
   // },
-  {
-    component: 'CNavGroup',
-    name: 'Icons',
-    to: '/icons',
-    icon: 'cil-star',
-    items: [
-      {
-        component: 'CNavItem',
-        name: 'CoreUI Icons',
-        to: '/icons/coreui-icons',
-        badge: {
-          color: 'info',
-          text: 'NEW',
-        },
-      },
-      {
-        component: 'CNavItem',
-        name: 'Brands',
-        to: '/icons/brands',
-      },
-      {
-        component: 'CNavItem',
-        name: 'Flags',
-        to: '/icons/flags',
-      },
-    ],
-  },
-  {
-    component: 'CNavGroup',
-    name: 'Notifications',
-    to: '/notifications',
-    icon: 'cil-bell',
-    items: [
-      {
-        component: 'CNavItem',
-        name: 'Alerts',
-        to: '/notifications/alerts',
-      },
-      {
-        component: 'CNavItem',
-        name: 'Badges',
-        to: '/notifications/badges',
-      },
-      {
-        component: 'CNavItem',
-        name: 'Modals',
-        to: '/notifications/modals',
-      },
-    ],
-  },
+  // {
+  //   component: 'CNavGroup',
+  //   name: 'Notifications',
+  //   to: '/notifications',
+  //   icon: 'cil-bell',
+  //   items: [
+  //     {
+  //       component: 'CNavItem',
+  //       name: 'Alerts',
+  //       to: '/notifications/alerts',
+  //     },
+  //     {
+  //       component: 'CNavItem',
+  //       name: 'Badges',
+  //       to: '/notifications/badges',
+  //     },
+  //     {
+  //       component: 'CNavItem',
+  //       name: 'Modals',
+  //       to: '/notifications/modals',
+  //     },
+  //   ],
+  // },
   // {
   //   component: 'CNavItem',
   //   name: 'Widgets',
@@ -249,34 +243,34 @@ export default [
   //   component: 'CNavTitle',
   //   name: 'Extras',
   // },
-  {
-    component: 'CNavGroup',
-    name: 'Pages',
-    to: '/pages',
-    icon: 'cil-star',
-    items: [
-      {
-        component: 'CNavItem',
-        name: 'Login',
-        to: '/pages/login',
-      },
-      {
-        component: 'CNavItem',
-        name: 'Register',
-        to: '/pages/register',
-      },
-      {
-        component: 'CNavItem',
-        name: 'Error 404',
-        to: '/pages/404',
-      },
-      {
-        component: 'CNavItem',
-        name: 'Error 500',
-        to: '/pages/500',
-      },
-    ],
-  },
+  // {
+  //   component: 'CNavGroup',
+  //   name: 'Pages',
+  //   to: '/pages',
+  //   icon: 'cil-star',
+  //   items: [
+  //     {
+  //       component: 'CNavItem',
+  //       name: 'Login',
+  //       to: '/pages/login',
+  //     },
+  //     {
+  //       component: 'CNavItem',
+  //       name: 'Register',
+  //       to: '/pages/register',
+  //     },
+  //     {
+  //       component: 'CNavItem',
+  //       name: 'Error 404',
+  //       to: '/pages/404',
+  //     },
+  //     {
+  //       component: 'CNavItem',
+  //       name: 'Error 500',
+  //       to: '/pages/500',
+  //     },
+  //   ],
+  // },
 
   // {
   //   component: 'CNavItem',

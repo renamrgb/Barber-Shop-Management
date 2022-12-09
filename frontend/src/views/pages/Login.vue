@@ -8,27 +8,19 @@
               <CCardBody>
                 <CForm>
                   <h1>Login</h1>
-                  <p class="text-medium-emphasis">Sign In to your account</p>
+                  <p class="text-medium-emphasis">Faça login em sua conta</p>
                   <CInputGroup class="mb-3">
                     <CInputGroupText>
                       <CIcon icon="cil-user" />
                     </CInputGroupText>
-                    <CFormInput
-                      placeholder="Username"
-                      autocomplete="username"
-                      v-model="usuario"
-                    />
+                    <CFormInput placeholder="Username" autocomplete="username" v-model="usuario" />
                   </CInputGroup>
                   <CInputGroup class="mb-4">
                     <CInputGroupText>
                       <CIcon icon="cil-lock-locked" />
                     </CInputGroupText>
-                    <CFormInput
-                      type="password"
-                      placeholder="Password"
-                      autocomplete="current-password"
-                      v-model="senha"
-                    />
+                    <CFormInput type="password" placeholder="Password" autocomplete="current-password"
+                      v-model="senha" />
                   </CInputGroup>
                   <CRow>
                     <CCol :xs="6">
@@ -36,28 +28,8 @@
                         Login
                       </CButton>
                     </CCol>
-                    <CCol :xs="6" class="text-right">
-                      <CButton color="link" class="px-0">
-                        Forgot password?
-                      </CButton>
-                    </CCol>
                   </CRow>
                 </CForm>
-              </CCardBody>
-            </CCard>
-            <CCard class="text-white bg-primary py-5" style="width: 44%">
-              <CCardBody class="text-center">
-                <div>
-                  <h2>Sign up</h2>
-                  <p>
-                    Lorem ipsum dolor sit amet, consectetur adipisicing elit,
-                    sed do eiusmod tempor incididunt ut labore et dolore magna
-                    aliqua.
-                  </p>
-                  <CButton color="light" variant="outline" class="mt-3">
-                    Register Now!
-                  </CButton>
-                </div>
               </CCardBody>
             </CCard>
           </CCardGroup>
@@ -65,6 +37,7 @@
       </CRow>
     </CContainer>
   </div>
+  <toast ref="toast" />
 </template>
 
 <script>
@@ -83,9 +56,14 @@ export default {
   methods: {
     async login() {
       let res = await this.service.login(this.usuario, this.senha)
-      if(res.status == 200){
+      if (res.status == 200) {
         localStorage.setItem('access_token', res.data.access_token);
+        localStorage.setItem('nome_usuario', res.data.userFirstName);
         this.$router.push({ path: `/` })
+      } else if(res.response.status == 400) {        
+        this.$refs.toast.createToast(
+          'Usuário não existe ou senha inválida'
+        )
       }
     },
   },
