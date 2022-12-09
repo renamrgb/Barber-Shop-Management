@@ -12,6 +12,9 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
+import java.util.HashSet;
+import java.util.Set;
+
 @Configuration
 @Profile("test")
 public class TestConfig implements CommandLineRunner {
@@ -44,8 +47,7 @@ public class TestConfig implements CommandLineRunner {
         Procedimento proc1 = new Procedimento("Corte de Cabelo", 100.00, true);
         procedimentoRepository.save(proc1);
         /*============================================================================================================*/
-        /*
-        * Cliente cli = new Cliente();
+        Cliente cli = new Cliente();
         Usuario u = new Usuario();
         u.setNome("Rafael Paulo");
         u.setTelefone("18997101710");
@@ -55,9 +57,13 @@ public class TestConfig implements CommandLineRunner {
         u.setAtivo(true);
         u.setSenha(bCryptPasswordEncoder.encode("12345678"));
         u.setNivelAcesso(new NivelAcesso(NivelAcessoEnum.ROLE_ADMIN));
-        * */
-        //Profissional prof = new Profissional("Rafael", "18997101710", true);
-//        usuarioRepository.save(u);
+
+        Profissional prof = new Profissional();
+        prof.setUsuario(u);
+        Set<Procedimento> procedimentos = new HashSet<>();
+        procedimentos.add(new Procedimento(1L));
+        prof.setProcedimentos(procedimentos);
+        usuarioRepository.save(u);
         /*============================================================================================================*/
 
         FormaPagamento fp = new FormaPagamento("Cartão de Credito", true);

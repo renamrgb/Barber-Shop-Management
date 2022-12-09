@@ -19,6 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityNotFoundException;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -111,7 +112,7 @@ public class ProfissionalService {
 
         return entidade;
     }
-
+    @Transactional
     private ProfissionalDTO converteEmDTO(Profissional profissional) {
 
         ProfissionalDTO dto = new ProfissionalDTO();
@@ -136,5 +137,10 @@ public class ProfissionalService {
         return dto;
     }
 
+    public Profissional findById(Long id) {
+        Optional<Profissional> obj = repository.findById(id);
+        Profissional entity = obj.orElseThrow(() -> new ResourceNotFoundException(id));
+        return entity;
+    }
 
 }

@@ -1,6 +1,7 @@
 package com.rpx.bsm.resources;
 
 import com.rpx.bsm.dto.ProfissionalDTO;
+import com.rpx.bsm.entities.Profissional;
 import com.rpx.bsm.records.ProfissionalRecord;
 import com.rpx.bsm.services.ProfissionalService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,6 +24,12 @@ public class ProfissionalResoucrce {
     public ResponseEntity<List<ProfissionalDTO>> findAll() {
         List<ProfissionalDTO> list = service.findAll();
         return ResponseEntity.ok().body(list);
+    }
+
+    @GetMapping(value = "/{id}")
+    public ResponseEntity<Profissional> findById(@PathVariable Long id){
+        Profissional obj = service.findById(id);
+        return ResponseEntity.ok().body(obj);
     }
 
     @PostMapping

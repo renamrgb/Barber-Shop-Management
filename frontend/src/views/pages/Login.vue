@@ -16,6 +16,7 @@
                     <CFormInput
                       placeholder="Username"
                       autocomplete="username"
+                      v-model="usuario"
                     />
                   </CInputGroup>
                   <CInputGroup class="mb-4">
@@ -26,11 +27,14 @@
                       type="password"
                       placeholder="Password"
                       autocomplete="current-password"
+                      v-model="senha"
                     />
                   </CInputGroup>
                   <CRow>
                     <CCol :xs="6">
-                      <CButton color="primary" class="px-4"> Login </CButton>
+                      <CButton color="primary" class="px-4" @click="login">
+                        Login
+                      </CButton>
                     </CCol>
                     <CCol :xs="6" class="text-right">
                       <CButton color="link" class="px-0">
@@ -64,7 +68,26 @@
 </template>
 
 <script>
+import Toast from '@/components/Toast.vue'
+import UsuarioService from '@/Services/usuarioService.js'
 export default {
+  components: { Toast },
   name: 'Login',
+  data() {
+    return {
+      service: new UsuarioService(),
+      usuario: '',
+      senha: '',
+    }
+  },
+  methods: {
+    async login() {
+      let res = await this.service.login(this.usuario, this.senha)
+      if(res.status == 200){
+        localStorage.setItem('access_token', res.data.access_token);
+        this.$router.push({ path: `/` })
+      }
+    },
+  },
 }
 </script>

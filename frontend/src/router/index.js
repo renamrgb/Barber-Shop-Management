@@ -255,6 +255,21 @@ const routes = [
             name: 'Alterar Cliente',
             component: () => import('@/views/forms/Cliente.vue'),
           },
+          {
+            path: '/forms/profissional',
+            name: 'Profissional',
+            component: () => import('@/views/list/Profissional.vue'),
+          },
+          {
+            path: '/forms/profissional/cadastro',
+            name: 'Cadastrar Profissional',
+            component: () => import('@/views/forms/Profissional.vue'),
+          },
+          {
+            path: '/forms/profissional/cadastro/:id',
+            name: 'Alterar Profissional',
+            component: () => import('@/views/forms/Profissional.vue'),
+          },
         ],
       },
       {
@@ -364,6 +379,14 @@ const router = createRouter({
     // always scroll to top
     return { top: 0 }
   },
+})
+
+router.beforeEach((to, from, next) => {
+  if(to.name !== 'Login' && to.name !== 'Register' && !localStorage.getItem('access_token')){
+    next({name: 'Login'})
+  }else{
+    next();
+  }
 })
 
 export default router
