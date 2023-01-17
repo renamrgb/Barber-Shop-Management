@@ -2,7 +2,7 @@ package com.rpx.bsm.config;
 
 import com.rpx.bsm.entities.*;
 import com.rpx.bsm.enums.NivelAcessoEnum;
-import com.rpx.bsm.repositories.FormaPagamentoRepository;
+import com.rpx.bsm.repositories.paymentMethodRepository;
 import com.rpx.bsm.repositories.ProcedimentoRepository;
 import com.rpx.bsm.repositories.ProdutoRepository;
 import com.rpx.bsm.repositories.UsuarioRepository;
@@ -22,7 +22,7 @@ public class TestConfig implements CommandLineRunner {
     @Autowired
     private UsuarioRepository usuarioRepository;
     @Autowired
-    private FormaPagamentoRepository formaPagamentoRepository;
+    private paymentMethodRepository formaPagamentoRepository;
 
     @Autowired
     private ProdutoRepository produtoRepository;
@@ -66,7 +66,7 @@ public class TestConfig implements CommandLineRunner {
         usuarioRepository.save(u);
         /*============================================================================================================*/
 
-        FormaPagamento fp = new FormaPagamento("Cartão de Credito", true);
+        PaymentMethod fp = new PaymentMethod("Cartão de Credito", true);
         formaPagamentoRepository.save(fp);
 
     }

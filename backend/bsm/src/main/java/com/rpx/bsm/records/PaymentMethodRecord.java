@@ -5,7 +5,7 @@ import org.hibernate.validator.constraints.Length;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
-public record FormaDePagamentoRecord(
-        @NotBlank @Length(min = 2, max = 60) String descricao,
-        @NotNull Boolean ativo) {
+public record PaymentMethodRecord(
+        @NotBlank @Length(min = 2, max = 60) String description,
+        @NotNull Boolean isActive) {
 }

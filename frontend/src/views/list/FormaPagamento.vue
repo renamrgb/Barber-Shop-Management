@@ -26,8 +26,8 @@
             <CTableBody>
               <CTableRow v-for="fp in this.fps" :key="fp.id">
                 <CTableHeaderCell scope="row">{{ fp.id }}</CTableHeaderCell>
-                <CTableDataCell>{{ fp.descricao }}</CTableDataCell>
-                <CTableDataCell v-if="fp.ativo == true">
+                <CTableDataCell>{{ fp.description }}</CTableDataCell>
+                <CTableDataCell v-if="fp.isActive == true">
                   <CIcon icon="cil-check" size="xl" />
                 </CTableDataCell>
                 <CTableDataCell v-else-if="fp.ativo == false">
@@ -103,38 +103,17 @@ export default {
   components: { Toast },
   name: 'FormaPagamento',
   data() {
-    return {
-      descricao: '',
-      ativo: false,
+    return {      
       fp: new FormaPagamentoService(),
       fps: '',
       modalExcluir: false,
       idFp: '',
     }
   },
-  methods: {
-    async saveFormaPagamento() {
-      let res = await this.fp.saveFormasPagamento({
-        descricao: this.descricao,
-        ativo: this.ativo,
-      })
-      if (res.status == 201) {
-        this.$refs.toast.createToast(
-          'Forma de pagamento cadastrada com sucesso!',
-        )
-      } else {
-        let vetErros = res.response.data.fieldErrors
-
-        vetErros.forEach((element) => {
-          this.$refs.toast.createToast(
-            ` [${element.fieldName}] ${element.message} `,
-          )
-        })
-      }
-    },
+  methods: {    
     async getFormasPagamento() {
       this.fps = await this.fp.consultarFormasPagamento()
-      console.log(this.fps)
+      console.log(`OPA ${this.fps}`);
     },
     async excluir() {
       this.modalExcluir = false

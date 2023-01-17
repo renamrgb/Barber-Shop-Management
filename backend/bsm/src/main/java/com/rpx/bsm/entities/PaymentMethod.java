@@ -9,28 +9,28 @@ import java.io.Serializable;
 import java.util.Objects;
 
 @Entity
-@Table(name = "formaPagamento")
+@Table(name = "paymentMethod")
 @Getter
 @Setter
 @NoArgsConstructor
-public class FormaPagamento implements Serializable {
+public class PaymentMethod implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY) //Auto incremento
     private Long Id;
-    private String descricao;
-    private Boolean ativo;
+    private String description;
+    private Boolean isActive;
 
-    public FormaPagamento(String descricao, boolean ativo) {
-        this.descricao = descricao;
-        this.ativo = ativo;
+    public PaymentMethod(String description, boolean isActive) {
+        this.description = description;
+        this.isActive = isActive;
     }
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        FormaPagamento that = (FormaPagamento) o;
+        PaymentMethod that = (PaymentMethod) o;
         return Objects.equals(Id, that.Id);
     }
 
@@ -41,6 +41,10 @@ public class FormaPagamento implements Serializable {
 
     @Override
     public String toString() {
-        return "FormaDePagamento{" + "Id=" + Id + ", descricao='" + descricao + '\'' + ", ativo=" + ativo + '}';
+        return "FormPayment{" +
+                "Id=" + Id +
+                ", description='" + description + '\'' +
+                ", isActive=" + isActive +
+                '}';
     }
 }
