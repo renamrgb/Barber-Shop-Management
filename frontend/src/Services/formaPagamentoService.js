@@ -1,8 +1,7 @@
 import api from '@/Services/API/api'
 
 export default class FormaPagamentoService {
-
-  url = "/paymentMethod"
+  url = '/paymentMethod'
 
   async consultarFormasPagamento() {
     try {
@@ -40,6 +39,16 @@ export default class FormaPagamentoService {
     try {
       const res = await api.get(`${this.url}/${id}`)
       return res
+    } catch (error) {
+      return error
+    }
+  }
+  async getByDescription(description) {
+    try {
+      const data = await api.get(
+        `${this.url}/findByDescription?description=${description}`,
+      )      
+      return data.data;
     } catch (error) {
       return error
     }

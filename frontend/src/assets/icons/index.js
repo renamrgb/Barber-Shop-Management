@@ -172,6 +172,7 @@ export const iconsSet = Object.assign(
     cibCcAmex,
     cilTrash,
     cilPlus,
-    cilPlaylistAdd
+    cilPlaylistAdd,
+    cilMagnifyingGlass
   },
 )
