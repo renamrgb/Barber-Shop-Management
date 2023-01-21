@@ -1,8 +1,8 @@
 package com.rpx.bsm.resources;
 
-import com.rpx.bsm.entities.TipoDespesa;
-import com.rpx.bsm.records.TipoDespesaRecord;
-import com.rpx.bsm.services.TipoDespesaService;
+import com.rpx.bsm.entities.ExpenseType;
+import com.rpx.bsm.records.ExpenseTypeRecord;
+import com.rpx.bsm.services.ExpenseTypeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -17,24 +17,24 @@ import java.util.List;
 public class TipoDespesaResource {
 
     @Autowired
-    private TipoDespesaService service;
+    private ExpenseTypeService service;
 
     @GetMapping
-    public ResponseEntity<List<TipoDespesa>> findAll() {
-        List<TipoDespesa> list = service.findAll();
+    public ResponseEntity<List<ExpenseType>> findAll() {
+        List<ExpenseType> list = service.findAll();
         return ResponseEntity.ok().body(list);
     }
 
     @PostMapping
-    public ResponseEntity<TipoDespesa> insert(@Valid @RequestBody TipoDespesaRecord obj) {
-        TipoDespesa fp = service.insert(obj);
+    public ResponseEntity<ExpenseType> insert(@Valid @RequestBody ExpenseTypeRecord obj) {
+        ExpenseType fp = service.insert(obj);
         URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(fp.getId()).toUri();
         return ResponseEntity.created(uri).body(fp);
     }
 
     @GetMapping(value = "/{id}")
-    public ResponseEntity<TipoDespesa> findById(@PathVariable Long id){
-        TipoDespesa obj = service.findById(id);
+    public ResponseEntity<ExpenseType> findById(@PathVariable Long id){
+        ExpenseType obj = service.findById(id);
         return ResponseEntity.ok().body(obj);
     }
 
@@ -45,8 +45,8 @@ public class TipoDespesaResource {
     }
 
     @PutMapping(value = "/{id}")
-    public ResponseEntity<TipoDespesa> update(@PathVariable Long id, @RequestBody TipoDespesaRecord obj) {
-        TipoDespesa entidade = service.update(id, obj);
+    public ResponseEntity<ExpenseType> update(@PathVariable Long id, @RequestBody ExpenseTypeRecord obj) {
+        ExpenseType entidade = service.update(id, obj);
         return ResponseEntity.ok().body(entidade);
     }
 

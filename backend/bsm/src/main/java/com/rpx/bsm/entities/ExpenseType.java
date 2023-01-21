@@ -9,29 +9,28 @@ import java.io.Serializable;
 import java.util.Objects;
 
 @Entity
-@Table(name = "tipoDespesa")
+@Table(name = "type_expense")
 @Getter
 @Setter
 @NoArgsConstructor
-public class TipoDespesa implements Serializable {
+public class TypeExpense implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY) //Auto incremento
     private Long Id;
-    private String descricao;
-    private Boolean ativo;
+    private String description;
+    private Boolean isActive;
 
-
-    public TipoDespesa(String descricao, Boolean ativo) {
-        this.descricao = descricao;
-        this.ativo = ativo;
+    public TypeExpense(String description, Boolean isActive) {
+        this.description = description;
+        this.isActive = isActive;
     }
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        TipoDespesa that = (TipoDespesa) o;
+        TypeExpense that = (TypeExpense) o;
         return Objects.equals(Id, that.Id);
     }
 
@@ -42,6 +41,6 @@ public class TipoDespesa implements Serializable {
 
     @Override
     public String toString() {
-        return "TipoDespesa{" + "descricao='" + descricao + '\'' + ", ativo=" + ativo + '}';
+        return "TipoDespesa{" + "descricao='" + description + '\'' + ", ativo=" + isActive + '}';
     }
 }

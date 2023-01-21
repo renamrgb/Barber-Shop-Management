@@ -9,7 +9,7 @@
           <CForm
             class="row g-3 needs-validation"
             novalidate
-            :validated="validatedCustom01"
+            :validated="validatedCustom"
             @submit="validationRequired"
           >
             <div :md="4">
@@ -38,9 +38,7 @@
                 type="submit"
                 >Confirmar</CButton
               >
-              <router-link to="/forms/forma-pagamento"
-                ><CButton color="danger">Cancelar</CButton></router-link
-              >
+              <a class="btn btn-danger" href="/#/forms/forma-pagamento">Cancelar</a>
             </div>
           </CForm>
         </CCardBody>
@@ -64,7 +62,7 @@ export default {
       fp: new FormaPagamentoService(),
       fps: '',
       visibleLiveDemo: false,
-      validatedCustom01: null,
+      validatedCustom: null,
     }
   },
   methods: {
@@ -74,7 +72,7 @@ export default {
         event.preventDefault()
         event.stopPropagation()
       }
-      this.validatedCustom01 = true
+      this.validatedCustom = true
     },
     async saveFormaPagamento() {
       let res = undefined
@@ -100,8 +98,8 @@ export default {
     async buscarFormaPagamento() {
       if (this.id != undefined) {
         let formaPagamento = await this.fp.buscarUmaformaDePagamento(this.id)
-        this.descricao = formaPagamento.data.descricao
-        this.ativo = formaPagamento.data.ativo
+        this.descricao = formaPagamento.data.description
+        this.ativo = formaPagamento.data.isActive
       }
     },
   },

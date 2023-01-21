@@ -46,7 +46,7 @@ export default class FormaPagamentoService {
   async getByDescription(description) {
     try {
       const data = await api.get(
-        `${this.url}/findByDescription?description=${description}`,
+        `${this.url}?description=${description}`,
       )      
       return data.data;
     } catch (error) {

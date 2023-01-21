@@ -1,9 +1,11 @@
 import api from '@/Services/API/api'
 
 export default class ModeloMensagemService {
+  url = '/messageTemplate'
+
   async consultarTodos() {
     try {
-      const res = await api.get('/modeloMensagens')
+      const res = await api.get(this.url)
       return res.data
     } catch (error) {
       return error
@@ -11,7 +13,7 @@ export default class ModeloMensagemService {
   }
   async cadastrar(item) {
     try {
-      const res = await api.post('/modeloMensagens', item)      
+      const res = await api.post(this.url, item)
       return res
     } catch (error) {
       return error
@@ -19,7 +21,7 @@ export default class ModeloMensagemService {
   }
   async excluir(id) {
     try {
-      const res = await api.delete(`/modeloMensagens/${id}`)
+      const res = await api.delete(`${this.url}/${id}`)
       return res
     } catch (error) {
       return error
@@ -27,7 +29,7 @@ export default class ModeloMensagemService {
   }
   async alterar(id, item) {
     try {
-      const res = await api.put(`/modeloMensagens/${id}`, item)
+      const res = await api.put(`${this.url}/${id}`, item)
       return res
     } catch (error) {
       return error
@@ -35,8 +37,16 @@ export default class ModeloMensagemService {
   }
   async buscarUm(id) {
     try {
-      const res = await api.get(`/modeloMensagens/${id}`)
+      const res = await api.get(`${this.url}/${id}`)
       return res
+    } catch (error) {
+      return error
+    }
+  }
+  async getByTitle(title) {
+    try {
+      const res = await api.get(`${this.url}?title=${title}`)
+      return res.data
     } catch (error) {
       return error
     }

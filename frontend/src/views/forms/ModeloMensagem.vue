@@ -3,28 +3,35 @@
     <CCol :xs="12">
       <CCard class="mb-4">
         <CCardHeader>
-          <strong>Modelo de Mensagem</strong>
+          <strong>Modelo de mensagem</strong>
         </CCardHeader>
         <CCardBody>
-          <CForm>
+          <CForm
+            class="row g-3 needs-validation"
+            novalidate
+            :validated="validatedCustom"
+            @submit="validationRequired"
+          >
             <div class="mb-3">
-              <CFormLabel for="titulo">Descrição</CFormLabel>
+              <CFormLabel for="titulo">* Descrição</CFormLabel>
               <CFormInput
                 id="titulo"
                 type="text"
                 placeholder="Mensagem de confirmação..."
                 v-model.lazy="titulo"
+                required
               />
             </div>
             <div class="mb-3">
               <CFormTextarea
                 id="mensagem"
-                label="Corpo de Mensagem"
+                label="* Corpo da Mensagem"
                 rows="5"
                 v-model.lazy="mensagem"
+                required
               ></CFormTextarea>
             </div>
-            <div class="mb-3">              
+            <div class="mb-3">
               <CFormSwitch
                 id="formSwitchCheckDefault"
                 label="Ativo"
@@ -32,12 +39,12 @@
               />
             </div>
             <div class="d-grid gap-2 d-md-flex justify-content-md-end">
-              <CButton color="primary" class="me-md-2" @click="salvar"
+              <CButton color="primary" type="submit" @click="salvar"
                 >Confirmar</CButton
               >
-              <router-link to="/forms/modeloMensagem"
-                ><CButton color="danger">Cancelar</CButton></router-link
-              >
+              <!-- <router-link to="/forms/modeloMensagem"
+                > -->
+              <a class="btn btn-danger"  href="/#/forms/modeloMensagem">Cancelar</a>
             </div>
           </CForm>
         </CCardBody>
@@ -60,15 +67,24 @@ export default {
       mensagem: '',
       ativo: false,
       service: new Service(),
+      validatedCustom: null,
     }
   },
   methods: {
+    validationRequired(event) {
+      const form = event.currentTarget
+      if (form.checkValidity() === false) {
+        event.preventDefault()
+        event.stopPropagation()
+      }
+      this.validatedCustom = true
+    },
     async salvar() {
       let res = undefined
       let dados = {
-        titulo: this.titulo,
-        mensagem: this.mensagem,
-        ativo: this.ativo,
+        title: this.titulo,
+        body: this.mensagem,
+        isActive: this.ativo,
       }
       if (this.id == undefined) {
         res = await this.service.cadastrar(dados)
@@ -87,9 +103,7 @@ export default {
           let vetErros = res.response.data.fieldErrors
 
           vetErros.forEach((element) => {
-            this.$refs.toast.createToast(
-              ` [${element.fieldName}] ${element.message} `,
-            )
+            this.$refs.toast.createToast(`${element.message} `)
           })
         }
       }
@@ -97,9 +111,9 @@ export default {
     async consultarUm() {
       if (this.id != undefined) {
         let item = await this.service.buscarUm(this.id)
-        this.titulo = item.data.titulo
-        this.mensagem = item.data.mensagem
-        this.ativo = item.data.ativo
+        this.titulo = item.data.title
+        this.mensagem = item.data.body
+        this.ativo = item.data.isActive
       }
     },
   },

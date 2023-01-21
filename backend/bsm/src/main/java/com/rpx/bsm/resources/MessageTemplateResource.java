@@ -1,7 +1,7 @@
 package com.rpx.bsm.resources;
 
-import com.rpx.bsm.entities.ModeloMensagem;
-import com.rpx.bsm.records.ModeloMensagemRecord;
+import com.rpx.bsm.entities.MessageTemplate;
+import com.rpx.bsm.records.MessageTemplateRecord;
 import com.rpx.bsm.services.ModeloMensagemService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -20,21 +20,21 @@ public class ModeloMensagemResource {
     private ModeloMensagemService service;
 
     @GetMapping
-    public ResponseEntity<List<ModeloMensagem>> findAll() {
-        List<ModeloMensagem> list = service.findAll();
+    public ResponseEntity<List<MessageTemplate>> findAll() {
+        List<MessageTemplate> list = service.findAll();
         return ResponseEntity.ok().body(list);
     }
 
     @PostMapping
-    public ResponseEntity<ModeloMensagem> insert(@Valid @RequestBody ModeloMensagemRecord record) {
-        ModeloMensagem obj = service.insert(record);
+    public ResponseEntity<MessageTemplate> insert(@Valid @RequestBody MessageTemplateRecord record) {
+        MessageTemplate obj = service.insert(record);
         URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(obj.getId()).toUri();
         return ResponseEntity.created(uri).body(obj);
     }
 
     @GetMapping(value = "/{id}")
-    public ResponseEntity<ModeloMensagem> findById(@PathVariable Long id){
-        ModeloMensagem obj = service.findById(id);
+    public ResponseEntity<MessageTemplate> findById(@PathVariable Long id){
+        MessageTemplate obj = service.findById(id);
         return ResponseEntity.ok().body(obj);
     }
 
@@ -45,8 +45,8 @@ public class ModeloMensagemResource {
     }
 
     @PutMapping(value = "/{id}")
-    public ResponseEntity<ModeloMensagem> update(@PathVariable Long id, @Valid @RequestBody ModeloMensagemRecord record) {
-        ModeloMensagem obj = service.update(id, record);
+    public ResponseEntity<MessageTemplate> update(@PathVariable Long id, @Valid @RequestBody MessageTemplateRecord record) {
+        MessageTemplate obj = service.update(id, record);
         return ResponseEntity.ok().body(obj);
     }
 

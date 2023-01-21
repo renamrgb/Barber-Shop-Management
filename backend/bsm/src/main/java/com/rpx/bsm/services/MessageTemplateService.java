@@ -1,8 +1,8 @@
 package com.rpx.bsm.services;
 
-import com.rpx.bsm.entities.ModeloMensagem;
-import com.rpx.bsm.records.ModeloMensagemRecord;
-import com.rpx.bsm.repositories.ModeloMensagemRepository;
+import com.rpx.bsm.entities.MessageTemplate;
+import com.rpx.bsm.records.MessageTemplateRecord;
+import com.rpx.bsm.repositories.MessageTemplateRepository;
 import com.rpx.bsm.resources.exceptions.DatabaseException;
 import com.rpx.bsm.resources.exceptions.ResourceNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,13 +19,13 @@ import java.util.Optional;
 public class ModeloMensagemService {
 
     @Autowired
-    private ModeloMensagemRepository repository;
+    private MessageTemplateRepository repository;
 
-    public List<ModeloMensagem> findAll() {
+    public List<MessageTemplate> findAll() {
         return repository.findAll();
     }
 
-    public ModeloMensagem insert(ModeloMensagemRecord record) {
+    public MessageTemplate insert(MessageTemplateRecord record) {
         return repository.save(this.converterEmEntidade(record));
     }
 
@@ -39,9 +39,9 @@ public class ModeloMensagemService {
         }
     }
     @Transactional
-    public ModeloMensagem update(Long id, ModeloMensagemRecord record) {
+    public MessageTemplate update(Long id, MessageTemplateRecord record) {
         try {
-            ModeloMensagem entity = repository.getReferenceById(id);
+            MessageTemplate entity = repository.getReferenceById(id);
             updateData(entity, this.converterEmEntidade(record));
             return repository.save(entity);
         }catch (EntityNotFoundException e){
@@ -49,19 +49,19 @@ public class ModeloMensagemService {
         }
     }
 
-    private void updateData(ModeloMensagem entity, ModeloMensagem obj) {
+    private void updateData(MessageTemplate entity, MessageTemplate obj) {
         entity.setTitulo(obj.getTitulo());
         entity.setMensagem(obj.getMensagem());
         entity.setAtivo(obj.getAtivo());
     }
 
-    public ModeloMensagem findById(Long id) {
-        Optional<ModeloMensagem> obj = repository.findById(id);
+    public MessageTemplate findById(Long id) {
+        Optional<MessageTemplate> obj = repository.findById(id);
         return obj.get();
     }
 
-    private ModeloMensagem converterEmEntidade(ModeloMensagemRecord record){
-        return new ModeloMensagem(record.titulo(), record.mensagem(), record.ativo());
+    private MessageTemplate converterEmEntidade(MessageTemplateRecord record){
+        return new MessageTemplate(record.titulo(), record.mensagem(), record.ativo());
     }
 
 }

@@ -1,8 +1,8 @@
 package com.rpx.bsm.services;
 
-import com.rpx.bsm.entities.TipoDespesa;
-import com.rpx.bsm.records.TipoDespesaRecord;
-import com.rpx.bsm.repositories.TipoDespesaRepository;
+import com.rpx.bsm.entities.ExpenseType;
+import com.rpx.bsm.records.ExpenseTypeRecord;
+import com.rpx.bsm.repositories.ExpenseTypeRepository;
 import com.rpx.bsm.resources.exceptions.DatabaseException;
 import com.rpx.bsm.resources.exceptions.ResourceNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,13 +19,13 @@ import java.util.Optional;
 public class TipoDespesaService {
 
     @Autowired
-    private TipoDespesaRepository repository;
+    private ExpenseTypeRepository repository;
 
-    public List<TipoDespesa> findAll() {
+    public List<ExpenseType> findAll() {
         return repository.findAll();
     }
 
-    public TipoDespesa insert(TipoDespesaRecord record) {
+    public ExpenseType insert(ExpenseTypeRecord record) {
         return repository.save(this.converterEmentidade(record));
     }
 
@@ -39,9 +39,9 @@ public class TipoDespesaService {
         }
     }
     @Transactional
-    public TipoDespesa update(Long id, TipoDespesaRecord record) {
+    public ExpenseType update(Long id, ExpenseTypeRecord record) {
         try {
-            TipoDespesa entity = repository.getReferenceById(id);
+            ExpenseType entity = repository.getReferenceById(id);
             updateData(entity, this.converterEmentidade(record));
             return repository.save(entity);
         } catch (EntityNotFoundException e) {
@@ -49,16 +49,16 @@ public class TipoDespesaService {
         }
     }
 
-    private void updateData(TipoDespesa entity, TipoDespesa obj) {
+    private void updateData(ExpenseType entity, ExpenseType obj) {
         entity.setDescricao(obj.getDescricao());
         entity.setAtivo(obj.getAtivo());
     }
 
-    private TipoDespesa converterEmentidade(TipoDespesaRecord record) {
-        return new TipoDespesa(record.descricao(), record.ativo());
+    private ExpenseType converterEmentidade(ExpenseTypeRecord record) {
+        return new ExpenseType(record.descricao(), record.ativo());
     }
-    public TipoDespesa findById(Long id) {
-        Optional<TipoDespesa> obj = repository.findById(id);
+    public ExpenseType findById(Long id) {
+        Optional<ExpenseType> obj = repository.findById(id);
         return obj.get();
     }
 

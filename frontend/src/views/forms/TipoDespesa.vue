@@ -6,17 +6,23 @@
           <strong>Tipos de Despesas</strong>
         </CCardHeader>
         <CCardBody>
-          <CForm>
-            <div class="mb-3">
+          <CForm
+            class="row g-3 needs-validation"
+            novalidate
+            :validated="validatedCustom"
+            @submit="validationRequired"
+          >
+            <div>
               <CFormLabel for="descricao">Descrição</CFormLabel>
               <CFormInput
                 id="descricao"
                 type="text"
                 placeholder="Corte de cabelo..."
                 v-model.lazy="descricao"
+                required
               />
-            </div>            
-            <div class="mb-3">
+            </div>
+            <div>
               <br />
               <CFormSwitch
                 id="formSwitchCheckDefault"
@@ -25,11 +31,15 @@
               />
             </div>
             <div class="d-grid gap-2 d-md-flex justify-content-md-end">
-              <CButton color="primary" class="me-md-2" @click="salvar"
+              <CButton
+                color="primary"
+                class="me-md-2"
+                @click="salvar"
+                type="submit"
                 >Confirmar</CButton
               >
-              <router-link to="/forms/tipoDespesas"
-                ><CButton color="danger">Cancelar</CButton></router-link
+              <a class="btn btn-danger" href="/#/forms/tipoDespesas"
+                >Cancelar</a
               >
             </div>
           </CForm>
@@ -49,16 +59,26 @@ export default {
   data() {
     return {
       id: this.$route.params.id,
-      descricao: '',      
+      descricao: '',
       ativo: false,
       service: new Service(),
+      visibleLiveDemo: false,
+      validatedCustom: null,
     }
   },
   methods: {
+    validationRequired(event) {
+      const form = event.currentTarget
+      if (form.checkValidity() === false) {
+        event.preventDefault()
+        event.stopPropagation()
+      }
+      this.validatedCustom = true
+    },
     async salvar() {
       let res = undefined
       let dados = {
-        descricao: this.descricao,       
+        descricao: this.descricao,
         ativo: this.ativo,
       }
       if (this.id == undefined) {
@@ -73,7 +93,7 @@ export default {
         this.$refs.toast.createToast('Alterado com sucesso!')
       } else {
         if (res.status == 500) {
-          this.$refs.toast.createToast(res.error);
+          this.$refs.toast.createToast(res.error)
         } else {
           let vetErros = res.response.data.fieldErrors
 
@@ -93,7 +113,7 @@ export default {
       }
     },
   },
-  mounted() {    
+  mounted() {
     if (this.id != undefined) {
       this.consultarUm()
     }
