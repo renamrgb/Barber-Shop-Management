@@ -12,29 +12,29 @@ import java.io.Serializable;
 import java.util.Objects;
 
 @Entity
-@Table(name = "tipoProdutoProcedimento")
+@Table(name = "product_procedure_types")
 @Getter
 @Setter
 @NoArgsConstructor
-public class TipoProdutoProcedimento implements Serializable {
+public class ProductProcedureTypes implements Serializable {
 
     @javax.persistence.Id
     @GeneratedValue(strategy = GenerationType.IDENTITY) //Auto incremento
     private Long Id;
-    private String descricao;
-    private Boolean ativo;
+    private String description;
+    private Boolean isActive;
 
 
-    public TipoProdutoProcedimento(String descricao, Boolean ativo) {
-        this.descricao = descricao;
-        this.ativo = ativo;
+    public ProductProcedureTypes(String description, Boolean isActive) {
+        this.description = description;
+        this.isActive = isActive;
     }
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        TipoProdutoProcedimento that = (TipoProdutoProcedimento) o;
+        ProductProcedureTypes that = (ProductProcedureTypes) o;
         return Objects.equals(Id, that.Id);
     }
 
@@ -47,8 +47,8 @@ public class TipoProdutoProcedimento implements Serializable {
     public String toString() {
         return "TipoProdutoProcedimento{" +
                 "Id=" + Id +
-                ", descricao='" + descricao + '\'' +
-                ", ativo=" + ativo +
+                ", descricao='" + description + '\'' +
+                ", ativo=" + isActive +
                 '}';
     }
 }

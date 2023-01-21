@@ -3,19 +3,25 @@
     <CCol :xs="12">
       <CCard class="mb-4">
         <CCardHeader>
-          <strong>Tipo de produto/procedimento</strong>
+          <strong>Tipos de produto/procedimento</strong>
         </CCardHeader>
         <CCardBody>
-          <CForm>
+          <CForm
+            class="row needs-validation"
+            novalidate
+            :validated="validatedCustom"
+            @submit="validationRequired"
+          >
             <div class="mb-3">
-              <CFormLabel for="descricao">Descrição</CFormLabel>
+              <CFormLabel for="descricao">* Descrição</CFormLabel>
               <CFormInput
                 id="descricao"
                 type="text"
                 placeholder="Corte de cabelo..."
                 v-model.lazy="descricao"
+                required
               />
-            </div>            
+            </div>
             <div class="mb-3">
               <br />
               <CFormSwitch
@@ -25,11 +31,15 @@
               />
             </div>
             <div class="d-grid gap-2 d-md-flex justify-content-md-end">
-              <CButton color="primary" class="me-md-2" @click="salvar"
+              <CButton
+                color="primary"
+                class="me-md-2"
+                @click="salvar"
+                type="submit"
                 >Confirmar</CButton
               >
-              <router-link to="/forms/tipoProdutoProcedimento"
-                ><CButton color="danger">Cancelar</CButton></router-link
+              <a href="/#/forms/tipoProdutoProcedimento" class="btn btn-danger"
+                >Cancelar</a
               >
             </div>
           </CForm>
@@ -48,17 +58,27 @@ export default {
   data() {
     return {
       id: this.$route.params.id,
-      descricao: '',      
+      descricao: '',
       ativo: false,
       service: new Service(),
+      visibleLiveDemo: false,
+      validatedCustom: null,
     }
   },
   methods: {
+    validationRequired(event) {
+      const form = event.currentTarget
+      if (form.checkValidity() === false) {
+        event.preventDefault()
+        event.stopPropagation()
+      }
+      this.validatedCustom = true
+    },
     async salvar() {
       let res = undefined
       let dados = {
-        descricao: this.descricao,       
-        ativo: this.ativo,
+        description: this.descricao,
+        isActive: this.ativo,
       }
       if (this.id == undefined) {
         res = await this.service.cadastrar(dados)
@@ -72,14 +92,12 @@ export default {
         this.$refs.toast.createToast('Alterado com sucesso!')
       } else {
         if (res.status == 500) {
-          this.$refs.toast.createToast(res.error);
+          this.$refs.toast.createToast(res.error)
         } else {
           let vetErros = res.response.data.fieldErrors
 
           vetErros.forEach((element) => {
-            this.$refs.toast.createToast(
-              ` [${element.fieldName}] ${element.message} `,
-            )
+            this.$refs.toast.createToast(`${element.message} `)
           })
         }
       }
@@ -87,12 +105,12 @@ export default {
     async consultarUm() {
       if (this.id != undefined) {
         let item = await this.service.buscarUm(this.id)
-        this.descricao = item.data.descricao
-        this.ativo = item.data.ativo
+        this.descricao = item.data.description
+        this.ativo = item.data.active
       }
     },
   },
-  mounted() {    
+  mounted() {
     if (this.id != undefined) {
       this.consultarUm()
     }

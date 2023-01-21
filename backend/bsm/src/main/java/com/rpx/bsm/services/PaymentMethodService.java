@@ -2,7 +2,7 @@ package com.rpx.bsm.services;
 
 import com.rpx.bsm.entities.PaymentMethod;
 import com.rpx.bsm.records.PaymentMethodRecord;
-import com.rpx.bsm.repositories.paymentMethodRepository;
+import com.rpx.bsm.repositories.PaymentMethodRepository;
 import com.rpx.bsm.resources.exceptions.DatabaseException;
 import com.rpx.bsm.resources.exceptions.ResourceNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,11 +18,7 @@ import java.util.Optional;
 public class PaymentMethodService {
 
     @Autowired
-    private paymentMethodRepository repository;
-
-    public List<PaymentMethod> findAll() {
-        return repository.findAll();
-    }
+    private PaymentMethodRepository repository;
 
     public List<PaymentMethod> find(String description){
         List<PaymentMethod> list;
@@ -72,9 +68,4 @@ public class PaymentMethodService {
         Optional<PaymentMethod> obj = repository.findById(id);
         return obj.get();
     }
-
-    public List<PaymentMethod> findByDescription(String filtro){
-        return repository.findByDescriptionContaining(filtro);
-    }
-
 }

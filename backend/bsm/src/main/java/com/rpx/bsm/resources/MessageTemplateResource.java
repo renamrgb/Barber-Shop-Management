@@ -2,7 +2,7 @@ package com.rpx.bsm.resources;
 
 import com.rpx.bsm.entities.MessageTemplate;
 import com.rpx.bsm.records.MessageTemplateRecord;
-import com.rpx.bsm.services.ModeloMensagemService;
+import com.rpx.bsm.services.MessageTemplateService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -13,15 +13,15 @@ import java.net.URI;
 import java.util.List;
 
 @RestController
-@RequestMapping(value = "/modeloMensagens")
-public class ModeloMensagemResource {
+@RequestMapping(value = "/messageTemplate")
+public class MessageTemplateResource {
 
     @Autowired
-    private ModeloMensagemService service;
+    private MessageTemplateService service;
 
     @GetMapping
-    public ResponseEntity<List<MessageTemplate>> findAll() {
-        List<MessageTemplate> list = service.findAll();
+    public ResponseEntity<List<MessageTemplate>> find(@RequestParam(defaultValue = "",name = "title") String title) {
+        List<MessageTemplate> list = service.find("");
         return ResponseEntity.ok().body(list);
     }
 

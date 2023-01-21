@@ -9,30 +9,30 @@ import java.io.Serializable;
 import java.util.Objects;
 
 @Entity
-@Table(name = "modeloMensagem")
+@Table(name = "message_template")
 @Getter
 @Setter
 @NoArgsConstructor
-public class ModeloMensagem  implements Serializable {
+public class MessageTemplate implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY) //Auto incremento
     private Long Id;
-    private String titulo;
-    private String mensagem;
-    private Boolean ativo;
+    private String title;
+    private String body;
+    private Boolean isActive;
 
-    public ModeloMensagem(String titulo, String mensagem, Boolean ativo) {
-        this.titulo = titulo;
-        this.mensagem = mensagem;
-        this.ativo = ativo;
+    public MessageTemplate(String title, String body, Boolean isActive) {
+        this.title = title;
+        this.body = body;
+        this.isActive = isActive;
     }
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        ModeloMensagem that = (ModeloMensagem) o;
+        MessageTemplate that = (MessageTemplate) o;
         return Objects.equals(Id, that.Id);
     }
 
@@ -45,9 +45,9 @@ public class ModeloMensagem  implements Serializable {
     public String toString() {
         return "ModeloMensagem{" +
                 "Id=" + Id +
-                ", titulo='" + titulo + '\'' +
-                ", texto='" + mensagem + '\'' +
-                ", ativo=" + ativo +
+                ", titulo='" + title + '\'' +
+                ", texto='" + body + '\'' +
+                ", ativo=" + isActive +
                 '}';
     }
 }

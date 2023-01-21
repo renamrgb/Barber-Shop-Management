@@ -13,15 +13,15 @@ import java.net.URI;
 import java.util.List;
 
 @RestController
-@RequestMapping(value = "/tipoDespesas")
-public class TipoDespesaResource {
+@RequestMapping(value = "/expenseTypes")
+public class ExpenseTypeResource {
 
     @Autowired
     private ExpenseTypeService service;
 
     @GetMapping
-    public ResponseEntity<List<ExpenseType>> findAll() {
-        List<ExpenseType> list = service.findAll();
+    public ResponseEntity<List<ExpenseType>> find(@RequestParam(defaultValue = "",name = "description") String description) {
+        List<ExpenseType> list = service.find(description);
         return ResponseEntity.ok().body(list);
     }
 

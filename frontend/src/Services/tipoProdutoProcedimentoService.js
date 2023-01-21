@@ -1,9 +1,11 @@
 import api from '@/Services/API/api'
 
 export default class TipoDespesaService {
+  url = '/productProcedureTypes'
+
   async consultarTodos() {
     try {
-      const res = await api.get('/tipoProdutoProcedimento')
+      const res = await api.get(this.url)
       return res.data
     } catch (error) {
       return error
@@ -11,7 +13,7 @@ export default class TipoDespesaService {
   }
   async cadastrar(item) {
     try {
-      const res = await api.post('/tipoProdutoProcedimento', item)      
+      const res = await api.post(this.url, item)
       return res
     } catch (error) {
       return error
@@ -19,7 +21,7 @@ export default class TipoDespesaService {
   }
   async excluir(id) {
     try {
-      const res = await api.delete(`/tipoProdutoProcedimento/${id}`)
+      const res = await api.delete(`${this.url}/${id}`)
       return res
     } catch (error) {
       return error
@@ -27,7 +29,7 @@ export default class TipoDespesaService {
   }
   async alterar(id, item) {
     try {
-      const res = await api.put(`/tipoProdutoProcedimento/${id}`, item)
+      const res = await api.put(`${this.url}/${id}`, item)
       return res
     } catch (error) {
       return error
@@ -35,8 +37,16 @@ export default class TipoDespesaService {
   }
   async buscarUm(id) {
     try {
-      const res = await api.get(`/tipoProdutoProcedimento/${id}`)
+      const res = await api.get(`${this.url}/${id}`)
       return res
+    } catch (error) {
+      return error
+    }
+  }
+  async getByDescription(description) {
+    try {
+      const res = await api.get(`${this.url}?description=${description}`)
+      return res.data
     } catch (error) {
       return error
     }

@@ -1,8 +1,8 @@
 package com.rpx.bsm.services;
 
-import com.rpx.bsm.entities.ExpenseType;
-import com.rpx.bsm.records.ExpenseTypeRecord;
-import com.rpx.bsm.repositories.ExpenseTypeRepository;
+import com.rpx.bsm.entities.ProductProcedureTypes;
+import com.rpx.bsm.records.ProductProcedureTypesRecord;
+import com.rpx.bsm.repositories.ProductProcedureTypesRepository;
 import com.rpx.bsm.resources.exceptions.DatabaseException;
 import com.rpx.bsm.resources.exceptions.ResourceNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,15 +16,15 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
-public class ExpenseTypeService {
+public class ProductProcedureTypesService {
 
     @Autowired
-    private ExpenseTypeRepository repository;
+    private ProductProcedureTypesRepository repository;
 
-    public List<ExpenseType> find(String description){
-        List<ExpenseType> list;
+    public List<ProductProcedureTypes> find(String description) {
+        List<ProductProcedureTypes> list;
 
-        if(description.isEmpty())
+        if (description.isEmpty())
             list = repository.findAll();
         else
             list = repository.findByDescriptionContaining(description);
@@ -32,7 +32,7 @@ public class ExpenseTypeService {
         return list;
     }
 
-    public ExpenseType insert(ExpenseTypeRecord record) {
+    public ProductProcedureTypes insert(ProductProcedureTypesRecord record) {
         return repository.save(this.converterEmentidade(record));
     }
 
@@ -45,10 +45,11 @@ public class ExpenseTypeService {
             throw new DatabaseException(e.getMessage());
         }
     }
+
     @Transactional
-    public ExpenseType update(Long id, ExpenseTypeRecord record) {
+    public ProductProcedureTypes update(Long id, ProductProcedureTypesRecord record) {
         try {
-            ExpenseType entity = repository.getReferenceById(id);
+            ProductProcedureTypes entity = repository.getReferenceById(id);
             updateData(entity, this.converterEmentidade(record));
             return repository.save(entity);
         } catch (EntityNotFoundException e) {
@@ -56,16 +57,17 @@ public class ExpenseTypeService {
         }
     }
 
-    private void updateData(ExpenseType entity, ExpenseType obj) {
+    private void updateData(ProductProcedureTypes entity, ProductProcedureTypes obj) {
         entity.setDescription(obj.getDescription());
         entity.setIsActive(obj.getIsActive());
     }
 
-    private ExpenseType converterEmentidade(ExpenseTypeRecord record) {
-        return new ExpenseType(record.description(), record.isActive());
+    private ProductProcedureTypes converterEmentidade(ProductProcedureTypesRecord record) {
+        return new ProductProcedureTypes(record.description(), record.isActive());
     }
-    public ExpenseType findById(Long id) {
-        Optional<ExpenseType> obj = repository.findById(id);
+
+    public ProductProcedureTypes findById(Long id) {
+        Optional<ProductProcedureTypes> obj = repository.findById(id);
         return obj.get();
     }
 

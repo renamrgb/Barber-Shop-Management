@@ -9,11 +9,11 @@ import java.io.Serializable;
 import java.util.Objects;
 
 @Entity
-@Table(name = "type_expense")
+@Table(name = "expense_type")
 @Getter
 @Setter
 @NoArgsConstructor
-public class TypeExpense implements Serializable {
+public class ExpenseType implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY) //Auto incremento
@@ -21,7 +21,7 @@ public class TypeExpense implements Serializable {
     private String description;
     private Boolean isActive;
 
-    public TypeExpense(String description, Boolean isActive) {
+    public ExpenseType(String description, Boolean isActive) {
         this.description = description;
         this.isActive = isActive;
     }
@@ -30,7 +30,7 @@ public class TypeExpense implements Serializable {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        TypeExpense that = (TypeExpense) o;
+        ExpenseType that = (ExpenseType) o;
         return Objects.equals(Id, that.Id);
     }
 

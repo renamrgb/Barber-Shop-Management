@@ -9,7 +9,7 @@ import java.io.Serializable;
 import java.util.Objects;
 
 @Entity
-@Table(name = "paymentMethod")
+@Table(name = "payment_method")
 @Getter
 @Setter
 @NoArgsConstructor

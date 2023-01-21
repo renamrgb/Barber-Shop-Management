@@ -16,13 +16,20 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
-public class ModeloMensagemService {
+public class MessageTemplateService {
 
     @Autowired
     private MessageTemplateRepository repository;
 
-    public List<MessageTemplate> findAll() {
-        return repository.findAll();
+    public List<MessageTemplate> find(String title){
+        List<MessageTemplate> list;
+
+        if(title.isEmpty())
+            list = repository.findAll();
+        else
+            list = repository.findByTitleContaining(title);
+
+        return list;
     }
 
     public MessageTemplate insert(MessageTemplateRecord record) {
@@ -50,9 +57,9 @@ public class ModeloMensagemService {
     }
 
     private void updateData(MessageTemplate entity, MessageTemplate obj) {
-        entity.setTitulo(obj.getTitulo());
-        entity.setMensagem(obj.getMensagem());
-        entity.setAtivo(obj.getAtivo());
+        entity.setTitle(obj.getTitle());
+        entity.setBody(obj.getBody());
+        entity.setIsActive(obj.getIsActive());
     }
 
     public MessageTemplate findById(Long id) {
@@ -61,7 +68,7 @@ public class ModeloMensagemService {
     }
 
     private MessageTemplate converterEmEntidade(MessageTemplateRecord record){
-        return new MessageTemplate(record.titulo(), record.mensagem(), record.ativo());
+        return new MessageTemplate(record.title(), record.body(), record.isActive());
     }
 
 }

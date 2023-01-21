@@ -20,7 +20,7 @@ public class PaymentMethodResource {
     private PaymentMethodService service;
 
     @GetMapping
-    public ResponseEntity<List<PaymentMethod>> findAll(@RequestParam(defaultValue = "") String description) {
+    public ResponseEntity<List<PaymentMethod>> find(@RequestParam(defaultValue = "", name = "description") String description) {
         List<PaymentMethod> list = service.find(description);
         return ResponseEntity.ok().body(list);
     }
@@ -36,12 +36,6 @@ public class PaymentMethodResource {
     public ResponseEntity<PaymentMethod> findById(@PathVariable Long id){
         PaymentMethod obj = service.findById(id);
         return ResponseEntity.ok().body(obj);
-    }
-
-    @GetMapping(value = "/findByDescription")
-    public ResponseEntity<List<PaymentMethod>> findByDescription(@RequestParam(name = "description") String description){
-        List<PaymentMethod> list = service.findByDescription(description);
-        return ResponseEntity.ok().body(list);
     }
 
     @DeleteMapping(value = "/{id}")
