@@ -6,8 +6,8 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
 public record MessageTemplateRecord(
-        @NotBlank() @Length(min=2, max =60, message = "O título deve conter de 2  à 60 caracteres") String title,
-        @NotBlank @Length(min=2, max =1000, message = "A mensagem deve conter de 2  à 1000 caracteres") String body,
-        @NotNull Boolean isActive
+        @NotBlank(message = "O campo 'título' é obrigatório") @Length(min=2, max =60, message = "O campo 'título' deve conter até 60 caracteres") String title,
+        @NotBlank(message = "O campo 'corpo da mensagem' é obrigatorio") @Length(min=2, max =1000, message = "O campo 'corpo da mensagem' deve conter até 1000 caracteres") String body,
+        @NotNull(message = "O campo 'ativo' é obrigatório") Boolean isActive
 ) {
 }

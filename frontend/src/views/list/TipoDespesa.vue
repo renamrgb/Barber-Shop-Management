@@ -53,7 +53,7 @@
                   <CTableDataCell v-if="item.isActive == true">
                     <CIcon icon="cil-check" size="xl" />
                   </CTableDataCell>
-                  <CTableDataCell v-else-if="item.ativo == false">
+                  <CTableDataCell v-else-if="item.isActive == false">
                     <CIcon icon="cil-x-circle" size="xl" />
                   </CTableDataCell>
                   <CTableDataCell>

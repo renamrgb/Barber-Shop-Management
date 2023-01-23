@@ -9,8 +9,7 @@
           <CForm
             class="row needs-validation"
             novalidate
-            :validated="validatedCustom"
-            @submit="validationRequired"
+            :validated="validatedCustom"            
           >
             <div class="mb-3">
               <CFormLabel for="descricao">* Descrição</CFormLabel>
@@ -33,9 +32,8 @@
             <div class="d-grid gap-2 d-md-flex justify-content-md-end">
               <CButton
                 color="primary"
-                class="me-md-2"
+                class="me-md-2"                
                 @click="salvar"
-                type="submit"
                 >Confirmar</CButton
               >
               <a href="/#/forms/tipoProdutoProcedimento" class="btn btn-danger"
@@ -74,12 +72,18 @@ export default {
       }
       this.validatedCustom = true
     },
-    async salvar() {
+    async salvar(event) {
+      const form = event.currentTarget
+      if (form.checkValidity() === false) {
+        event.preventDefault()
+        event.stopPropagation()
+      }
+      this.validatedCustom = true
       let res = undefined
       let dados = {
         description: this.descricao,
         isActive: this.ativo,
-      }
+      }      
       if (this.id == undefined) {
         res = await this.service.cadastrar(dados)
       } else {

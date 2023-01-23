@@ -3,14 +3,13 @@
     <CCol :xs="12">
       <CCard class="mb-4">
         <CCardHeader>
-          <strong>Forma de Pagamento</strong>          
+          <strong>Formas de Pagamento</strong>
         </CCardHeader>
         <CCardBody>
           <CForm
             class="row g-3 needs-validation"
             novalidate
-            :validated="validatedCustom"
-            @submit="validationRequired"
+            :validated="validatedCustom"            
           >
             <div :md="4">
               <CFormLabel for="descricao">* Descrição</CFormLabel>
@@ -21,13 +20,12 @@
                 v-model.lazy="descricao"
                 required
               />
-              
             </div>
             <div class="mb-3">
               <CFormSwitch
                 id="formSwitchCheckDefault"
                 label="Ativo"
-                v-model="ativo"                
+                v-model="ativo"
               />
             </div>
             <div class="d-grid gap-2 d-md-flex justify-content-md-end">
@@ -35,15 +33,16 @@
                 color="primary"
                 class="me-md-2"
                 @click="saveFormaPagamento"
-                type="submit"
                 >Confirmar</CButton
               >
-              <a class="btn btn-danger" href="/#/forms/forma-pagamento">Cancelar</a>
+              <a class="btn btn-danger" href="/#/forms/forma-pagamento"
+                >Cancelar</a
+              >
             </div>
           </CForm>
         </CCardBody>
       </CCard>
-    </CCol>    
+    </CCol>
   </CRow>
   <toast ref="toast" />
 </template>
@@ -61,22 +60,20 @@ export default {
       ativo: false,
       fp: new FormaPagamentoService(),
       fps: '',
-      visibleLiveDemo: false,
       validatedCustom: null,
     }
   },
-  methods: {
-    validationRequired(event) {
+  methods: {    
+    async saveFormaPagamento(event) {
       const form = event.currentTarget
+      let res = undefined
+      let dados = { description: this.descricao, isActive: this.ativo }
       if (form.checkValidity() === false) {
         event.preventDefault()
         event.stopPropagation()
       }
       this.validatedCustom = true
-    },
-    async saveFormaPagamento() {
-      let res = undefined
-      let dados = { description: this.descricao, isActive: this.ativo }
+
       if (this.id == undefined) {
         res = await this.fp.cadastrar(dados)
       } else {
@@ -84,7 +81,7 @@ export default {
       }
       if (res.status == 201) {
         this.$refs.toast.createToast('Cadastrado com sucesso!')
-        this.$router.push('/forms/forma-pagamento')
+        this.$router.push({ path: `/forms/forma-pagamento` })
       } else if (res.status == 200) {
         this.$refs.toast.createToast('Alterado com sucesso!')
       } else {

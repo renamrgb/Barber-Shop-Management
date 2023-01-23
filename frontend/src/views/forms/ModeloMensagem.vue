@@ -9,8 +9,7 @@
           <CForm
             class="row g-3 needs-validation"
             novalidate
-            :validated="validatedCustom"
-            @submit="validationRequired"
+            :validated="validatedCustom"            
           >
             <div class="mb-3">
               <CFormLabel for="titulo">* Descrição</CFormLabel>
@@ -39,11 +38,9 @@
               />
             </div>
             <div class="d-grid gap-2 d-md-flex justify-content-md-end">
-              <CButton color="primary" type="submit" @click="salvar"
+              <CButton color="primary" @click="salvar"
                 >Confirmar</CButton
-              >
-              <!-- <router-link to="/forms/modeloMensagem"
-                > -->
+              >              
               <a class="btn btn-danger"  href="/#/forms/modeloMensagem">Cancelar</a>
             </div>
           </CForm>
@@ -70,22 +67,22 @@ export default {
       validatedCustom: null,
     }
   },
-  methods: {
-    validationRequired(event) {
-      const form = event.currentTarget
-      if (form.checkValidity() === false) {
-        event.preventDefault()
-        event.stopPropagation()
-      }
-      this.validatedCustom = true
-    },
-    async salvar() {
+  methods: {    
+    async salvar(event) {
       let res = undefined
       let dados = {
         title: this.titulo,
         body: this.mensagem,
         isActive: this.ativo,
       }
+      const form = event.currentTarget
+      if (form.checkValidity() === false) {
+        event.preventDefault()
+        event.stopPropagation()
+      }
+      this.validatedCustom = true
+
+
       if (this.id == undefined) {
         res = await this.service.cadastrar(dados)
       } else {

@@ -9,8 +9,7 @@
           <CForm
             class="row g-3 needs-validation"
             novalidate
-            :validated="validatedCustom"
-            @submit="validationRequired"
+            :validated="validatedCustom"            
           >
             <div>
               <CFormLabel for="descricao">Descrição</CFormLabel>
@@ -34,8 +33,7 @@
               <CButton
                 color="primary"
                 class="me-md-2"
-                @click="salvar"
-                type="submit"
+                @click="salvar"                
                 >Confirmar</CButton
               >
               <a class="btn btn-danger" href="/#/forms/tipoDespesas"
@@ -66,20 +64,18 @@ export default {
       validatedCustom: null,
     }
   },
-  methods: {
-    validationRequired(event) {
+  methods: {    
+    async salvar(event) {
       const form = event.currentTarget
       if (form.checkValidity() === false) {
         event.preventDefault()
         event.stopPropagation()
       }
       this.validatedCustom = true
-    },
-    async salvar() {
       let res = undefined
       let dados = {
-        descricao: this.descricao,
-        ativo: this.ativo,
+        description: this.descricao,
+        isActive: this.ativo,
       }
       if (this.id == undefined) {
         res = await this.service.cadastrar(dados)
@@ -99,7 +95,7 @@ export default {
 
           vetErros.forEach((element) => {
             this.$refs.toast.createToast(
-              ` [${element.fieldName}] ${element.message} `,
+              `${element.message} `,
             )
           })
         }
