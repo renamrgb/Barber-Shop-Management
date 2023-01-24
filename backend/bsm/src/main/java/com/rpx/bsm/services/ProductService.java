@@ -1,8 +1,8 @@
 package com.rpx.bsm.services;
 
 import com.rpx.bsm.entities.*;
-import com.rpx.bsm.records.ProdutoRecord;
-import com.rpx.bsm.repositories.ProdutoRepository;
+import com.rpx.bsm.records.ProductRecord;
+import com.rpx.bsm.repositories.ProductRepository;
 import com.rpx.bsm.resources.exceptions.DatabaseException;
 import com.rpx.bsm.resources.exceptions.ResourceNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,16 +16,23 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
-public class ProdutoService {
+public class ProductService {
 
     @Autowired
-    private ProdutoRepository repository;
+    private ProductRepository repository;
 
-    public List<Produto> findAll() {
-        return repository.findAll();
+    public List<Product> find(String title){
+        List<Product> list;
+
+        if(title.isEmpty())
+            list = repository.findAll();
+        else
+            list = repository.findByTitleContaining(title);
+
+        return list;
     }
 
-    public Produto insert(ProdutoRecord record) {
+    public Product insert(ProductRecord record) {
         return repository.save(this.converterEmentidade(record));
     }
 
@@ -39,9 +46,9 @@ public class ProdutoService {
         }
     }
     @Transactional
-    public Produto update(Long id, ProdutoRecord record) {
+    public Product update(Long id, ProductRecord record) {
         try {
-            Produto entity = repository.getReferenceById(id);
+            Product entity = repository.getReferenceById(id);
             updateData(entity, this.converterEmentidade(record));
             return repository.save(entity);
         } catch (EntityNotFoundException e) {
@@ -49,18 +56,19 @@ public class ProdutoService {
         }
     }
 
-    private void updateData(Produto entity, Produto obj) {
-        entity.setTitulo(obj.getTitulo());
-        entity.setValor(obj.getValor());
-        entity.setQuantidade(obj.getQuantidade());
-        entity.setAtivo(obj.getAtivo());
+    private void updateData(Product entity, Product obj) {
+        entity.setTitle(obj.getTitle());
+        entity.setPrice(obj.getPrice());
+        entity.setBrand(obj.getBrand());
+        entity.setQuantity(obj.getQuantity());
+        entity.setIsActive(obj.getIsActive());
     }
 
-    private Produto converterEmentidade(ProdutoRecord record) {
-        return new Produto(record.titulo(), record.valor(), record.marca(), record.quantidade(), record.ativo());
+    private Product converterEmentidade(ProductRecord record) {
+        return new Product(record.title(), record.price(), record.brand(), record.quantity(), record.isActive());
     }
-    public Produto findById(Long id) {
-        Optional<Produto> obj = repository.findById(id);
+    public Product findById(Long id) {
+        Optional<Product> obj = repository.findById(id);
         return obj.get();
     }
 

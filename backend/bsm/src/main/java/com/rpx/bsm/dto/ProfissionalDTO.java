@@ -1,6 +1,5 @@
 package com.rpx.bsm.dto;
 
-import com.rpx.bsm.entities.Procedimento;
 import lombok.Getter;
 import lombok.Setter;
 

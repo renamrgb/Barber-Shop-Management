@@ -1,7 +1,7 @@
 package com.rpx.bsm.services;
 
 import com.rpx.bsm.dto.ProcedimentoDTO;
-import com.rpx.bsm.entities.Procedimento;
+import com.rpx.bsm.entities.Procedure;
 import com.rpx.bsm.records.ProcedimentoRecord;
 import com.rpx.bsm.repositories.ProcedimentoRepository;
 import com.rpx.bsm.resources.exceptions.DatabaseException;
@@ -22,7 +22,7 @@ public class ProcedimentoService {
     @Autowired
     private ProcedimentoRepository repository;
 
-    public List<Procedimento> findAll() {
+    public List<Procedure> findAll() {
         return repository.findAll();
     }
 
@@ -43,7 +43,7 @@ public class ProcedimentoService {
     @Transactional
     public ProcedimentoDTO update(Long id, ProcedimentoRecord obj) {
         try {
-            Procedimento entity = repository.getReferenceById(id);
+            Procedure entity = repository.getReferenceById(id);
             updateData(entity, obj);
             return converteEmDTO(repository.save(entity));
         } catch (EntityNotFoundException e) {
@@ -51,15 +51,15 @@ public class ProcedimentoService {
         }
     }
 
-    private void updateData(Procedimento entity, ProcedimentoRecord record) {
+    private void updateData(Procedure entity, ProcedimentoRecord record) {
         entity.setDescricao(record.descricao());
         entity.setAtivo(record.ativo());
         entity.setValor(record.valor());
     }
 
-    private Procedimento converteEmEntidade(ProcedimentoRecord record) {
+    private Procedure converteEmEntidade(ProcedimentoRecord record) {
 
-        Procedimento entidade = new Procedimento();
+        Procedure entidade = new Procedure();
 
         entidade.setDescricao(record.descricao());
         entidade.setValor(record.valor());
@@ -68,7 +68,7 @@ public class ProcedimentoService {
         return entidade;
     }
 
-    private ProcedimentoDTO converteEmDTO(Procedimento entidade) {
+    private ProcedimentoDTO converteEmDTO(Procedure entidade) {
 
         ProcedimentoDTO dto = new ProcedimentoDTO(
                 entidade.getId(),
@@ -79,8 +79,8 @@ public class ProcedimentoService {
 
         return dto;
     }
-    public Procedimento findById(Long id) {
-        Optional<Procedimento> obj = repository.findById(id);
+    public Procedure findById(Long id) {
+        Optional<Procedure> obj = repository.findById(id);
         return obj.get();
     }
 

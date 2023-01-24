@@ -17,27 +17,27 @@ import java.util.Set;
 @Getter
 @Setter
 @NoArgsConstructor
-public class Procedimento implements Serializable {
+public class Procedure implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY) //Auto incremento
     private Long Id;
     @NonNull
-    private String descricao;
+    private String description;
     @NonNull
-    private Double valor;
+    private Double price;
     @NonNull
-    private Boolean ativo;
+    private Boolean isActrive;
 
     @JsonIgnore
     @ManyToMany(mappedBy = "procedimentos") //Nome do set
     private Set<Profissional> profissionais = new HashSet<>();
 
-    public Procedimento(Long id) {
+    public Procedure(Long id) {
         Id = id;
     }
 
-    public Procedimento(String descricao, Double valor, Boolean ativo) {
+    public Procedure(String descricao, Double valor, Boolean ativo) {
         this.descricao = descricao;
         this.valor = valor;
         this.ativo = ativo;
@@ -47,7 +47,7 @@ public class Procedimento implements Serializable {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        Procedimento that = (Procedimento) o;
+        Procedure that = (Procedure) o;
         return Objects.equals(Id, that.Id);
     }
 

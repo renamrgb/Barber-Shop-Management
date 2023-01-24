@@ -4,7 +4,7 @@ import com.rpx.bsm.entities.*;
 import com.rpx.bsm.enums.NivelAcessoEnum;
 import com.rpx.bsm.repositories.PaymentMethodRepository;
 import com.rpx.bsm.repositories.ProcedimentoRepository;
-import com.rpx.bsm.repositories.ProdutoRepository;
+import com.rpx.bsm.repositories.ProductRepository;
 import com.rpx.bsm.repositories.UsuarioRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
@@ -25,26 +25,27 @@ public class TestConfig implements CommandLineRunner {
     private PaymentMethodRepository formaPagamentoRepository;
 
     @Autowired
-    private ProdutoRepository produtoRepository;
+    private ProductRepository produtoRepository;
 
     @Autowired
     private ProcedimentoRepository procedimentoRepository;
     @Autowired
     private BCryptPasswordEncoder bCryptPasswordEncoder;
+
     @Override
     public void run(String... args) throws Exception {
 
 
-        Produto prod1 = new Produto();
-        prod1.setTitulo("Produto teste 1");
-        prod1.setValor(100.00);
-        prod1.setQuantidade(1);
-        prod1.setMarca("Marca Teste 1");
-        prod1.setAtivo(true);
+        Product prod1 = new Product();
+        prod1.setTitle("Produto teste 1");
+        prod1.setPrice(100.00);
+        prod1.setQuantity(1);
+        prod1.setBrand("Marca Teste 1");
+        prod1.setIsActive(true);
         produtoRepository.save(prod1);
 
         /*============================================================================================================*/
-        Procedimento proc1 = new Procedimento("Corte de Cabelo", 100.00, true);
+        Procedure proc1 = new Procedure("Corte de Cabelo", 100.00, true);
         procedimentoRepository.save(proc1);
         /*============================================================================================================*/
         Cliente cli = new Cliente();
@@ -60,8 +61,8 @@ public class TestConfig implements CommandLineRunner {
 
         Profissional prof = new Profissional();
         prof.setUsuario(u);
-        Set<Procedimento> procedimentos = new HashSet<>();
-        procedimentos.add(new Procedimento(1L));
+        Set<Procedure> procedimentos = new HashSet<>();
+        procedimentos.add(new Procedure(1L));
         prof.setProcedimentos(procedimentos);
         usuarioRepository.save(u);
         /*============================================================================================================*/

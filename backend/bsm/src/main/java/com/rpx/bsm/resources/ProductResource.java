@@ -1,8 +1,8 @@
 package com.rpx.bsm.resources;
 
-import com.rpx.bsm.entities.Produto;
-import com.rpx.bsm.records.ProdutoRecord;
-import com.rpx.bsm.services.ProdutoService;
+import com.rpx.bsm.entities.Product;
+import com.rpx.bsm.records.ProductRecord;
+import com.rpx.bsm.services.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -13,27 +13,27 @@ import java.net.URI;
 import java.util.List;
 
 @RestController
-@RequestMapping(value = "/produtos")
-public class ProdutoResource {
+@RequestMapping(value = "/products")
+public class ProductResource {
 
     @Autowired
-    private ProdutoService service;
+    private ProductService service;
 
     @GetMapping
-    public ResponseEntity<List<Produto>> findAll() {
-        List<Produto> list = service.findAll();
+    public ResponseEntity<List<Product>> findAll(@RequestParam(defaultValue = "", name = "title") String title) {
+        List<Product> list = service.find(title);
         return ResponseEntity.ok().body(list);
     }
 
     @GetMapping(value = "/{id}")
-    public ResponseEntity<Produto> findById(@PathVariable Long id){
-        Produto obj = service.findById(id);
+    public ResponseEntity<Product> findById(@PathVariable Long id){
+        Product obj = service.findById(id);
         return ResponseEntity.ok().body(obj);
     }
 
     @PostMapping
-    public ResponseEntity<Produto> insert(@Valid @RequestBody ProdutoRecord record) {
-        Produto obj = service.insert(record);
+    public ResponseEntity<Product> insert(@Valid @RequestBody ProductRecord record) {
+        Product obj = service.insert(record);
         URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(obj.getId()).toUri();
         return ResponseEntity.created(uri).body(obj);
     }
@@ -45,8 +45,8 @@ public class ProdutoResource {
     }
 
     @PutMapping(value = "/{id}")
-    public ResponseEntity<Produto> update(@PathVariable Long id, @Valid @RequestBody ProdutoRecord record) {
-        Produto obj = service.update(id, record);
+    public ResponseEntity<Product> update(@PathVariable Long id, @Valid @RequestBody ProductRecord record) {
+        Product obj = service.update(id, record);
         return ResponseEntity.ok().body(obj);
     }
 

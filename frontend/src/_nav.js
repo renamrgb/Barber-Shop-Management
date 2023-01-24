@@ -27,7 +27,7 @@ export default [
       }, 
       {
         component: 'CNavItem',
-        name: 'Produto',
+        name: 'Produtos',
         to: '/forms/produto',
       },
       {

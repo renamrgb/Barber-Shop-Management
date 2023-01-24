@@ -27,7 +27,7 @@ public class Profissional implements Serializable {
             joinColumns = @JoinColumn(name = "profissional_id"),
             inverseJoinColumns = @JoinColumn(name = "procedimento_id")
     )
-    private Set<Procedimento> procedimentos = new HashSet<>();
+    private Set<Procedure> procedimentos = new HashSet<>();
 
     public Profissional() {
         this.usuario = new Usuario();

@@ -2,7 +2,7 @@ package com.rpx.bsm.services;
 
 import com.rpx.bsm.dto.ProcedimentoDTO;
 import com.rpx.bsm.dto.ProfissionalDTO;
-import com.rpx.bsm.entities.Procedimento;
+import com.rpx.bsm.entities.Procedure;
 import com.rpx.bsm.entities.Profissional;
 import com.rpx.bsm.enums.NivelAcessoEnum;
 import com.rpx.bsm.records.ProcedimentoIdRecord;
@@ -83,7 +83,7 @@ public class ProfissionalService {
         entidade.getUsuario().getNivelAcesso().setAuthority(NivelAcessoEnum.ROLE_ADMIN);
 
         for (ProcedimentoIdRecord p : record.procedimentos()) {
-            entidade.getProcedimentos().add(new Procedimento(p.id()));
+            entidade.getProcedimentos().add(new Procedure(p.id()));
         }
 
         return entidade;
@@ -107,7 +107,7 @@ public class ProfissionalService {
         entidade.getUsuario().getEndereco().setCidade(record.usuario().endereco().cidade());
         entidade.getUsuario().getEndereco().setUf(record.usuario().endereco().uf());
         for (ProcedimentoIdRecord p : record.procedimentos()) {
-            entidade.getProcedimentos().add(new Procedimento(p.id()));
+            entidade.getProcedimentos().add(new Procedure(p.id()));
         }
 
         return entidade;
@@ -130,7 +130,7 @@ public class ProfissionalService {
         dto.getEndereco().setComplemento(profissional.getUsuario().getEndereco().getComplemento());
         dto.getEndereco().setCidade(profissional.getUsuario().getEndereco().getCidade());
         dto.getEndereco().setUf(profissional.getUsuario().getEndereco().getUf());
-        for (Procedimento p : profissional.getProcedimentos()) {
+        for (Procedure p : profissional.getProcedimentos()) {
             dto.getProcedimentos().add(new ProcedimentoDTO(p.getId()));
         }
 

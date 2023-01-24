@@ -3,17 +3,22 @@
     <CCol :xs="12">
       <CCard class="mb-4">
         <CCardHeader>
-          <strong>Produto</strong>
+          <strong>Produtos</strong>
         </CCardHeader>
         <CCardBody>
-          <CForm>
+          <CForm
+            class="row g-3 needs-validation"
+            novalidate
+            :validated="validatedCustom"
+          >
             <div class="mb-3">
-              <CFormLabel for="descricao">Título</CFormLabel>
+              <CFormLabel for="descricao">* Título</CFormLabel>
               <CFormInput
                 id="titulo"
                 type="text"
                 placeholder="Creme de barbear..."
                 v-model.lazy="titulo"
+                required
               />
             </div>
             <div class="mb-3">
@@ -25,28 +30,34 @@
                 v-model.lazy="marca"
               />
             </div>
-            <div class="row g-4">
-              <div class="col-auto">
-                <CFormLabel for="descricao">Valor</CFormLabel>
-                <CFormInput
-                  id="valor"
-                  type="number"
-                  placeholder="R$ 00,00"
-                  v-model.lazy="valor"
-                />
+            <div class="row mb-2">
+              <div class="col">
+                <CFormLabel for="descricao">* Valor</CFormLabel>
+                <CInputGroup class="mb-3">
+                  <CInputGroupText>R$</CInputGroupText>
+                  <CFormInput
+                    id="valor"                    
+                    placeholder="00,00"
+                    v-model.lazy="valor"
+                    min="0"
+                    required
+                  />
+                </CInputGroup>
               </div>
-              <div class="col-auto">
-                <CFormLabel for="descricao">Quantidade em estoque</CFormLabel>
+
+              <div class="col">
+                <CFormLabel for="descricao">* Qtd em estoque</CFormLabel>
                 <CFormInput
                   id="quantidade"
                   type="number"
                   placeholder="0"
                   v-model.lazy="quantidade"
+                  min="0"
+                  required
                 />
               </div>
             </div>
-            <div class="mb-3">
-              <br />
+            <div class="mb-1">              
               <CFormSwitch
                 id="formSwitchCheckDefault"
                 label="Ativo"
@@ -57,9 +68,7 @@
               <CButton color="primary" class="me-md-2" @click="salvar"
                 >Confirmar</CButton
               >
-              <router-link to="/forms/produto"
-                ><CButton color="danger">Cancelar</CButton></router-link
-              >
+              <a href="/#/forms/produto" class="btn btn-danger">Cancelar</a>
             </div>
           </CForm>
         </CCardBody>
@@ -84,23 +93,31 @@ export default {
       quantidade: '',
       ativo: false,
       service: new Service(),
+      validatedCustom: null,
     }
   },
   methods: {
-    async salvar() {
+    async salvar(event) {
+      const form = event.currentTarget
+      if (form.checkValidity() === false) {
+        event.preventDefault()
+        event.stopPropagation()
+      }
+      this.validatedCustom = true
       let res = undefined
-      let dados = { 
-        titulo: this.titulo, 
-        marca: this.marca, 
-        quantidade: this.quantidade, 
-        valor: this.valor, 
-        ativo: this.ativo 
+      this.valor = this.valor.replace(',', '.');
+      let dados = {
+        title: this.titulo,
+        brand: this.marca,
+        quantity: this.quantidade,
+        price: parseFloat(this.valor),
+        isActive: this.ativo,
       }
       if (this.id == undefined) {
         res = await this.service.cadastrar(dados)
       } else {
         res = await this.service.alterar(this.id, dados)
-      }      
+      }
       if (res.status == 201) {
         this.$refs.toast.createToast('Cadastrado com sucesso!')
         this.$router.push('/forms/produto')
@@ -110,20 +127,18 @@ export default {
         let vetErros = res.response.data.fieldErrors
 
         vetErros.forEach((element) => {
-          this.$refs.toast.createToast(
-            ` [${element.fieldName}] ${element.message} `,
-          )
+          this.$refs.toast.createToast(`${element.message} `)
         })
       }
     },
     async consultarUm() {
       if (this.id != undefined) {
         let item = await this.service.buscarUm(this.id)
-        this.titulo = item.data.titulo
-        this.valor = item.data.valor
-        this.quantidade = item.data.quantidade
-        this.marca = item.data.marca
-        this.ativo = item.data.ativo
+        this.titulo = item.data.title
+        this.valor = item.data.price
+        this.quantidade = item.data.quantity
+        this.marca = item.data.brand
+        this.ativo = item.data.isActive
       }
     },
   },
@@ -135,4 +150,3 @@ export default {
   },
 }
 </script>
-
