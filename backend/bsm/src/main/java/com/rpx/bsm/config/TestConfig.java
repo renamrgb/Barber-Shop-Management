@@ -3,7 +3,7 @@ package com.rpx.bsm.config;
 import com.rpx.bsm.entities.*;
 import com.rpx.bsm.enums.NivelAcessoEnum;
 import com.rpx.bsm.repositories.PaymentMethodRepository;
-import com.rpx.bsm.repositories.ProcedimentoRepository;
+import com.rpx.bsm.repositories.ProcedureRepository;
 import com.rpx.bsm.repositories.ProductRepository;
 import com.rpx.bsm.repositories.UsuarioRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,7 +28,7 @@ public class TestConfig implements CommandLineRunner {
     private ProductRepository produtoRepository;
 
     @Autowired
-    private ProcedimentoRepository procedimentoRepository;
+    private ProcedureRepository procedimentoRepository;
     @Autowired
     private BCryptPasswordEncoder bCryptPasswordEncoder;
 

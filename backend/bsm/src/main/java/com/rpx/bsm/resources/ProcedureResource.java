@@ -2,8 +2,8 @@ package com.rpx.bsm.resources;
 
 import com.rpx.bsm.dto.ProcedimentoDTO;
 import com.rpx.bsm.entities.Procedure;
-import com.rpx.bsm.records.ProcedimentoRecord;
-import com.rpx.bsm.services.ProcedimentoService;
+import com.rpx.bsm.records.ProcedureRecord;
+import com.rpx.bsm.services.ProcedureService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -14,14 +14,14 @@ import java.net.URI;
 import java.util.List;
 
 @RestController
-@RequestMapping(value = "/procedimentos")
-public class ProcedimentoResource {
+@RequestMapping(value = "/procedures")
+public class ProcedureResource {
     @Autowired
-    private ProcedimentoService service;
+    private ProcedureService service;
 
     @GetMapping
-    public ResponseEntity<List<Procedure>> findAll() {
-        List<Procedure> list = service.findAll();
+    public ResponseEntity<List<Procedure>> find(@RequestParam(defaultValue = "", name = "description") String description) {
+        List<Procedure> list = service.find(description);
         return ResponseEntity.ok().body(list);
     }
 
@@ -32,7 +32,7 @@ public class ProcedimentoResource {
     }
 
     @PostMapping
-    public ResponseEntity<ProcedimentoDTO> insert(@Valid @RequestBody ProcedimentoRecord record) {
+    public ResponseEntity<ProcedimentoDTO> insert(@Valid @RequestBody ProcedureRecord record) {
         ProcedimentoDTO obj = service.insert(record);
         URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(obj.getId()).toUri();
         return ResponseEntity.created(uri).body(obj);
@@ -45,7 +45,7 @@ public class ProcedimentoResource {
     }
 
     @PutMapping(value = "/{id}")
-    public ResponseEntity<ProcedimentoDTO> update(@PathVariable Long id, @Valid @RequestBody ProcedimentoRecord record) {
+    public ResponseEntity<ProcedimentoDTO> update(@PathVariable Long id, @Valid @RequestBody ProcedureRecord record) {
         ProcedimentoDTO obj = service.update(id, record);
         return ResponseEntity.ok().body(obj);
     }

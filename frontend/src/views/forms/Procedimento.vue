@@ -3,28 +3,37 @@
     <CCol :xs="12">
       <CCard class="mb-4">
         <CCardHeader>
-          <strong>Procedimento</strong>
+          <strong>Procedimentos</strong>
         </CCardHeader>
         <CCardBody>
-          <CForm>
+          <CForm
+            class="row needs-validation"
+            novalidate
+            :validated="validatedCustom"
+          >
             <div class="mb-3">
-              <CFormLabel for="descricao">Descrição</CFormLabel>
+              <CFormLabel for="descricao">* Descrição</CFormLabel>
               <CFormInput
                 id="descricao"
                 type="text"
                 placeholder="Corte de cabelo..."
                 v-model.lazy="descricao"
+                required
               />
             </div>
-            <div class="row g-4">
+            <div class="row">
               <div class="col-auto">
-                <CFormLabel for="descricao">Valor</CFormLabel>
-                <CFormInput
-                  id="valor"
-                  type="number"
-                  placeholder="R$ 00,00"
-                  v-model.lazy="valor"
-                />
+                <CFormLabel for="descricao">* Preço</CFormLabel>
+                <CInputGroup class="mb-1">
+                  <CInputGroupText>R$</CInputGroupText>
+                  <CFormInput
+                    id="valor"
+                    placeholder="00,00"
+                    v-model.lazy="preco"
+                    min="0"
+                    required
+                  />
+                </CInputGroup>
               </div>
             </div>
             <div class="mb-3">
@@ -38,10 +47,8 @@
             <div class="d-grid gap-2 d-md-flex justify-content-md-end">
               <CButton color="primary" class="me-md-2" @click="salvar"
                 >Confirmar</CButton
-              >
-              <router-link to="/forms/procedimento"
-                ><CButton color="danger">Cancelar</CButton></router-link
-              >
+              >              
+              <a href="/#/forms/procedimento" class="btn btn-danger">Cancelar</a>
             </div>
           </CForm>
         </CCardBody>
@@ -61,18 +68,26 @@ export default {
     return {
       id: this.$route.params.id,
       descricao: '',
-      valor: '',
+      preco: '',
       ativo: false,
       service: new Service(),
+      validatedCustom: null,
     }
   },
   methods: {
-    async salvar() {
+    async salvar(event) {
+      const form = event.currentTarget
+      if (form.checkValidity() === false) {
+        event.preventDefault()
+        event.stopPropagation()
+      }
+      this.preco = this.preco.replace(',', '.');
+      this.validatedCustom = true
       let res = undefined
       let dados = {
-        descricao: this.descricao,
-        valor: this.valor,
-        ativo: this.ativo,
+        description: this.descricao,
+        price: this.preco,
+        isActive: this.ativo,
       }
       if (this.id == undefined) {
         res = await this.service.cadastrar(dados)
@@ -86,7 +101,7 @@ export default {
         this.$refs.toast.createToast('Alterado com sucesso!')
       } else {
         if (res.status == 500) {
-          this.$refs.toast.createToast(res.error);
+          this.$refs.toast.createToast(res.error)
         } else {
           let vetErros = res.response.data.fieldErrors
 
@@ -101,9 +116,9 @@ export default {
     async consultarUm() {
       if (this.id != undefined) {
         let item = await this.service.buscarUm(this.id)
-        this.descricao = item.data.descricao
-        this.valor = item.data.valor
-        this.ativo = item.data.ativo
+        this.descricao = item.data.description
+        this.valor = item.data.price
+        this.ativo = item.data.isActive
       }
     },
   },

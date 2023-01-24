@@ -20,7 +20,7 @@ public class ProductResource {
     private ProductService service;
 
     @GetMapping
-    public ResponseEntity<List<Product>> findAll(@RequestParam(defaultValue = "", name = "title") String title) {
+    public ResponseEntity<List<Product>> find(@RequestParam(defaultValue = "", name = "title") String title) {
         List<Product> list = service.find(title);
         return ResponseEntity.ok().body(list);
     }

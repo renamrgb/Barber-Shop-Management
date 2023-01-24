@@ -1,9 +1,11 @@
 import api from '@/Services/API/api'
 
 export default class ProcedimentoService {
+  url = '/procedures'
+
   async consultarTodos() {
     try {
-      const res = await api.get('/procedimentos')
+      const res = await api.get(this.url)
       return res.data
     } catch (error) {
       return error
@@ -11,7 +13,7 @@ export default class ProcedimentoService {
   }
   async cadastrar(item) {
     try {
-      const res = await api.post('/procedimentos', item)      
+      const res = await api.post(this.url, item)
       return res
     } catch (error) {
       return error
@@ -19,7 +21,7 @@ export default class ProcedimentoService {
   }
   async excluir(id) {
     try {
-      const res = await api.delete(`/procedimentos/${id}`)
+      const res = await api.delete(`${this.url}/${id}`)
       return res
     } catch (error) {
       return error
@@ -27,7 +29,7 @@ export default class ProcedimentoService {
   }
   async alterar(id, item) {
     try {
-      const res = await api.put(`/procedimentos/${id}`, item)
+      const res = await api.put(`${this.url}/${id}`, item)
       return res
     } catch (error) {
       return error
@@ -35,8 +37,16 @@ export default class ProcedimentoService {
   }
   async buscarUm(id) {
     try {
-      const res = await api.get(`/procedimentos/${id}`)
+      const res = await api.get(`${this.url}/${id}`)
       return res
+    } catch (error) {
+      return error
+    }
+  }
+  async getByDescription(description) {
+    try {
+      const res = await api.get(`${this.url}?description=${description}`)
+      return res.data
     } catch (error) {
       return error
     }

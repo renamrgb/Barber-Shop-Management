@@ -27,20 +27,27 @@ public class Procedure implements Serializable {
     @NonNull
     private Double price;
     @NonNull
-    private Boolean isActrive;
+    private Boolean isActive;
 
     @JsonIgnore
     @ManyToMany(mappedBy = "procedimentos") //Nome do set
-    private Set<Profissional> profissionais = new HashSet<>();
+    private Set<Profissional> professionals = new HashSet<>();
 
     public Procedure(Long id) {
         Id = id;
     }
 
-    public Procedure(String descricao, Double valor, Boolean ativo) {
-        this.descricao = descricao;
-        this.valor = valor;
-        this.ativo = ativo;
+    public Procedure(@NonNull String description, @NonNull Double price, @NonNull Boolean isActive, Set<Profissional> professionals) {
+        this.description = description;
+        this.price = price;
+        this.isActive = isActive;
+        this.professionals = professionals;
+    }
+
+    public Procedure(@NonNull String description, @NonNull Double price, @NonNull Boolean isActive) {
+        this.description = description;
+        this.price = price;
+        this.isActive = isActive;
     }
 
     @Override
@@ -58,6 +65,12 @@ public class Procedure implements Serializable {
 
     @Override
     public String toString() {
-        return "Procedimento{" + "Id=" + Id + ", descricao='" + descricao + '\'' + ", valor=" + valor + '}';
+        return "Procedure{" +
+                "Id=" + Id +
+                ", description='" + description + '\'' +
+                ", price=" + price +
+                ", isActive=" + isActive +
+                ", professionals=" + professionals +
+                '}';
     }
 }

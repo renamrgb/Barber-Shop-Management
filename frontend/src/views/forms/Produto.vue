@@ -32,13 +32,13 @@
             </div>
             <div class="row mb-2">
               <div class="col">
-                <CFormLabel for="descricao">* Valor</CFormLabel>
+                <CFormLabel for="descricao">* Preço</CFormLabel>
                 <CInputGroup class="mb-3">
                   <CInputGroupText>R$</CInputGroupText>
                   <CFormInput
                     id="valor"                    
                     placeholder="00,00"
-                    v-model.lazy="valor"
+                    v-model.lazy="preco"
                     min="0"
                     required
                   />
@@ -88,7 +88,7 @@ export default {
     return {
       id: this.$route.params.id,
       titulo: '',
-      valor: '',
+      preco: '',
       marca: '',
       quantidade: '',
       ativo: false,
@@ -105,12 +105,12 @@ export default {
       }
       this.validatedCustom = true
       let res = undefined
-      this.valor = this.valor.replace(',', '.');
+      this.valor = this.preco.replace(',', '.');
       let dados = {
         title: this.titulo,
         brand: this.marca,
         quantity: this.quantidade,
-        price: parseFloat(this.valor),
+        price: parseFloat(this.preco),
         isActive: this.ativo,
       }
       if (this.id == undefined) {

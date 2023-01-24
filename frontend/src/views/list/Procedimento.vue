@@ -4,7 +4,7 @@
       <CCard class="mb-4">
         <CCardHeader>
           <CRow class="align-items-start">
-            <CCol> <h3>Procedimento</h3> </CCol>
+            <CCol> <h3>Procedimentos</h3> </CCol>
             <CCol id="teste-align">
               <router-link to="/forms/procedimento/cadastro">
                 <CIcon icon="cil-playlist-add" size="xxl" />
@@ -13,50 +13,74 @@
           </CRow>
         </CCardHeader>
         <CCardBody>
-          <CTable>
-            <CTableHead color="dark">
-              <CTableRow>
-                <CTableHeaderCell scope="col">#</CTableHeaderCell>
-                <CTableHeaderCell scope="col">Descrição</CTableHeaderCell>
-                <CTableHeaderCell scope="col">Valor</CTableHeaderCell>
-                <CTableHeaderCell scope="col">Ativo</CTableHeaderCell>
-                <CTableHeaderCell scope="col">Excluir?</CTableHeaderCell>
-                <CTableHeaderCell scope="col">Alterar?</CTableHeaderCell>
-              </CTableRow>
-            </CTableHead>
-            <CTableBody>
-              <CTableRow v-for="item in this.itens" :key="item.id">
-                <CTableHeaderCell scope="row">{{ item.id }}</CTableHeaderCell>
-                <CTableDataCell>{{ item.descricao }}</CTableDataCell>
-                <CTableDataCell>{{ item.valor }}</CTableDataCell>
-                <CTableDataCell v-if="item.ativo == true">
-                  <CIcon icon="cil-check" size="xl" />
-                </CTableDataCell>
-                <CTableDataCell v-else-if="item.ativo == false">
-                  <CIcon icon="cil-x-circle" size="xl" />
-                </CTableDataCell>
-                <CTableDataCell>
-                  <CIcon
-                    icon="cil-trash"
-                    size="xl"
-                    @click="
-                      () => {
-                        modalExcluir = true
-                        idItem = item.id
-                      }
-                    "
-                  />
-                </CTableDataCell>
-                <CTableDataCell>
-                  <CIcon
-                    icon="cil-pencil"
-                    size="xl"
-                    @click="this.alterar(item.id)"
-                  />
-                </CTableDataCell>
-              </CTableRow>
-            </CTableBody>
-          </CTable>
+          <div class="row">
+            <div class="col-md-12 mx-auto">
+              <div class="input-group">
+                <input
+                  class="form-control border-end-0 border rounded-pill"
+                  type="search"
+                  placeholder="Buscar"
+                  id="example-search-input"
+                  v-model="searchText"
+                />
+                <span class="input-group-append">
+                  <button
+                    class="btn btn-outline-secondary bg-dark border-bottom-0 border rounded-pill ms-n5"
+                    type="button"
+                    @click="getByDescription"
+                  >
+                    <CIcon icon="cil-magnifying-glass" size="x" />
+                  </button>
+                </span>
+              </div>
+            </div>
+          </div>
+          <div class="bdr">
+            <CTable responsive="xl">
+              <CTableHead color="dark">
+                <CTableRow>
+                  <CTableHeaderCell scope="col">#</CTableHeaderCell>
+                  <CTableHeaderCell scope="col">Descrição</CTableHeaderCell>
+                  <CTableHeaderCell scope="col">Valor</CTableHeaderCell>
+                  <CTableHeaderCell scope="col">Ativo</CTableHeaderCell>
+                  <CTableHeaderCell scope="col">Excluir?</CTableHeaderCell>
+                  <CTableHeaderCell scope="col">Alterar?</CTableHeaderCell>
+                </CTableRow>
+              </CTableHead>
+              <CTableBody>
+                <CTableRow v-for="item in this.itens" :key="item.id">
+                  <CTableHeaderCell scope="row">{{ item.id }}</CTableHeaderCell>
+                  <CTableDataCell>{{ item.description }}</CTableDataCell>
+                  <CTableDataCell>R$ {{ item.price }}</CTableDataCell>
+                  <CTableDataCell v-if="item.isActive == true">
+                    <CIcon icon="cil-check" size="xl" />
+                  </CTableDataCell>
+                  <CTableDataCell v-else-if="item.isActive == false">
+                    <CIcon icon="cil-x-circle" size="xl" />
+                  </CTableDataCell>
+                  <CTableDataCell>
+                    <CIcon
+                      icon="cil-trash"
+                      size="xl"
+                      @click="
+                        () => {
+                          modalExcluir = true
+                          idItem = item.id
+                        }
+                      "
+                    />
+                  </CTableDataCell>
+                  <CTableDataCell>
+                    <CIcon
+                      icon="cil-pencil"
+                      size="xl"
+                      @click="this.alterar(item.id)"
+                    />
+                  </CTableDataCell>
+                </CTableRow>
+              </CTableBody>
+            </CTable>
+          </div>
         </CCardBody>
       </CCard>
     </CCol>
@@ -110,12 +134,13 @@ export default {
       itens: '',
       modalExcluir: false,
       idItem: '',
+      searchText: ''
     }
   },
-  methods: {    
+  methods: {
     async consultaTodos() {
-      this.itens = await this.service.consultarTodos()  
-      console.log(this.itens);    
+      this.itens = await this.service.consultarTodos()
+      console.log(this.itens)
     },
     async excluir() {
       this.modalExcluir = false
@@ -133,6 +158,9 @@ export default {
     alterar(id) {
       this.$router.push({ path: `/forms/procedimento/cadastro/${id}` })
     },
+    async getByDescription(){
+      this.itens = await this.service.getByDescription(this.searchText);
+    }
   },
 
   mounted() {
