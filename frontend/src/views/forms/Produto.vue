@@ -1,4 +1,4 @@
-<template>
+<template #default="{ v }">
   <CRow>
     <CCol :xs="12">
       <CCard class="mb-4">
@@ -7,65 +7,87 @@
         </CCardHeader>
         <CCardBody>
           <CForm
-            class="row g-3 needs-validation"
+            class="needs-validation"
             novalidate
             :validated="validatedCustom"
           >
             <div class="mb-3">
-              <CFormLabel for="descricao">* Título</CFormLabel>
+              <CFormLabel for="title">* Título</CFormLabel>
               <CFormInput
-                id="titulo"
+                name="title"
                 type="text"
                 placeholder="Creme de barbear..."
-                v-model.lazy="titulo"
+                v-model="form.title"
                 required
               />
+              <div
+                v-if="v$.form.title.$errors.length > 0"
+                class="invalid-input-form"
+              >
+                {{ v$.form.title.$errors[0].$message }}
+              </div>
             </div>
             <div class="mb-3">
               <CFormLabel for="descricao">Marca</CFormLabel>
               <CFormInput
-                id="Marca"
+                id="brand"
                 type="text"
                 placeholder=""
-                v-model.lazy="marca"
+                v-model="form.brand"
+                maxlength="65"
               />
+              <div
+                v-if="v$.form.brand.$errors.length > 0"
+                class="invalid-input-form"
+              >
+                {{ v$.form.brand.$errors[0].$message }}
+              </div>
             </div>
-            <div class="row mb-2">
+            <div class="row mb-3">
               <div class="col">
-                <CFormLabel for="descricao">* Preço</CFormLabel>
-                <CInputGroup class="mb-3">
+                <CFormLabel for="price">* Preço</CFormLabel>
+                <CInputGroup>
                   <CInputGroupText>R$</CInputGroupText>
                   <CFormInput
-                    id="valor"                    
-                    placeholder="00,00"
-                    v-model.lazy="preco"
+                    name="price"
+                    v-model="form.price"
                     min="0"
                     required
-                  />
+                  />                  
                 </CInputGroup>
+                <div
+                    v-if="v$.form.price.$errors.length > 0"
+                    class="invalid-input-form"
+                  >
+                    {{ v$.form.price.$errors[0].$message }}
+                  </div>
               </div>
-
               <div class="col">
-                <CFormLabel for="descricao">* Qtd em estoque</CFormLabel>
+                <CFormLabel for="quantity">* Qtd em estoque</CFormLabel>
                 <CFormInput
-                  id="quantidade"
-                  type="number"
-                  placeholder="0"
-                  v-model.lazy="quantidade"
+                  name="quantity"
+                  type="number"                  
+                  v-model="form.quantity"
                   min="0"
                   required
                 />
+                <div
+                  v-if="v$.form.quantity.$errors.length > 0"
+                  class="invalid-input-form"
+                >
+                  {{ v$.form.quantity.$errors[0].$message }}
+                </div>
               </div>
             </div>
-            <div class="mb-1">              
+            <div class="mb-1">
               <CFormSwitch
                 id="formSwitchCheckDefault"
                 label="Ativo"
-                v-model="ativo"
+                v-model="form.isActive"
               />
             </div>
             <div class="d-grid gap-2 d-md-flex justify-content-md-end">
-              <CButton color="primary" class="me-md-2" @click="salvar"
+              <CButton color="primary" class="me-md-2" @click="submitForm"
                 >Confirmar</CButton
               >
               <a href="/#/forms/produto" class="btn btn-danger">Cancelar</a>
@@ -79,39 +101,67 @@
 </template>
 
 <script>
+import { useVuelidate } from '@vuelidate/core'
+import { decimal } from '@vuelidate/validators'
 import Service from '@/Services/produtoService.js'
 import Toast from '@/components/Toast.vue'
+import ValidationsMessage from '@/util/ValidationsMessage.js'
+
 export default {
   components: { Toast },
-  name: 'Produto',
+  name: 'Produtos',
   data() {
     return {
+      v$: useVuelidate(),
       id: this.$route.params.id,
-      titulo: '',
-      preco: '',
-      marca: '',
-      quantidade: '',
-      ativo: false,
       service: new Service(),
+      validationsMessage: new ValidationsMessage(),
       validatedCustom: null,
+      form: {
+        title: '',
+        brand: '',
+        quantity: 0,
+        price: '00.00',
+        isActive: false,
+      },
+    }
+  },
+  validations() {
+    return {
+      form: {
+        title: {
+          required: this.validationsMessage.requiredMessage,
+          maxLength: this.validationsMessage.maxLengthMenssage(60),
+        },
+        brand: { maxLength: this.validationsMessage.maxLengthMenssage(60) },
+        quantity: {
+          required: this.validationsMessage.requiredMessage,
+          minValue: this.validationsMessage.minMenssage(0),
+        },
+        price: {
+          required: this.validationsMessage.requiredMessage,
+          decimal,
+          minValue: this.validationsMessage.minMenssage(0),
+        },
+      },
     }
   },
   methods: {
-    async salvar(event) {
-      const form = event.currentTarget
-      if (form.checkValidity() === false) {
-        event.preventDefault()
-        event.stopPropagation()
+    submitForm(event) {
+      this.v$.$validate()
+      if (!this.v$.$error) {
+        this.salvar()
       }
-      this.validatedCustom = true
+    },
+    async salvar(event) {
       let res = undefined
-      this.valor = this.preco.replace(',', '.');
+      this.form.price = this.form.price.replace(',', '.')
       let dados = {
-        title: this.titulo,
-        brand: this.marca,
-        quantity: this.quantidade,
-        price: parseFloat(this.preco),
-        isActive: this.ativo,
+        title: this.form.title,
+        brand: this.form.brand,
+        quantity: this.form.quantity,
+        price: parseFloat(this.form.price),
+        isActive: this.form.isActive,
       }
       if (this.id == undefined) {
         res = await this.service.cadastrar(dados)
@@ -134,19 +184,38 @@ export default {
     async consultarUm() {
       if (this.id != undefined) {
         let item = await this.service.buscarUm(this.id)
-        this.titulo = item.data.title
-        this.valor = item.data.price
-        this.quantidade = item.data.quantity
-        this.marca = item.data.brand
-        this.ativo = item.data.isActive
+        this.form.title = item.data.title
+        this.form.price = item.data.price
+        this.form.quantity = item.data.quantity
+        this.form.brand = item.data.brand
+        this.form.isActive = item.data.isActive
       }
     },
   },
   mounted() {
-    console.log(this.id)
     if (this.id != undefined) {
       this.consultarUm()
     }
   },
 }
 </script>
+<style scoped>
+.div-center {
+  display: flex;
+  justify-content: center;
+  margin: 30px;
+}
+.label {
+  margin-right: 10px;
+}
+.error {
+  border: 3px solid red;
+}
+.button-submit {
+  margin-top: 15px;
+  width: 250px;
+}
+.error-color {
+  color: red;
+}
+</style>

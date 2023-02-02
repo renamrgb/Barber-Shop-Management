@@ -65,13 +65,7 @@ export default {
     }
   },
   methods: {    
-    async salvar(event) {
-      const form = event.currentTarget
-      if (form.checkValidity() === false) {
-        event.preventDefault()
-        event.stopPropagation()
-      }
-      this.validatedCustom = true
+    async salvar(event) {      
       let res = undefined
       let dados = {
         description: this.descricao,
