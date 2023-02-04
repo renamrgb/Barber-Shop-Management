@@ -21,7 +21,7 @@ public class Profissional implements Serializable {
     private Boolean ativo;
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "usuario_id")
-    private Usuario usuario;
+    private User usuario;
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "profissionaisProcedimentos",
             joinColumns = @JoinColumn(name = "profissional_id"),
@@ -30,7 +30,7 @@ public class Profissional implements Serializable {
     private Set<Procedure> procedimentos = new HashSet<>();
 
     public Profissional() {
-        this.usuario = new Usuario();
+        this.usuario = new User();
     }
 
     @Override

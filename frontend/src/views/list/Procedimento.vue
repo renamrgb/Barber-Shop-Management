@@ -139,8 +139,7 @@ export default {
   },
   methods: {
     async consultaTodos() {
-      this.itens = await this.service.consultarTodos()
-      console.log(this.itens)
+      this.itens = await this.service.consultarTodos()      
     },
     async excluir() {
       this.modalExcluir = false

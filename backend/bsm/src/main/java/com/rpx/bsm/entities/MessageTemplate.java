@@ -19,12 +19,12 @@ public class MessageTemplate implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY) //Auto incremento
     private Long Id;
     private String title;
-    private String body;
+    private String bodyMessage;
     private Boolean isActive;
 
-    public MessageTemplate(String title, String body, Boolean isActive) {
+    public MessageTemplate(String title, String bodyMessage, Boolean isActive) {
         this.title = title;
-        this.body = body;
+        this.bodyMessage = bodyMessage;
         this.isActive = isActive;
     }
 
@@ -46,7 +46,7 @@ public class MessageTemplate implements Serializable {
         return "ModeloMensagem{" +
                 "Id=" + Id +
                 ", titulo='" + title + '\'' +
-                ", texto='" + body + '\'' +
+                ", texto='" + bodyMessage + '\'' +
                 ", ativo=" + isActive +
                 '}';
     }

@@ -7,7 +7,7 @@ import com.rpx.bsm.entities.Profissional;
 import com.rpx.bsm.enums.NivelAcessoEnum;
 import com.rpx.bsm.records.ProcedimentoIdRecord;
 import com.rpx.bsm.records.ProfissionalRecord;
-import com.rpx.bsm.repositories.ProfissionalRepository;
+import com.rpx.bsm.repositories.ProfessionalRepository;
 import com.rpx.bsm.resources.exceptions.DatabaseException;
 import com.rpx.bsm.resources.exceptions.ResourceNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,10 +23,10 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
-public class ProfissionalService {
+public class ProfessionalService {
 
     @Autowired
-    private ProfissionalRepository repository;
+    private ProfessionalRepository repository;
     @Autowired
     private BCryptPasswordEncoder bCryptPasswordEncoder;
 
@@ -64,21 +64,20 @@ public class ProfissionalService {
 
         Profissional entidade = new Profissional();
 
-        entidade.getUsuario().setNome(record.usuario().nome());
+        entidade.getUsuario().setName(record.usuario().name());
         entidade.getUsuario().setEmail(record.usuario().email());
-        entidade.getUsuario().setSenha(bCryptPasswordEncoder.encode(record.usuario().senha()));
-        entidade.getUsuario().setTelefone(record.usuario().telefone());
+        entidade.getUsuario().setPassword(bCryptPasswordEncoder.encode(record.usuario().password()));
+        entidade.getUsuario().setPhoneNumber(record.usuario().phoneNumber());
         entidade.getUsuario().setCpf(record.usuario().cpf());
         entidade.getUsuario().setRg(record.usuario().rg());
-        entidade.getUsuario().setAtivo(record.usuario().ativo());
-        entidade.getUsuario().setAdmin(true);
+        entidade.getUsuario().setIsActive(record.usuario().isActive());
 
-        entidade.getUsuario().getEndereco().setCep(record.usuario().endereco().cep());
-        entidade.getUsuario().getEndereco().setLogradouro(record.usuario().endereco().logradouro());
-        entidade.getUsuario().getEndereco().setBairro(record.usuario().endereco().bairro());
-        entidade.getUsuario().getEndereco().setComplemento(record.usuario().endereco().complemento());
-        entidade.getUsuario().getEndereco().setCidade(record.usuario().endereco().cidade());
-        entidade.getUsuario().getEndereco().setUf(record.usuario().endereco().uf());
+        entidade.getUsuario().getAddres().setZipCode(record.usuario().addres().zipCode());
+        entidade.getUsuario().getAddres().setPublicPlace(record.usuario().addres().publicPlace());
+        entidade.getUsuario().getAddres().setNeighborhood(record.usuario().addres().neighborhood());
+        entidade.getUsuario().getAddres().setComplement(record.usuario().addres().complement());
+        entidade.getUsuario().getAddres().setCity(record.usuario().addres().city());
+        entidade.getUsuario().getAddres().setState(record.usuario().addres().state());
 
         entidade.getUsuario().getNivelAcesso().setAuthority(NivelAcessoEnum.ROLE_ADMIN);
 
@@ -92,20 +91,20 @@ public class ProfissionalService {
     private Profissional updateData(ProfissionalRecord record, Profissional entidade) {
 
 
-        entidade.getUsuario().setNome(record.usuario().nome());
+        entidade.getUsuario().setName(record.usuario().name());
         entidade.getUsuario().setEmail(record.usuario().email());
-        entidade.getUsuario().setSenha(bCryptPasswordEncoder.encode(record.usuario().senha()));
-        entidade.getUsuario().setTelefone(record.usuario().telefone());
+        entidade.getUsuario().setPassword(bCryptPasswordEncoder.encode(record.usuario().password()));
+        entidade.getUsuario().setPhoneNumber(record.usuario().phoneNumber());
         entidade.getUsuario().setCpf(record.usuario().cpf());
         entidade.getUsuario().setRg(record.usuario().rg());
-        entidade.getUsuario().setAtivo(record.usuario().ativo());
+        entidade.getUsuario().setIsActive(record.usuario().isActive());
 
-        entidade.getUsuario().getEndereco().setCep(record.usuario().endereco().cep());
-        entidade.getUsuario().getEndereco().setLogradouro(record.usuario().endereco().logradouro());
-        entidade.getUsuario().getEndereco().setBairro(record.usuario().endereco().bairro());
-        entidade.getUsuario().getEndereco().setComplemento(record.usuario().endereco().complemento());
-        entidade.getUsuario().getEndereco().setCidade(record.usuario().endereco().cidade());
-        entidade.getUsuario().getEndereco().setUf(record.usuario().endereco().uf());
+        entidade.getUsuario().getAddres().setZipCode(record.usuario().addres().zipCode());
+        entidade.getUsuario().getAddres().setPublicPlace(record.usuario().addres().publicPlace());
+        entidade.getUsuario().getAddres().setNeighborhood(record.usuario().addres().neighborhood());
+        entidade.getUsuario().getAddres().setComplement(record.usuario().addres().complement());
+        entidade.getUsuario().getAddres().setCity(record.usuario().addres().city());
+        entidade.getUsuario().getAddres().setState(record.usuario().addres().state());
         for (ProcedimentoIdRecord p : record.procedimentos()) {
             entidade.getProcedimentos().add(new Procedure(p.id()));
         }
@@ -117,19 +116,19 @@ public class ProfissionalService {
 
         ProfissionalDTO dto = new ProfissionalDTO();
         dto.setId(profissional.getId());
-        dto.setNome(profissional.getUsuario().getNome());
+        dto.setName(profissional.getUsuario().getName());
         dto.setEmail(profissional.getUsuario().getEmail());
-        dto.setTelefone(profissional.getUsuario().getTelefone());
+        dto.setPhoneNumber(profissional.getUsuario().getPhoneNumber());
         dto.setCpf(profissional.getUsuario().getCpf());
         dto.setRg(profissional.getUsuario().getRg());
-        dto.setAtivo(profissional.getUsuario().getAtivo());
+        dto.setAtivo(profissional.getUsuario().getIsActive());
 
-        dto.getEndereco().setCep(profissional.getUsuario().getEndereco().getCep());
-        dto.getEndereco().setLogradouro(profissional.getUsuario().getEndereco().getLogradouro());
-        dto.getEndereco().setBairro(profissional.getUsuario().getEndereco().getBairro());
-        dto.getEndereco().setComplemento(profissional.getUsuario().getEndereco().getComplemento());
-        dto.getEndereco().setCidade(profissional.getUsuario().getEndereco().getCidade());
-        dto.getEndereco().setUf(profissional.getUsuario().getEndereco().getUf());
+        dto.getAddres().setZipCode(profissional.getUsuario().getAddres().getZipCode());
+        dto.getAddres().setPublicPlace(profissional.getUsuario().getAddres().getPublicPlace());
+        dto.getAddres().setNeighborhood(profissional.getUsuario().getAddres().getNeighborhood());
+        dto.getAddres().setComplement(profissional.getUsuario().getAddres().getComplement());
+        dto.getAddres().setCity(profissional.getUsuario().getAddres().getCity());
+        dto.getAddres().setState(profissional.getUsuario().getAddres().getState());
         for (Procedure p : profissional.getProcedimentos()) {
             dto.getProcedimentos().add(new ProcedimentoDTO(p.getId()));
         }

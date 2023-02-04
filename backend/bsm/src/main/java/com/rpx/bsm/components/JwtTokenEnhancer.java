@@ -1,6 +1,6 @@
 package com.rpx.bsm.components;
 
-import com.rpx.bsm.entities.Usuario;
+import com.rpx.bsm.entities.User;
 import com.rpx.bsm.repositories.UsuarioRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.oauth2.common.DefaultOAuth2AccessToken;
@@ -21,10 +21,10 @@ public class JwtTokenEnhancer implements TokenEnhancer {
     @Override
     public OAuth2AccessToken enhance(OAuth2AccessToken accessToken, OAuth2Authentication authentication) {
 
-        Usuario user = usuarioRepository.findByEmail(authentication.getName());
+        User user = usuarioRepository.findByEmail(authentication.getName());
 
         Map<String, Object> map = new HashMap<>();
-        map.put("userFirstName", user.getNome());
+        map.put("userFirstName", user.getName());
         map.put("userId", user.getId());
 
         DefaultOAuth2AccessToken token = (DefaultOAuth2AccessToken) accessToken;

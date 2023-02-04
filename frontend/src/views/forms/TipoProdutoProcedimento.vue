@@ -6,34 +6,32 @@
           <strong>Tipos de produto/procedimento</strong>
         </CCardHeader>
         <CCardBody>
-          <CForm
-            class="row needs-validation"
-            novalidate
-            :validated="validatedCustom"            
-          >
+          <CForm class="row needs-validation">
             <div class="mb-3">
-              <CFormLabel for="descricao">* Descrição</CFormLabel>
+              <CFormLabel for="description">* Descrição</CFormLabel>
               <CFormInput
-                id="descricao"
+                name="description"
                 type="text"
-                placeholder="Corte de cabelo..."
-                v-model.lazy="descricao"
+                v-model.lazy="form.description"
                 required
               />
+              <div
+                v-if="v$.form.description.$errors.length > 0"
+                class="invalid-input-form"
+              >
+                {{ v$.form.description.$errors[0].$message }}
+              </div>
             </div>
             <div class="mb-3">
               <br />
               <CFormSwitch
                 id="formSwitchCheckDefault"
                 label="Ativo"
-                v-model="ativo"
+                v-model="form.isActive"
               />
             </div>
             <div class="d-grid gap-2 d-md-flex justify-content-md-end">
-              <CButton
-                color="primary"
-                class="me-md-2"                
-                @click="salvar"
+              <CButton color="primary" class="me-md-2" @click="submitForm"
                 >Confirmar</CButton
               >
               <a href="/#/forms/tipoProdutoProcedimento" class="btn btn-danger"
@@ -51,39 +49,47 @@
 <script>
 import Service from '@/Services/tipoProdutoProcedimentoService.js'
 import Toast from '@/components/Toast.vue'
+import { useVuelidate } from '@vuelidate/core'
+import ValidationsMessage from '@/util/ValidationsMessage.js'
 export default {
   components: { Toast },
   data() {
     return {
+      v$: useVuelidate(),
+      validationsMessage: new ValidationsMessage(),
       id: this.$route.params.id,
-      descricao: '',
-      ativo: false,
       service: new Service(),
       visibleLiveDemo: false,
       validatedCustom: null,
+      form: {
+        description: '',
+        isActive: false,
+      },
+    }
+  },
+  validations() {
+    return {
+      form: {
+        description: {
+          required: this.validationsMessage.requiredMessage,
+          maxLength: this.validationsMessage.maxLengthMenssage(60),
+        },
+      },
     }
   },
   methods: {
-    validationRequired(event) {
-      const form = event.currentTarget
-      if (form.checkValidity() === false) {
-        event.preventDefault()
-        event.stopPropagation()
+    submitForm() {
+      this.v$.$validate()
+      if (!this.v$.$error) {
+        this.salvar()
       }
-      this.validatedCustom = true
     },
-    async salvar(event) {
-      const form = event.currentTarget
-      if (form.checkValidity() === false) {
-        event.preventDefault()
-        event.stopPropagation()
-      }
-      this.validatedCustom = true
+    async salvar() {
       let res = undefined
       let dados = {
-        description: this.descricao,
-        isActive: this.ativo,
-      }      
+        description: this.form.description,
+        isActive: this.form.isActive,
+      }
       if (this.id == undefined) {
         res = await this.service.cadastrar(dados)
       } else {
@@ -108,9 +114,7 @@ export default {
     },
     async consultarUm() {
       if (this.id != undefined) {
-        let item = await this.service.buscarUm(this.id)
-        this.descricao = item.data.description
-        this.ativo = item.data.active
+        this.form = await this.service.buscarUm(this.id)        
       }
     },
   },

@@ -38,7 +38,7 @@ export default class ProcedimentoService {
   async buscarUm(id) {
     try {
       const res = await api.get(`${this.url}/${id}`)
-      return res
+      return res.data
     } catch (error) {
       return error
     }

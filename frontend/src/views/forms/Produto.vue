@@ -6,11 +6,7 @@
           <strong>Produtos</strong>
         </CCardHeader>
         <CCardBody>
-          <CForm
-            class="needs-validation"
-            novalidate
-            :validated="validatedCustom"
-          >
+          <CForm>
             <div class="mb-3">
               <CFormLabel for="title">* Título</CFormLabel>
               <CFormInput
@@ -53,20 +49,20 @@
                     v-model="form.price"
                     min="0"
                     required
-                  />                  
+                  />
                 </CInputGroup>
                 <div
-                    v-if="v$.form.price.$errors.length > 0"
-                    class="invalid-input-form"
-                  >
-                    {{ v$.form.price.$errors[0].$message }}
-                  </div>
+                  v-if="v$.form.price.$errors.length > 0"
+                  class="invalid-input-form"
+                >
+                  {{ v$.form.price.$errors[0].$message }}
+                </div>
               </div>
               <div class="col">
                 <CFormLabel for="quantity">* Qtd em estoque</CFormLabel>
                 <CFormInput
                   name="quantity"
-                  type="number"                  
+                  type="number"
                   v-model="form.quantity"
                   min="0"
                   required
@@ -102,10 +98,10 @@
 
 <script>
 import { useVuelidate } from '@vuelidate/core'
+import ValidationsMessage from '@/util/ValidationsMessage.js'
 import { decimal } from '@vuelidate/validators'
 import Service from '@/Services/produtoService.js'
 import Toast from '@/components/Toast.vue'
-import ValidationsMessage from '@/util/ValidationsMessage.js'
 
 export default {
   components: { Toast },
@@ -113,10 +109,9 @@ export default {
   data() {
     return {
       v$: useVuelidate(),
+      validationsMessage: new ValidationsMessage(),
       id: this.$route.params.id,
       service: new Service(),
-      validationsMessage: new ValidationsMessage(),
-      validatedCustom: null,
       form: {
         title: '',
         brand: '',
@@ -147,15 +142,14 @@ export default {
     }
   },
   methods: {
-    submitForm(event) {
+    submitForm() {
       this.v$.$validate()
       if (!this.v$.$error) {
         this.salvar()
       }
     },
-    async salvar(event) {
-      let res = undefined
-      this.form.price = this.form.price.replace(',', '.')
+    async salvar() {
+      let res = undefined      
       let dados = {
         title: this.form.title,
         brand: this.form.brand,
@@ -164,6 +158,7 @@ export default {
         isActive: this.form.isActive,
       }
       if (this.id == undefined) {
+        dados.price = this.form.price.replace(',', '.')
         res = await this.service.cadastrar(dados)
       } else {
         res = await this.service.alterar(this.id, dados)
@@ -183,12 +178,7 @@ export default {
     },
     async consultarUm() {
       if (this.id != undefined) {
-        let item = await this.service.buscarUm(this.id)
-        this.form.title = item.data.title
-        this.form.price = item.data.price
-        this.form.quantity = item.data.quantity
-        this.form.brand = item.data.brand
-        this.form.isActive = item.data.isActive
+        this.form = await this.service.buscarUm(this.id)
       }
     },
   },

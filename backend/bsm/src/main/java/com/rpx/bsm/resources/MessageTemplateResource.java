@@ -21,7 +21,7 @@ public class MessageTemplateResource {
 
     @GetMapping
     public ResponseEntity<List<MessageTemplate>> find(@RequestParam(defaultValue = "",name = "title") String title) {
-        List<MessageTemplate> list = service.find("");
+        List<MessageTemplate> list = service.find(title);
         return ResponseEntity.ok().body(list);
     }
 

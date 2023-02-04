@@ -2,7 +2,6 @@ package com.rpx.bsm.entities;
 
 
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -16,52 +15,61 @@ import java.util.*;
 @Table(name = "usuario")
 @Getter
 @Setter
-public class Usuario implements UserDetails, Serializable {
+public class User implements UserDetails, Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY) //Auto incremento
     private Long Id;
-    private String nome;
+    private String name;
     @Column(unique = true)
     private String email;
-    private String senha;
-    private Boolean admin;
-    private Boolean ativo;
-    private String telefone;
+    private String password;
+    private String phoneNumber;
     private String cpf;
     private String rg;
 
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "endereco_id")
-    private Endereco endereco;
+    private Addres addres;
 
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "nivelacesso_id")
     private NivelAcesso nivelAcesso;
 
-    public Usuario() {
-        this.endereco = new Endereco();
+    private Boolean isActive;
+    public User() {
+        this.addres = new Addres();
         this.nivelAcesso = new NivelAcesso();
     }
 
-    public Usuario(String nome, String email, String senha, Boolean admin, Boolean ativo, String telefone, String cpf, String rg, Endereco endereco, NivelAcesso nivelAcesso) {
-        this.nome = nome;
+    public User(String name, String email, String password, String phoneNumber, String cpf, String rg, Addres addres, NivelAcesso nivelAcesso, Boolean isActive) {
+        this.name = name;
         this.email = email;
-        this.senha = senha;
-        this.admin = admin;
-        this.ativo = ativo;
-        this.telefone = telefone;
+        this.password = password;
+        this.phoneNumber = phoneNumber;
         this.cpf = cpf;
         this.rg = rg;
-        this.endereco = endereco;
+        this.addres = addres;
         this.nivelAcesso = nivelAcesso;
+        this.isActive = isActive;
+    }
+
+    public User(String name, String email, String password, String phoneNumber, String cpf, String rg, NivelAcesso nivelAcesso, Boolean isActive) {
+        this.name = name;
+        this.email = email;
+        this.password = password;
+        this.phoneNumber = phoneNumber;
+        this.cpf = cpf;
+        this.rg = rg;
+        this.nivelAcesso = nivelAcesso;
+        this.isActive = isActive;
     }
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        Usuario usuario = (Usuario) o;
+        User usuario = (User) o;
         return Objects.equals(Id, usuario.Id);
     }
 
@@ -72,17 +80,17 @@ public class Usuario implements UserDetails, Serializable {
 
     @Override
     public String toString() {
-        return "Usuario{" +
-                "nome='" + nome + '\'' +
+        return "User{" +
+                "Id=" + Id +
+                ", name='" + name + '\'' +
                 ", email='" + email + '\'' +
-                ", senha='" + senha + '\'' +
-                ", admin=" + admin +
-                ", ativo=" + ativo +
-                ", telefone='" + telefone + '\'' +
+                ", password='" + password + '\'' +
+                ", phoneNumber='" + phoneNumber + '\'' +
                 ", cpf='" + cpf + '\'' +
                 ", rg='" + rg + '\'' +
-                ", endereco=" + endereco +
+                ", addres=" + addres +
                 ", nivelAcesso=" + nivelAcesso +
+                ", isActive=" + isActive +
                 '}';
     }
 
@@ -95,7 +103,7 @@ public class Usuario implements UserDetails, Serializable {
 
     @Override
     public String getPassword() {
-        return senha;
+        return password;
     }
 
     @Override

@@ -48,15 +48,14 @@ public class TestConfig implements CommandLineRunner {
         Procedure proc1 = new Procedure("Corte de Cabelo", 100.00, true);
         procedimentoRepository.save(proc1);
         /*============================================================================================================*/
-        Cliente cli = new Cliente();
-        Usuario u = new Usuario();
-        u.setNome("Rafael Paulo");
-        u.setTelefone("18997101710");
-        u.setNome("Rafael Paulo");
-        u.setAdmin(true);
+        Customer cli = new Customer();
+        User u = new User();
+        u.setName("Rafael Paulo");
+        u.setPhoneNumber("18997101710");
+        u.setName("Rafael Paulo");
         u.setEmail("rafael8paulo@gmail.com");
-        u.setAtivo(true);
-        u.setSenha(bCryptPasswordEncoder.encode("12345678"));
+        u.setIsActive(true);
+        u.setPassword(bCryptPasswordEncoder.encode("12345678"));
         u.setNivelAcesso(new NivelAcesso(NivelAcessoEnum.ROLE_ADMIN));
 
         Profissional prof = new Profissional();

@@ -12,17 +12,17 @@ import java.util.Set;
 public class ProfissionalDTO implements Serializable {
 
     private Long id;
-    private String nome;
+    private String name;
     private String email;
-    private String telefone;
+    private String phoneNumber;
     private String cpf;
     private String rg;
 
-    private EnderecoDTO endereco;
+    private AddresDTO addres;
     private Set<ProcedimentoDTO> procedimentos = new HashSet<>();
     private Boolean ativo;
 
     public ProfissionalDTO() {
-        this.endereco = new EnderecoDTO();
+        this.addres = new AddresDTO();
     }
 }

@@ -1,7 +1,7 @@
 package com.rpx.bsm.resources;
 
-import com.rpx.bsm.entities.Usuario;
-import com.rpx.bsm.services.UsuarioService;
+import com.rpx.bsm.entities.User;
+import com.rpx.bsm.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -15,16 +15,16 @@ import java.util.List;
 public class UsuarioResource {
 
     @Autowired
-    private UsuarioService service;
+    private UserService service;
 
     @GetMapping
-    public ResponseEntity<List<Usuario>> findAll() {
-        List<Usuario> list = service.findAll();
+    public ResponseEntity<List<User>> findAll() {
+        List<User> list = service.findAll();
         return ResponseEntity.ok().body(list);
     }
 
     @PostMapping
-    public ResponseEntity<Usuario> insert(@RequestBody Usuario obj) {
+    public ResponseEntity<User> insert(@RequestBody User obj) {
         obj = service.insert(obj);
         URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(obj.getId()).toUri();
         return ResponseEntity.created(uri).body(obj);
@@ -37,7 +37,7 @@ public class UsuarioResource {
     }
 
     @PutMapping(value = "/{id}")
-    public ResponseEntity<Usuario> update(@PathVariable Long id, @RequestBody Usuario obj) {
+    public ResponseEntity<User> update(@PathVariable Long id, @RequestBody User obj) {
         obj = service.update(id, obj);
         return ResponseEntity.ok().body(obj);
     }

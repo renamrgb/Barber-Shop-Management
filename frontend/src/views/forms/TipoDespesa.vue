@@ -6,34 +6,32 @@
           <strong>Tipos de Despesas</strong>
         </CCardHeader>
         <CCardBody>
-          <CForm
-            class="row g-3 needs-validation"
-            novalidate
-            :validated="validatedCustom"            
-          >
+          <CForm>
             <div>
-              <CFormLabel for="descricao">Descrição</CFormLabel>
+              <CFormLabel for="description">Descrição</CFormLabel>
               <CFormInput
-                id="descricao"
-                type="text"
-                placeholder="Corte de cabelo..."
-                v-model.lazy="descricao"
+                name="description"
+                type="text"                
+                v-model.lazy="form.description"
                 required
               />
+              <div
+                v-if="v$.form.description.$errors.length > 0"
+                class="invalid-input-form"
+              >
+                {{ v$.form.description.$errors[0].$message }}
+              </div>
             </div>
             <div>
               <br />
               <CFormSwitch
                 id="formSwitchCheckDefault"
                 label="Ativo"
-                v-model="ativo"
+                v-model="form.isActive"
               />
             </div>
             <div class="d-grid gap-2 d-md-flex justify-content-md-end">
-              <CButton
-                color="primary"
-                class="me-md-2"
-                @click="salvar"                
+              <CButton color="primary" class="me-md-2" @click="submitForm"
                 >Confirmar</CButton
               >
               <a class="btn btn-danger" href="/#/forms/tipoDespesas"
@@ -49,6 +47,8 @@
 </template>
 
 <script>
+import { useVuelidate } from '@vuelidate/core'
+import ValidationsMessage from '@/util/ValidationsMessage.js'
 import Service from '@/Services/tipoDespesaService.js'
 import Toast from '@/components/Toast.vue'
 export default {
@@ -56,20 +56,40 @@ export default {
   name: 'Tipo de Despesa',
   data() {
     return {
+      v$: useVuelidate(),
+      validationsMessage: new ValidationsMessage(),
       id: this.$route.params.id,
-      descricao: '',
-      ativo: false,
       service: new Service(),
       visibleLiveDemo: false,
       validatedCustom: null,
+      form: {
+        description: '',
+        isActive: false,
+      },
     }
   },
-  methods: {    
-    async salvar(event) {      
+  validations() {
+    return {
+      form: {
+        description: {
+          required: this.validationsMessage.requiredMessage,
+          maxLength: this.validationsMessage.maxLengthMenssage(60),
+        },
+      },
+    }
+  },
+  methods: {
+    submitForm(event) {
+      this.v$.$validate()
+      if (!this.v$.$error) {
+        this.salvar()
+      }
+    },
+    async salvar(event) {
       let res = undefined
       let dados = {
-        description: this.descricao,
-        isActive: this.ativo,
+        description: this.form.description,
+        isActive: this.form.isActive,
       }
       if (this.id == undefined) {
         res = await this.service.cadastrar(dados)
@@ -88,9 +108,7 @@ export default {
           let vetErros = res.response.data.fieldErrors
 
           vetErros.forEach((element) => {
-            this.$refs.toast.createToast(
-              `${element.message} `,
-            )
+            this.$refs.toast.createToast(`${element.message} `)
           })
         }
       }

@@ -3,7 +3,7 @@ package com.rpx.bsm.resources;
 import com.rpx.bsm.dto.ProfissionalDTO;
 import com.rpx.bsm.entities.Profissional;
 import com.rpx.bsm.records.ProfissionalRecord;
-import com.rpx.bsm.services.ProfissionalService;
+import com.rpx.bsm.services.ProfessionalService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -18,7 +18,7 @@ import java.util.List;
 public class ProfissionalResoucrce {
 
     @Autowired
-    private ProfissionalService service;
+    private ProfessionalService service;
 
     @GetMapping
     public ResponseEntity<List<ProfissionalDTO>> findAll() {

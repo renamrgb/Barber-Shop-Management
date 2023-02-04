@@ -1,9 +1,9 @@
 package com.rpx.bsm.resources;
 
-import com.rpx.bsm.dto.ClienteDTO;
-import com.rpx.bsm.entities.Cliente;
-import com.rpx.bsm.records.ClienteRecord;
-import com.rpx.bsm.services.ClienteService;
+import com.rpx.bsm.dto.CustomerDTO;
+import com.rpx.bsm.entities.Customer;
+import com.rpx.bsm.records.CustomerRecord;
+import com.rpx.bsm.services.CustomerService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -12,29 +12,31 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import javax.validation.Valid;
 import java.net.URI;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
-@RequestMapping(value = "/clientes")
-public class ClienteResource {
+@RequestMapping(value = "/customers")
+public class CustomerResource {
 
     @Autowired
-    private ClienteService service;
+    private CustomerService service;
 
     @GetMapping
-    public ResponseEntity<List<ClienteDTO>> findAll() {
-        List<ClienteDTO> list = service.findAll();
-        return ResponseEntity.ok().body(list);
+    public ResponseEntity<List<CustomerDTO>> findAll(@RequestParam(defaultValue = "", name = "name") String name) {
+        List<Customer> list = service.find(name);
+        List<CustomerDTO> listDto = list.stream().map(x -> new CustomerDTO(x)).collect(Collectors.toList());
+        return ResponseEntity.ok().body(listDto);
     }
 
     @GetMapping(value = "/{id}")
-    public ResponseEntity<Cliente> findById(@PathVariable Long id){
-        Cliente obj = service.findById(id);
+    public ResponseEntity<Customer> findById(@PathVariable Long id){
+        Customer obj = service.findById(id);
         return ResponseEntity.ok().body(obj);
     }
 
     @PostMapping
-    public ResponseEntity<ClienteDTO> insert(@Valid @RequestBody ClienteRecord obj) {
-        ClienteDTO cli = service.insert(obj);
+    public ResponseEntity<CustomerDTO> insert(@Valid @RequestBody CustomerRecord obj) {
+        CustomerDTO cli = service.insert(obj);
         URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(cli.getId()).toUri();
         return ResponseEntity.created(uri).body(cli);
     }
@@ -46,8 +48,8 @@ public class ClienteResource {
     }
 
     @PutMapping(value = "/{id}")
-    public ResponseEntity<ClienteDTO> update(@PathVariable Long id, @RequestBody ClienteRecord obj) {
-        ClienteDTO objDto = service.update(id, obj);
+    public ResponseEntity<CustomerDTO> update(@PathVariable Long id, @RequestBody CustomerRecord obj) {
+        CustomerDTO objDto = service.update(id, obj);
         return ResponseEntity.ok().body(objDto);
     }
 

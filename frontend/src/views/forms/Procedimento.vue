@@ -6,34 +6,40 @@
           <strong>Procedimentos</strong>
         </CCardHeader>
         <CCardBody>
-          <CForm
-            class="row needs-validation"
-            novalidate
-            :validated="validatedCustom"
-          >
+          <CForm>
             <div class="mb-3">
-              <CFormLabel for="descricao">* Descrição</CFormLabel>
+              <CFormLabel for="description">* Descrição</CFormLabel>
               <CFormInput
-                id="descricao"
+                name="description"
                 type="text"
-                placeholder="Corte de cabelo..."
-                v-model.lazy="descricao"
+                v-model.lazy="form.description"
                 required
               />
+              <div
+                v-if="v$.form.description.$errors.length > 0"
+                class="invalid-input-form"
+              >
+                {{ v$.form.description.$errors[0].$message }}
+              </div>
             </div>
             <div class="row">
               <div class="col-auto">
-                <CFormLabel for="descricao">* Preço</CFormLabel>
+                <CFormLabel for="price">* Preço</CFormLabel>
                 <CInputGroup class="mb-1">
                   <CInputGroupText>R$</CInputGroupText>
                   <CFormInput
-                    id="valor"
-                    placeholder="00,00"
-                    v-model.lazy="preco"
+                    price="price"
+                    v-model.lazy="form.price"
                     min="0"
                     required
                   />
                 </CInputGroup>
+                <div
+                  v-if="v$.form.price.$errors.length > 0"
+                  class="invalid-input-form"
+                >
+                  {{ v$.form.price.$errors[0].$message }}
+                </div>
               </div>
             </div>
             <div class="mb-3">
@@ -41,14 +47,16 @@
               <CFormSwitch
                 id="formSwitchCheckDefault"
                 label="Ativo"
-                v-model="ativo"
+                v-model="form.isActive"
               />
             </div>
             <div class="d-grid gap-2 d-md-flex justify-content-md-end">
-              <CButton color="primary" class="me-md-2" @click="salvar"
+              <CButton color="primary" class="me-md-2" @click="submitForm"
                 >Confirmar</CButton
-              >              
-              <a href="/#/forms/procedimento" class="btn btn-danger">Cancelar</a>
+              >
+              <a href="/#/forms/procedimento" class="btn btn-danger"
+                >Cancelar</a
+              >
             </div>
           </CForm>
         </CCardBody>
@@ -61,35 +69,56 @@
 <script>
 import Service from '@/Services/procedimentoService.js'
 import Toast from '@/components/Toast.vue'
+import { useVuelidate } from '@vuelidate/core'
+import ValidationsMessage from '@/util/ValidationsMessage.js'
+import { decimal } from '@vuelidate/validators'
 export default {
   components: { Toast },
   name: 'Procedimento',
   data() {
     return {
+      v$: useVuelidate(),
+      validationsMessage: new ValidationsMessage(),
       id: this.$route.params.id,
-      descricao: '',
-      preco: '',
-      ativo: false,
       service: new Service(),
-      validatedCustom: null,
+      form: {
+        description: '',
+        price: '00.00',
+        isActive: false,
+      },
+    }
+  },
+  validations() {
+    return {
+      form: {
+        description: {
+          required: this.validationsMessage.requiredMessage,
+          maxLength: this.validationsMessage.maxLengthMenssage(60),
+        },
+        price: {
+          required: this.validationsMessage.requiredMessage,
+          decimal: this.validationsMessage.decimalMessage,
+          minValue: this.validationsMessage.minMenssage(0),
+        },       
+      },
     }
   },
   methods: {
-    async salvar(event) {
-      const form = event.currentTarget
-      if (form.checkValidity() === false) {
-        event.preventDefault()
-        event.stopPropagation()
+    submitForm(event) {
+      this.v$.$validate()
+      if (!this.v$.$error) {
+        this.salvar()
       }
-      this.preco = this.preco.replace(',', '.');
-      this.validatedCustom = true
+    },
+    async salvar(event) {
       let res = undefined
       let dados = {
-        description: this.descricao,
-        price: this.preco,
-        isActive: this.ativo,
+        description: this.form.description,
+        price: this.form.price,
+        isActive: this.form.isActive,
       }
       if (this.id == undefined) {
+        dados.price = dados.price.replace(',', '.')
         res = await this.service.cadastrar(dados)
       } else {
         res = await this.service.alterar(this.id, dados)
@@ -115,15 +144,12 @@ export default {
     },
     async consultarUm() {
       if (this.id != undefined) {
-        let item = await this.service.buscarUm(this.id)
-        this.descricao = item.data.description
-        this.valor = item.data.price
-        this.ativo = item.data.isActive
+        this.form = await this.service.buscarUm(this.id) 
+        console.log(`DATA: ${this.form}`);       
       }
     },
   },
-  mounted() {
-    console.log(this.id)
+  mounted() {    
     if (this.id != undefined) {
       this.consultarUm()
     }

@@ -6,42 +6,50 @@
           <strong>Modelo de mensagem</strong>
         </CCardHeader>
         <CCardBody>
-          <CForm
-            class="row g-3 needs-validation"
-            novalidate
-            :validated="validatedCustom"            
-          >
+          <CForm>
             <div class="mb-3">
-              <CFormLabel for="titulo">* Descrição</CFormLabel>
+              <CFormLabel for="titulo">* Título da mensagem</CFormLabel>
               <CFormInput
                 id="titulo"
                 type="text"
                 placeholder="Mensagem de confirmação..."
-                v-model.lazy="titulo"
+                v-model.lazy="form.title"
                 required
               />
+              <div
+                v-if="v$.form.title.$errors.length > 0"
+                class="invalid-input-form"
+              >
+                {{ v$.form.title.$errors[0].$message }}
+              </div>
             </div>
             <div class="mb-3">
               <CFormTextarea
                 id="mensagem"
                 label="* Corpo da Mensagem"
                 rows="5"
-                v-model.lazy="mensagem"
+                v-model.lazy="form.bodyMessage"
                 required
               ></CFormTextarea>
+              <div
+                v-if="v$.form.bodyMessage.$errors.length > 0"
+                class="invalid-input-form"
+              >
+                {{ v$.form.bodyMessage.$errors[0].$message }}
+              </div>
             </div>
             <div class="mb-3">
               <CFormSwitch
                 id="formSwitchCheckDefault"
                 label="Ativo"
-                v-model="ativo"
+                v-model="form.isActive"
               />
             </div>
             <div class="d-grid gap-2 d-md-flex justify-content-md-end">
-              <CButton color="primary" @click="salvar"
-                >Confirmar</CButton
-              >              
-              <a class="btn btn-danger"  href="/#/forms/modeloMensagem">Cancelar</a>
+              <CButton color="primary" @click="submitForm">Confirmar</CButton>
+              <a class="btn btn-danger" href="/#/forms/modeloMensagem"
+                >Cancelar</a
+              >
             </div>
           </CForm>
         </CCardBody>
@@ -52,6 +60,8 @@
 </template>
 
 <script>
+import { useVuelidate } from '@vuelidate/core'
+import ValidationsMessage from '@/util/ValidationsMessage.js'
 import Service from '@/Services/modeloMensagemService.js'
 import Toast from '@/components/Toast.vue'
 export default {
@@ -59,34 +69,44 @@ export default {
   name: 'Tipo de Despesa',
   data() {
     return {
+      v$: useVuelidate(),
+      validationsMessage: new ValidationsMessage(),
       id: this.$route.params.id,
-      titulo: '',
-      mensagem: '',
-      ativo: false,
       service: new Service(),
-      validatedCustom: null,
+      form: {
+        title: '',
+        bodyMessage: '',
+        isActive: false,
+      },
     }
   },
-  methods: {    
-    async salvar(event) {
+  validations() {
+    return {
+      form: {
+        title: {
+          required: this.validationsMessage.requiredMessage,
+          maxLength: this.validationsMessage.maxLengthMenssage(60),
+        },
+        bodyMessage: {
+          required: this.validationsMessage.requiredMessage,
+          maxLength: this.validationsMessage.maxLengthMenssage(1000),
+        },
+      },
+    }
+  },
+  methods: {
+    submitForm() {
+      this.v$.$validate()
+      if (!this.v$.$error) {
+        this.salvar()
+      }
+    },
+    async salvar() {
       let res = undefined
-      let dados = {
-        title: this.titulo,
-        body: this.mensagem,
-        isActive: this.ativo,
-      }
-      const form = event.currentTarget
-      if (form.checkValidity() === false) {
-        event.preventDefault()
-        event.stopPropagation()
-      }
-      this.validatedCustom = true
-
-
       if (this.id == undefined) {
-        res = await this.service.cadastrar(dados)
+        res = await this.service.cadastrar(this.form)
       } else {
-        res = await this.service.alterar(this.id, dados)
+        res = await this.service.alterar(this.id, this.form)
       }
       if (res.status == 201) {
         this.$refs.toast.createToast('Cadastrado com sucesso!')
@@ -107,10 +127,7 @@ export default {
     },
     async consultarUm() {
       if (this.id != undefined) {
-        let item = await this.service.buscarUm(this.id)
-        this.titulo = item.data.title
-        this.mensagem = item.data.body
-        this.ativo = item.data.isActive
+        this.form = await this.service.buscarUm(this.id)        
       }
     },
   },

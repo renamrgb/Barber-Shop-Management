@@ -9,28 +9,32 @@ import java.util.Objects;
 
 
 @Entity
-@Table(name = "cliente")
+@Table(name = "customer")
 @Getter
 @Setter
-public class Cliente implements Serializable {
+public class Customer implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY) //Auto incremento
     private Long Id;
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "usuario_id")
-    private Usuario usuario;
+    private User user;
 
 
-    public Cliente() {
-        this.usuario = new Usuario();
+    public Customer() {
+        this.user = new User();
+    }
+
+    public Customer(User user) {
+        this.user = user;
     }
 
     @Override
     public String toString() {
         return "Cliente{" +
                 "Id=" + Id +
-                ", usuario=" + usuario +
+                ", usuario=" + user +
                 '}';
     }
 
@@ -38,7 +42,7 @@ public class Cliente implements Serializable {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        Cliente cliente = (Cliente) o;
+        Customer cliente = (Customer) o;
         return Objects.equals(Id, cliente.Id);
     }
 

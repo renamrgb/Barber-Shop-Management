@@ -58,7 +58,7 @@ public class MessageTemplateService {
 
     private void updateData(MessageTemplate entity, MessageTemplate obj) {
         entity.setTitle(obj.getTitle());
-        entity.setBody(obj.getBody());
+        entity.setBodyMessage(obj.getBodyMessage());
         entity.setIsActive(obj.getIsActive());
     }
 
@@ -68,7 +68,7 @@ public class MessageTemplateService {
     }
 
     private MessageTemplate converterEmEntidade(MessageTemplateRecord record){
-        return new MessageTemplate(record.title(), record.body(), record.isActive());
+        return new MessageTemplate(record.title(), record.bodyMessage(), record.isActive());
     }
 
 }
