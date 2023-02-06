@@ -1,6 +1,6 @@
 package com.rpx.bsm.services;
 
-import com.rpx.bsm.dto.ProcedimentoDTO;
+import com.rpx.bsm.dto.ProcedureDTO;
 import com.rpx.bsm.entities.Procedure;
 import com.rpx.bsm.records.ProcedureRecord;
 import com.rpx.bsm.repositories.ProcedureRepository;
@@ -33,7 +33,7 @@ public class ProcedureService {
         return list;
     }
 
-    public ProcedimentoDTO insert(ProcedureRecord obj) {
+    public ProcedureDTO insert(ProcedureRecord obj) {
         return converteEmDTO(repository.save(converteEmEntidade(obj)));
     }
 
@@ -48,7 +48,7 @@ public class ProcedureService {
     }
 
     @Transactional
-    public ProcedimentoDTO update(Long id, ProcedureRecord obj) {
+    public ProcedureDTO update(Long id, ProcedureRecord obj) {
         try {
             Procedure entity = repository.getReferenceById(id);
             updateData(entity, obj);
@@ -75,9 +75,9 @@ public class ProcedureService {
         return entidade;
     }
 
-    private ProcedimentoDTO converteEmDTO(Procedure entidade) {
+    private ProcedureDTO converteEmDTO(Procedure entidade) {
 
-        ProcedimentoDTO dto = new ProcedimentoDTO(
+        ProcedureDTO dto = new ProcedureDTO(
                 entidade.getId(),
                 entidade.getDescription(),
                 entidade.getPrice(),

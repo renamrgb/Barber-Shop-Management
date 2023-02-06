@@ -30,14 +30,14 @@ public class Procedure implements Serializable {
     private Boolean isActive;
 
     @JsonIgnore
-    @ManyToMany(mappedBy = "procedimentos") //Nome do set
-    private Set<Profissional> professionals = new HashSet<>();
+    @ManyToMany(mappedBy = "procedures") //Nome do set
+    private Set<Professional> professionals = new HashSet<>();
 
     public Procedure(Long id) {
         Id = id;
     }
 
-    public Procedure(@NonNull String description, @NonNull Double price, @NonNull Boolean isActive, Set<Profissional> professionals) {
+    public Procedure(@NonNull String description, @NonNull Double price, @NonNull Boolean isActive, Set<Professional> professionals) {
         this.description = description;
         this.price = price;
         this.isActive = isActive;

@@ -30,12 +30,12 @@ public class CustomerDTO implements Serializable {
         phoneNumber = obj.getUser().getPhoneNumber();
         cpf = obj.getUser().getCpf();
         rg = obj.getUser().getRg();
-        address.setState(obj.getUser().getAddres().getState());
-        address.setZipCode(obj.getUser().getAddres().getZipCode());
-        address.setPublicPlace(obj.getUser().getAddres().getPublicPlace());
-        address.setNeighborhood(obj.getUser().getAddres().getNeighborhood());
-        address.setComplement(obj.getUser().getAddres().getComplement());
-        address.setCity(obj.getUser().getAddres().getCity());
+        address.setState(obj.getUser().getAddress().getState());
+        address.setZipCode(obj.getUser().getAddress().getZipCode());
+        address.setPublicPlace(obj.getUser().getAddress().getPublicPlace());
+        address.setNeighborhood(obj.getUser().getAddress().getNeighborhood());
+        address.setComplement(obj.getUser().getAddress().getComplement());
+        address.setCity(obj.getUser().getAddress().getCity());
         isActive = obj.getUser().getIsActive();
     }
 

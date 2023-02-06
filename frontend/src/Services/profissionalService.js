@@ -1,9 +1,10 @@
 import api from '@/Services/API/api'
 
 export default class ProfissionalService {
+  url = '/professionals'
   async consultarTodos() {
     try {
-      const res = await api.get('/profissionais')
+      const res = await api.get(this.url)
       return res.data
     } catch (error) {
       return error
@@ -11,7 +12,7 @@ export default class ProfissionalService {
   }
   async cadastrar(item) {
     try {
-      const res = await api.post('/profissionais', item)      
+      const res = await api.post(this.url, item)      
       return res
     } catch (error) {
       return error
@@ -19,7 +20,7 @@ export default class ProfissionalService {
   }
   async excluir(id) {
     try {
-      const res = await api.delete(`/profissionais/${id}`)
+      const res = await api.delete(`${this.url}/${id}`)
       return res
     } catch (error) {
       return error
@@ -27,7 +28,7 @@ export default class ProfissionalService {
   }
   async alterar(id, item) {
     try {
-      const res = await api.put(`/profissionais/${id}`, item)
+      const res = await api.put(`${this.url}/${id}`, item)
       return res
     } catch (error) {
       return error
@@ -35,8 +36,16 @@ export default class ProfissionalService {
   }
   async buscarUm(id) {
     try {
-      const res = await api.get(`/profissionais/${id}`)
-      return res
+      const res = await api.get(`${this.url}/${id}`)
+      return res.data
+    } catch (error) {
+      return error
+    }
+  }
+  async findByName(name) {
+    try {
+      const res = await api.get(`${this.url}?name=${name}`)
+      return res.data
     } catch (error) {
       return error
     }

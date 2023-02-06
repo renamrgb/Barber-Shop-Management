@@ -13,31 +13,31 @@ import java.util.Set;
 @Table(name = "profissional")
 @Getter
 @Setter
-public class Profissional implements Serializable {
+public class Professional implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY) //Auto incremento
     private Long Id;
-    private Boolean ativo;
+    private Boolean isActive;
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "usuario_id")
-    private User usuario;
+    private User user;
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "profissionaisProcedimentos",
             joinColumns = @JoinColumn(name = "profissional_id"),
             inverseJoinColumns = @JoinColumn(name = "procedimento_id")
     )
-    private Set<Procedure> procedimentos = new HashSet<>();
+    private Set<Procedure> procedures = new HashSet<>();
 
-    public Profissional() {
-        this.usuario = new User();
+    public Professional() {
+        this.user = new User();
     }
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        Profissional that = (Profissional) o;
+        Professional that = (Professional) o;
         return Objects.equals(Id, that.Id);
     }
 
@@ -50,8 +50,8 @@ public class Profissional implements Serializable {
     public String toString() {
         return "Profissional{" +
                 "Id=" + Id +
-                ", ativo=" + ativo +
-                ", procedimentos=" + procedimentos +
+                ", ativo=" + isActive +
+                ", procedimentos=" + procedures  +
                 '}';
     }
 }

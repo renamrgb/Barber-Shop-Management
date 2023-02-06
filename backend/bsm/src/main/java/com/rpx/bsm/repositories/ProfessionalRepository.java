@@ -1,6 +1,16 @@
 package com.rpx.bsm.repositories;
 
-import com.rpx.bsm.entities.Profissional;
+import com.rpx.bsm.entities.Professional;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 
-public interface ProfessionalRepository extends JpaRepository<Profissional, Long> {}
+import java.util.List;
+
+public interface ProfessionalRepository extends JpaRepository<Professional, Long> {
+
+    @Query("SELECT p FROM Professional p"
+            +" JOIN FETCH p.user u"
+            +" WHERE u.name like %:name%")
+    List<Professional> findByName(String name);
+
+}

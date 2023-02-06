@@ -3,86 +3,220 @@
     <CCol :xs="12">
       <CCard class="mb-4">
         <CCardHeader>
-          <strong>Profissional</strong>
+          <strong>Profissionais</strong>
         </CCardHeader>
         <CCardBody>
           <CForm>
             <div class="mb-3">
               <CFormLabel for="nome">* Nome</CFormLabel>
-              <CFormInput id="nome" type="text" placeholder="Rafael..." v-model.lazy="nome" />
+              <CFormInput
+                name="nome"
+                type="text"
+                placeholder=""
+                v-model="form.user.name"
+              />
+              <div
+                v-if="v$.form.user.name.$errors.length > 0"
+                class="invalid-input-form"
+              >
+                {{ v$.form.user.name.$errors[0].$message }}
+              </div>
             </div>
             <div class="mb-3">
               <CFormLabel for="email">* E-mail</CFormLabel>
-              <CFormInput id="email" type="email" placeholder="exemplo@gmail.com" v-model.lazy="email" />
+              <CFormInput
+                name="email"
+                type="email"
+                placeholder="exemplo@gmail.com"
+                v-model="form.user.email"
+              />
+              <div
+                v-if="v$.form.user.email.$errors.length > 0"
+                class="invalid-input-form"
+              >
+                {{ v$.form.user.email.$errors[0].$message }}
+              </div>
             </div>
             <div class="row mb-3">
-              <div class="col">
-                <CFormLabel for="senha">* Senha</CFormLabel>
-                <CFormInput id="senha" type="password" placeholder="*******" v-model.lazy="senha" />
+              <div v-if="btnChangePassword != true">
+                <div class="col">
+                  <CFormLabel for="senha">* Senha</CFormLabel>
+                  <CFormInput
+                    id="senha"
+                    name="senha"
+                    type="password"
+                    placeholder="*******"
+                    v-model="form.user.password"
+                  />
+                  <div
+                    v-if="v$.form.user.password.$errors.length > 0"
+                    class="invalid-input-form"
+                  >
+                    {{ v$.form.user.password.$errors[0].$message }}
+                  </div>
+                </div>
+                <div class="col">
+                  <CFormLabel for="confirmaSenha">* Confirmar senha</CFormLabel>
+                  <CFormInput
+                    id="confirmaSenha"
+                    name="confirmaSenha"
+                    type="password"
+                    placeholder="*******"
+                    v-model="form.user.confirmPassword"
+                  />
+                  <div
+                    v-if="v$.form.user.confirmPassword.$errors.length > 0"
+                    class="invalid-input-form"
+                  >
+                    {{ v$.form.user.confirmPassword.$errors[0].$message }}
+                  </div>
+                </div>
+                <div class="invalid-input-form">
+                  {{ messagePassword }}
+                </div>
+                <CFormSwitch
+                  name="mostraSenha"
+                  label="Mostrar Senha"
+                  v-model="mostraSenha"
+                  @change="mostrarSenha()"
+                />
               </div>
-              <div class="col">
-                <CFormLabel for="senha">* Confirmar senha</CFormLabel>
-                <CFormInput id="confirmaSenha" type="password" placeholder="*******" v-model.lazy="confirmaSenha" />
+              <div v-else>
+                <button
+                  type="button"
+                  class="btn btn-light"
+                  @click="
+                    () => {
+                      btnChangePassword = false
+                    }
+                  "
+                >
+                  Alterar senha
+                </button>
               </div>
-            </div>
-            <CFormSwitch class="row mb-3" id="mostraSenha" label="Mostrar Senha" v-model="mostraSenha"
-              @change="mostrarSenha()" />
-            <div class="mb-3">
-              <Multiselect v-model="value" placeholder="Procedimentos que o profissional realiza..." label="descricao"
-                trackBy="descricao" :options="options" :searchable="true" mode="tags">
-              </Multiselect>
             </div>
             <div class="row mb-3">
               <div class="col">
                 <CFormLabel for="rg">RG</CFormLabel>
-                <CFormInput id="rg" type="text" placeholder="11111111111" v-model="rg" v-mask="'##.###.###-##'" />
+                <CFormInput name="rg" type="text" v-model="form.user.rg" />
               </div>
               <div class="col">
-                <CFormLabel for="senha">CPF</CFormLabel>
-                <CFormInput id="cpf" type="text" placeholder="111.111.111-11" v-model.lazy="cpf"  />
+                <CFormLabel for="cpf">CPF / CNPJ</CFormLabel>
+                <input
+                  type="text"
+                  class="form-control"
+                  v-mask="['###.###.###-##', '##.###.###/####-##']"
+                  v-model="form.user.cpf"
+                />
               </div>
             </div>
             <div class="mb-3">
-              <CFormLabel for="telefone">Telefone/Celular</CFormLabel>
-              <CFormInput id="telefone" type="tel" placeholder="(18) 99999-9999" v-model.lazy="telefone" />
+              <CFormLabel for="telefone">* Telefone / Celular</CFormLabel>
+              <input
+                name="telefone"
+                type="tel"
+                class="form-control"
+                v-mask="['(##) #####-####']"
+                v-model="form.user.phoneNumber"
+              />
+              <div
+                v-if="v$.form.user.phoneNumber.$errors.length > 0"
+                class="invalid-input-form"
+              >
+                {{ v$.form.user.phoneNumber.$errors[0].$message }}
+              </div>
             </div>
-            <div class="row g-4 mb-3">
-              <div class="col-md-2">
-                <CFormLabel for="cep">CEP</CFormLabel>
-                <CFormInput id="cep" type="text" placeholder="99999-000" v-model.lazy="cep" maxlength="8" />
-              </div>
-              <div class="col">
-                <CFormLabel for="descricao">Logradouro</CFormLabel>
-                <CFormInput id="quantidade" type="logradouro" placeholder="Rua..." v-model.lazy="logradouro" />
-              </div>
+            <div class="mb-3">
+              <Multiselect
+                v-model="value"
+                placeholder="Procedimentos que o profissional realiza..."
+                label="description"
+                trackBy="description"
+                :options="options"
+                :searchable="true"
+                mode="tags"
+              >
+              </Multiselect>
             </div>
-            <div class="row g-4 mb-3">
-              <div class="col">
-                <CFormLabel for="cep">Bairro</CFormLabel>
-                <CFormInput id="bairro" type="text" placeholder="Centro" v-model.lazy="bairro" />
+            <div name="addres">
+              <div class="row g-4 mb-3">
+                <div class="col-md-2">
+                  <CFormLabel for="cep">CEP</CFormLabel>
+                  <input
+                    name="cep"
+                    type="text"
+                    class="form-control"
+                    v-mask="'#####-###'"
+                    v-model="form.user.address.zipCode"
+                  />
+                </div>
+                <div class="col">
+                  <CFormLabel for="descricao">Logradouro</CFormLabel>
+                  <CFormInput
+                    name="quantidade"
+                    type="logradouro"
+                    placeholder="Rua..."
+                    v-model="form.user.address.publicPlace"
+                  />
+                </div>
               </div>
-              <div class="col">
-                <CFormLabel for="complemento">Complemento</CFormLabel>
-                <CFormInput id="complemento" type="complemento" placeholder="" v-model.lazy="complemento" />
-              </div>
-              <div class="col">
-                <CFormLabel for="cidade">Cidade</CFormLabel>
-                <CFormInput id="cidade" type="cidade" placeholder="Tarabai" v-model.lazy="cidade" />
-              </div>
-              <div class="col-md-2">
-                <CFormLabel for="uf">UF</CFormLabel>
-                <CFormInput id="uf" type="uf" placeholder="SP" v-model.lazy="uf" maxlength="2" />
+              <div class="row g-4 mb-3">
+                <div class="col">
+                  <CFormLabel for="cep">Bairro</CFormLabel>
+                  <CFormInput
+                    name="bairro"
+                    type="text"
+                    placeholder="Centro"
+                    v-model="form.user.address.neighborhood"
+                  />
+                </div>
+                <div class="col">
+                  <CFormLabel for="complemento">Complemento</CFormLabel>
+                  <CFormInput
+                    name="complemento"
+                    type="complemento"
+                    placeholder=""
+                    v-model="form.user.address.complement"
+                  />
+                </div>
+                <div class="col">
+                  <CFormLabel for="cidade">Cidade</CFormLabel>
+                  <CFormInput
+                    name="cidade"
+                    type="cidade"
+                    placeholder="Tarabai"
+                    v-model="form.user.address.city"
+                    disabled
+                  />
+                </div>
+                <div class="col-md-2">
+                  <CFormLabel for="uf">UF</CFormLabel>
+                  <input
+                    name="uf"
+                    placeholder="SP"
+                    class="form-control"
+                    v-model="form.user.address.state"
+                    max="2"
+                    disabled
+                  />
+                </div>
               </div>
             </div>
             <div class="mb-3">
               <br />
-              <CFormSwitch id="formSwitchCheckDefault" label="Ativo" v-model="ativo" />
+              <CFormSwitch
+                name="formSwitchCheckDefault"
+                label="Ativo"
+                v-model="form.user.isActive"
+              />
             </div>
             <div class="d-grid gap-2 d-md-flex justify-content-md-end">
-              <CButton color="primary" class="me-md-2" @click="salvar">Confirmar</CButton>
-              <router-link to="/forms/profissional">
-                <CButton color="danger">Cancelar</CButton>
-              </router-link>
+              <CButton color="primary" class="me-md-2" @click="submitForm"
+                >Confirmar</CButton
+              >
+              <a href="/#/forms/profissional" class="btn btn-danger"
+                >Cancelar</a
+              >
             </div>
           </CForm>
         </CCardBody>
@@ -93,6 +227,8 @@
 </template>
 
 <script>
+import { useVuelidate } from '@vuelidate/core'
+import ValidationsMessage from '@/util/ValidationsMessage.js'
 import Service from '@/Services/profissionalService.js'
 import ProcedimentoService from '@/Services/procedimentoService.js'
 import Toast from '@/components/Toast.vue'
@@ -103,107 +239,122 @@ export default {
   name: 'Profissional',
   data() {
     return {
+      v$: useVuelidate(),
+      validationsMessage: new ValidationsMessage(),
       id: this.$route.params.id,
-      nome: '',
-      email: '',
-      senha: '',
-      confirmaSenha: '',
-      mostraSenha: false,
-      telefone: '',
-      cpf: '',
-      rg: '',
-      cep: '',
-      logradouro: '',
-      bairro: '',
-      complemento: '',
-      cidade: '',
-      uf: '',
-      ativo: false,
       service: new Service(),
       procedimentoService: new ProcedimentoService(),
+      mostraSenha: false,
+      messagePassword: '',
+      btnChangePassword: false,
+      form: {
+        user: {
+          name: '',
+          email: '',
+          password: '',
+          confirmPassword: '',
+          phoneNumber: '',
+          cpf: '',
+          rg: '',
+          address: {
+            zipCode: '',
+            publicPlace: '',
+            neighborhood: '',
+            complement: '',
+            city: '',
+            state: '',
+          },
+          nivelAcesso: {
+            authority: 'ROLE_ADMIN',
+          },
+          isActive: false,
+        },
+        procedures: [],
+      },
       value: [],
       options: [],
-      procedimentos: [],
+    }
+  },
+  validations() {
+    return {
+      form: {
+        user: {
+          name: {
+            required: this.validationsMessage.requiredMessage,
+            maxLength: this.validationsMessage.maxLengthMenssage(100),
+          },
+          email: {
+            required: this.validationsMessage.requiredMessage,
+            maxLength: this.validationsMessage.maxLengthMenssage(100),
+            email: this.validationsMessage.emailMessage,
+          },
+          password: {
+            required: this.validationsMessage.requiredMessage,
+            maxLength: this.validationsMessage.maxLengthMenssage(10),
+          },
+          confirmPassword: {
+            required: this.validationsMessage.requiredMessage,
+            maxLength: this.validationsMessage.maxLengthMenssage(10),
+          },
+          phoneNumber: {
+            required: this.validationsMessage.requiredMessage,
+            maxLength: this.validationsMessage.maxLengthMenssage(15),
+          },
+        },
+      },
     }
   },
   methods: {
+    submitForm() {
+      if (this.form.user.password == undefined) {
+        this.form.user.password = '*******'
+        this.form.user.confirmPassword = '*******'
+      }
+      this.v$.$validate()
+      console.log(this.v$.$errors);
+      if (!this.v$.$error && !this.btnChangePassword && this.compararSenhas()) {
+        this.salvar()
+      } else if (!this.v$.$error && this.btnChangePassword) {
+        this.salvar()
+      }
+    },
     async salvar() {
-      let res = undefined
-
       this.value.forEach((element) => {
-        this.procedimentos.push({ id: element })
+        this.form.procedures.push({ id: element })
       })
+      let res = undefined
+      let dados = this.form
+      dados.user.address.zipCode = dados.user.address.zipCode.replace(
+        /[^\w\s]/gi,
+        '',
+      )
+      dados.user.phoneNumber = dados.user.phoneNumber.replace(/[^\w\s]/gi, '')
+      dados.user.phoneNumber = dados.user.phoneNumber.replace(' ', '')
+      dados.user.cpf = dados.user.cpf.replace(/[^\w\s]/gi, '')
 
-      if (this.compararSenhas()) {
-        let dados = {
-          usuario: {
-            nome: this.nome,
-            email: this.email,
-            senha: this.senha,
-            telefone: this.telefone,
-            cpf: this.cpf,
-            rg: this.rg,
-            endereco: {
-              cep: this.cep,
-              logradouro: this.logradouro,
-              bairro: this.bairro,
-              complemento: this.complemento,
-              cidade: this.cidade,
-              uf: this.uf,
-            },
-            nivelAcesso: {
-              authority: 'ROLE_ADMIN',
-            },
-            ativo: this.ativo,
-          },
-          procedimentos: this.procedimentos,
-        }
-        if (this.id == undefined) {
-          res = await this.service.cadastrar(dados)
-        } else {
-          res = await this.service.alterar(this.id, dados)
-        }
-        console.log(res)
-        if (res.status == 201) {
-          this.$refs.toast.createToast('Cadastrado com sucesso!')
-          this.$router.push('/forms/profissional')
-        } else if (res.status == 200) {
-          this.$refs.toast.createToast('Alterado com sucesso!')
-        } else {
-          let vetErros = res.response.data.fieldErrors
-          console.log(vetErros);
-          if (vetErros.isArray()) {
-            vetErros.forEach((element) => {
-              this.$refs.toast.createToast(
-                ` [${element.fieldName}] ${element.message} `,
-              )
-            })
-          } else this.$refs.toast.createToast(` [${vetErros.fieldName}] ${vetErros.message} `)
-        }
+      if (this.id == undefined) {
+        res = await this.service.cadastrar(dados)
       } else {
-        this.$refs.toast.createToast('As senhas não são iguais.')
+        this.form.password = ''
+        res = await this.service.alterar(this.id, dados)
+      }
+      if (res.status == 201) {
+        this.$refs.toast.createToast('Cadastrado com sucesso!')
+        this.$router.push('/forms/cliente')
+      } else if (res.status == 200) {
+        this.$refs.toast.createToast('Alterado com sucesso!')
+      } else {
+        let vetErros = res.response.data.fieldErrors
+        vetErros.forEach((element) => {
+          this.$refs.toast.createToast(
+            ` [${element.fieldName}] ${element.message} `,
+          )
+        })
       }
     },
     async consultarUm() {
       if (this.id != undefined) {
-        let item = await this.service.buscarUm(this.id)
-        item = item.data;
-        this.nome = item.usuario.nome
-        this.email = item.usuario.email
-        this.senha = item.usuario.senha
-        this.confirmaSenha = item.usuario.senha
-        this.telefone = item.usuario.telefone
-        this.cpf = item.usuario.cpf
-        this.rg = item.usuario.rg
-        this.cep = item.usuario.endereco.cep
-        this.logradouro = item.usuario.endereco.logradouro
-        this.bairro = item.usuario.endereco.bairro
-        this.complemento = item.usuario.endereco.complemento
-        this.cidade = item.usuario.endereco.cidade
-        this.uf = item.usuario.endereco.uf
-        this.ativo = item.usuario.ativo
-        this.carregaValue(item.procedimentos)
-
+        this.form.user = await this.service.buscarUm(this.id)
       }
     },
     mostrarSenha() {
@@ -216,17 +367,26 @@ export default {
       }
     },
     compararSenhas() {
-      return this.senha === this.confirmaSenha
+      if (this.form.user.password == this.form.user.confirmPassword) {
+        return true
+      } else {
+        this.messagePassword = 'As senhas não são iguais.'
+        return false
+      }
     },
     async carregarSelectProcedimentos() {
       let res = await this.procedimentoService.consultarTodos()
+      console.log(res)
       res.forEach((element) => {
-        this.options.push({ value: element.id, descricao: element.descricao })
+        this.options.push({
+          value: element.id,
+          description: element.description,
+        })
       })
     },
     carregaValue(itens) {
       itens.forEach((element) => {
-        this.value.push(element.id);
+        this.value.push(element.id)
       })
     },
   },
@@ -234,10 +394,9 @@ export default {
     this.carregarSelectProcedimentos()
     if (this.id != undefined) {
       this.consultarUm()
+      this.btnChangePassword = true
     }
   },
 }
 </script>
-<style src="@vueform/multiselect/themes/default.css">
-
-</style>
+<style src="@vueform/multiselect/themes/default.css"></style>

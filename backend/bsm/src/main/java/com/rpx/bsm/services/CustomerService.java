@@ -74,12 +74,12 @@ public class CustomerService {
         entity.getUser().setRg(record.user().rg());
         entity.getUser().setIsActive(record.user().isActive());
 
-        entity.getUser().getAddres().setZipCode(record.user().address().zipCode());
-        entity.getUser().getAddres().setPublicPlace(record.user().address().publicPlace());
-        entity.getUser().getAddres().setNeighborhood(record.user().address().neighborhood());
-        entity.getUser().getAddres().setComplement(record.user().address().complement());
-        entity.getUser().getAddres().setCity(record.user().address().city());
-        entity.getUser().getAddres().setState(record.user().address().state());
+        entity.getUser().getAddress().setZipCode(record.user().address().zipCode());
+        entity.getUser().getAddress().setPublicPlace(record.user().address().publicPlace());
+        entity.getUser().getAddress().setNeighborhood(record.user().address().neighborhood());
+        entity.getUser().getAddress().setComplement(record.user().address().complement());
+        entity.getUser().getAddress().setCity(record.user().address().city());
+        entity.getUser().getAddress().setState(record.user().address().state());
 
         entity.getUser().getNivelAcesso().setAuthority(NivelAcessoEnum.ROLE_ADMIN);
 
@@ -99,12 +99,12 @@ public class CustomerService {
         entity.getUser().setRg(record.user().rg());
         entity.getUser().setIsActive(record.user().isActive());
 
-        entity.getUser().getAddres().setZipCode(record.user().address().zipCode());
-        entity.getUser().getAddres().setPublicPlace(record.user().address().publicPlace());
-        entity.getUser().getAddres().setNeighborhood(record.user().address().neighborhood());
-        entity.getUser().getAddres().setComplement(record.user().address().complement());
-        entity.getUser().getAddres().setCity(record.user().address().city());
-        entity.getUser().getAddres().setState(record.user().address().state());
+        entity.getUser().getAddress().setZipCode(record.user().address().zipCode());
+        entity.getUser().getAddress().setPublicPlace(record.user().address().publicPlace());
+        entity.getUser().getAddress().setNeighborhood(record.user().address().neighborhood());
+        entity.getUser().getAddress().setComplement(record.user().address().complement());
+        entity.getUser().getAddress().setCity(record.user().address().city());
+        entity.getUser().getAddress().setState(record.user().address().state());
 
         entity.getUser().getNivelAcesso().setAuthority(NivelAcessoEnum.ROLE_ADMIN);
         return entity;

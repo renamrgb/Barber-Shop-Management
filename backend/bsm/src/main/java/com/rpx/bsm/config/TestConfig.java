@@ -58,11 +58,11 @@ public class TestConfig implements CommandLineRunner {
         u.setPassword(bCryptPasswordEncoder.encode("12345678"));
         u.setNivelAcesso(new NivelAcesso(NivelAcessoEnum.ROLE_ADMIN));
 
-        Profissional prof = new Profissional();
-        prof.setUsuario(u);
+        Professional prof = new Professional();
+        prof.setUser(u);
         Set<Procedure> procedimentos = new HashSet<>();
         procedimentos.add(new Procedure(1L));
-        prof.setProcedimentos(procedimentos);
+        prof.setProcedures(procedimentos);
         usuarioRepository.save(u);
         /*============================================================================================================*/
 

@@ -3,7 +3,7 @@
     <CCol :xs="12">
       <CCard class="mb-4">
         <CCardHeader>
-          <strong>Cliente</strong>
+          <strong>Clientes</strong>
         </CCardHeader>
         <CCardBody>
           <CForm>
@@ -250,7 +250,7 @@ export default {
             authority: 'ROLE_ADMIN',
           },
           isActive: false,
-        },
+        }
       },
     }
   },

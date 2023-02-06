@@ -1,12 +1,11 @@
 package com.rpx.bsm.services;
 
-import com.rpx.bsm.dto.ProcedimentoDTO;
 import com.rpx.bsm.dto.ProfissionalDTO;
 import com.rpx.bsm.entities.Procedure;
-import com.rpx.bsm.entities.Profissional;
+import com.rpx.bsm.entities.Professional;
 import com.rpx.bsm.enums.NivelAcessoEnum;
 import com.rpx.bsm.records.ProcedimentoIdRecord;
-import com.rpx.bsm.records.ProfissionalRecord;
+import com.rpx.bsm.records.ProfessionalRecord;
 import com.rpx.bsm.repositories.ProfessionalRepository;
 import com.rpx.bsm.resources.exceptions.DatabaseException;
 import com.rpx.bsm.resources.exceptions.ResourceNotFoundException;
@@ -20,7 +19,6 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.persistence.EntityNotFoundException;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 public class ProfessionalService {
@@ -30,13 +28,19 @@ public class ProfessionalService {
     @Autowired
     private BCryptPasswordEncoder bCryptPasswordEncoder;
 
-    public List<ProfissionalDTO> findAll() {
-        List<Profissional> all = repository.findAll();
-        return all.stream().map(this::converteEmDTO).collect(Collectors.toList());
+    public List<Professional> find(String name){
+        List<Professional> list= null;
+
+        if(name.isEmpty())
+            list = repository.findAll();
+        else
+            list = repository.findByName(name);
+
+        return list;
     }
 
-    public ProfissionalDTO insert(ProfissionalRecord obj) {
-        return converteEmDTO(repository.save(converteEmEntidade(obj)));
+    public ProfissionalDTO insert(ProfessionalRecord obj) {
+        return new ProfissionalDTO(repository.save(converteEmEntidade(obj)));
     }
 
     public void delete(Long id) {
@@ -50,98 +54,74 @@ public class ProfessionalService {
     }
 
     @Transactional
-    public ProfissionalDTO update(Long id, ProfissionalRecord obj) {
+    public ProfissionalDTO update(Long id, ProfessionalRecord obj) {
         try {
-            Profissional entity = repository.getReferenceById(id);
+            Professional entity = repository.getReferenceById(id);
             updateData(obj, entity);
-            return converteEmDTO(repository.save(entity));
+            return new ProfissionalDTO(repository.save(entity));
         } catch (EntityNotFoundException e) {
             throw new ResourceNotFoundException(id);
         }
     }
 
-    private Profissional converteEmEntidade(ProfissionalRecord record) {
+    private Professional converteEmEntidade(ProfessionalRecord record) {
 
-        Profissional entidade = new Profissional();
+        Professional entidade = new Professional();
 
-        entidade.getUsuario().setName(record.usuario().name());
-        entidade.getUsuario().setEmail(record.usuario().email());
-        entidade.getUsuario().setPassword(bCryptPasswordEncoder.encode(record.usuario().password()));
-        entidade.getUsuario().setPhoneNumber(record.usuario().phoneNumber());
-        entidade.getUsuario().setCpf(record.usuario().cpf());
-        entidade.getUsuario().setRg(record.usuario().rg());
-        entidade.getUsuario().setIsActive(record.usuario().isActive());
+        entidade.getUser().setName(record.user().name());
+        entidade.getUser().setEmail(record.user().email());
+        entidade.getUser().setPassword(bCryptPasswordEncoder.encode(record.user().password()));
+        entidade.getUser().setPhoneNumber(record.user().phoneNumber());
+        entidade.getUser().setCpf(record.user().cpf());
+        entidade.getUser().setRg(record.user().rg());
+        entidade.getUser().setIsActive(record.user().isActive());
 
-        entidade.getUsuario().getAddres().setZipCode(record.usuario().address().zipCode());
-        entidade.getUsuario().getAddres().setPublicPlace(record.usuario().address().publicPlace());
-        entidade.getUsuario().getAddres().setNeighborhood(record.usuario().address().neighborhood());
-        entidade.getUsuario().getAddres().setComplement(record.usuario().address().complement());
-        entidade.getUsuario().getAddres().setCity(record.usuario().address().city());
-        entidade.getUsuario().getAddres().setState(record.usuario().address().state());
+        entidade.getUser().getAddress().setZipCode(record.user().address().zipCode());
+        entidade.getUser().getAddress().setPublicPlace(record.user().address().publicPlace());
+        entidade.getUser().getAddress().setNeighborhood(record.user().address().neighborhood());
+        entidade.getUser().getAddress().setComplement(record.user().address().complement());
+        entidade.getUser().getAddress().setCity(record.user().address().city());
+        entidade.getUser().getAddress().setState(record.user().address().state());
 
-        entidade.getUsuario().getNivelAcesso().setAuthority(NivelAcessoEnum.ROLE_ADMIN);
+        entidade.getUser().getNivelAcesso().setAuthority(NivelAcessoEnum.ROLE_ADMIN);
 
-        for (ProcedimentoIdRecord p : record.procedimentos()) {
-            entidade.getProcedimentos().add(new Procedure(p.id()));
+        for (ProcedimentoIdRecord p : record.procedures()) {
+            entidade.getProcedures().add(new Procedure(p.id()));
         }
 
         return entidade;
     }
 
-    private Profissional updateData(ProfissionalRecord record, Profissional entidade) {
+    private Professional updateData(ProfessionalRecord record, Professional entidade) {
 
-
-        entidade.getUsuario().setName(record.usuario().name());
-        entidade.getUsuario().setEmail(record.usuario().email());
-        if (!record.usuario().password().equals("*******")) {
-            entidade.getUsuario().setPassword(bCryptPasswordEncoder.encode(record.usuario().password()));
+        entidade.getUser().setName(record.user().name());
+        entidade.getUser().setEmail(record.user().email());
+        if (!record.user().password().equals("*******")) {
+            entidade.getUser().setPassword(bCryptPasswordEncoder.encode(record.user().password()));
         }
-        entidade.getUsuario().setPhoneNumber(record.usuario().phoneNumber());
-        entidade.getUsuario().setCpf(record.usuario().cpf());
-        entidade.getUsuario().setRg(record.usuario().rg());
-        entidade.getUsuario().setIsActive(record.usuario().isActive());
+        entidade.getUser().setPhoneNumber(record.user().phoneNumber());
+        entidade.getUser().setCpf(record.user().cpf());
+        entidade.getUser().setRg(record.user().rg());
+        entidade.getUser().setIsActive(record.user().isActive());
 
-        entidade.getUsuario().getAddres().setZipCode(record.usuario().address().zipCode());
-        entidade.getUsuario().getAddres().setPublicPlace(record.usuario().address().publicPlace());
-        entidade.getUsuario().getAddres().setNeighborhood(record.usuario().address().neighborhood());
-        entidade.getUsuario().getAddres().setComplement(record.usuario().address().complement());
-        entidade.getUsuario().getAddres().setCity(record.usuario().address().city());
-        entidade.getUsuario().getAddres().setState(record.usuario().address().state());
-        for (ProcedimentoIdRecord p : record.procedimentos()) {
-            entidade.getProcedimentos().add(new Procedure(p.id()));
+        entidade.getUser().getAddress().setZipCode(record.user().address().zipCode());
+        entidade.getUser().getAddress().setPublicPlace(record.user().address().publicPlace());
+        entidade.getUser().getAddress().setNeighborhood(record.user().address().neighborhood());
+        entidade.getUser().getAddress().setComplement(record.user().address().complement());
+        entidade.getUser().getAddress().setCity(record.user().address().city());
+        entidade.getUser().getAddress().setState(record.user().address().state());
+        for (ProcedimentoIdRecord p : record.procedures()) {
+            entidade.getProcedures().add(new Procedure(p.id()));
         }
 
         return entidade;
     }
 
-    @Transactional
-    private ProfissionalDTO converteEmDTO(Profissional profissional) {
 
-        ProfissionalDTO dto = new ProfissionalDTO();
-        dto.setId(profissional.getId());
-        dto.setName(profissional.getUsuario().getName());
-        dto.setEmail(profissional.getUsuario().getEmail());
-        dto.setPhoneNumber(profissional.getUsuario().getPhoneNumber());
-        dto.setCpf(profissional.getUsuario().getCpf());
-        dto.setRg(profissional.getUsuario().getRg());
-        dto.setAtivo(profissional.getUsuario().getIsActive());
 
-        dto.getAddres().setZipCode(profissional.getUsuario().getAddres().getZipCode());
-        dto.getAddres().setPublicPlace(profissional.getUsuario().getAddres().getPublicPlace());
-        dto.getAddres().setNeighborhood(profissional.getUsuario().getAddres().getNeighborhood());
-        dto.getAddres().setComplement(profissional.getUsuario().getAddres().getComplement());
-        dto.getAddres().setCity(profissional.getUsuario().getAddres().getCity());
-        dto.getAddres().setState(profissional.getUsuario().getAddres().getState());
-        for (Procedure p : profissional.getProcedimentos()) {
-            dto.getProcedimentos().add(new ProcedimentoDTO(p.getId()));
-        }
-
-        return dto;
-    }
-
-    public Profissional findById(Long id) {
-        Optional<Profissional> obj = repository.findById(id);
-        Profissional entity = obj.orElseThrow(() -> new ResourceNotFoundException(id));
+    public Professional findById(Long id) {
+        Optional<Professional> obj = repository.findById(id);
+        Professional entity = obj.orElseThrow(() -> new ResourceNotFoundException(id));
         return entity;
     }
 

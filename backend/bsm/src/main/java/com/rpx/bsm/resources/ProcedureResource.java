@@ -1,6 +1,6 @@
 package com.rpx.bsm.resources;
 
-import com.rpx.bsm.dto.ProcedimentoDTO;
+import com.rpx.bsm.dto.ProcedureDTO;
 import com.rpx.bsm.entities.Procedure;
 import com.rpx.bsm.records.ProcedureRecord;
 import com.rpx.bsm.services.ProcedureService;
@@ -32,8 +32,8 @@ public class ProcedureResource {
     }
 
     @PostMapping
-    public ResponseEntity<ProcedimentoDTO> insert(@Valid @RequestBody ProcedureRecord record) {
-        ProcedimentoDTO obj = service.insert(record);
+    public ResponseEntity<ProcedureDTO> insert(@Valid @RequestBody ProcedureRecord record) {
+        ProcedureDTO obj = service.insert(record);
         URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(obj.getId()).toUri();
         return ResponseEntity.created(uri).body(obj);
     }
@@ -45,8 +45,8 @@ public class ProcedureResource {
     }
 
     @PutMapping(value = "/{id}")
-    public ResponseEntity<ProcedimentoDTO> update(@PathVariable Long id, @Valid @RequestBody ProcedureRecord record) {
-        ProcedimentoDTO obj = service.update(id, record);
+    public ResponseEntity<ProcedureDTO> update(@PathVariable Long id, @Valid @RequestBody ProcedureRecord record) {
+        ProcedureDTO obj = service.update(id, record);
         return ResponseEntity.ok().body(obj);
     }
 
