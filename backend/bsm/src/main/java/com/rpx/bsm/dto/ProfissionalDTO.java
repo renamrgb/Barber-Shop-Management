@@ -18,11 +18,11 @@ public class ProfissionalDTO implements Serializable {
     private String cpf;
     private String rg;
 
-    private AddresDTO addres;
+    private AddressDTO addres;
     private Set<ProcedimentoDTO> procedimentos = new HashSet<>();
     private Boolean ativo;
 
     public ProfissionalDTO() {
-        this.addres = new AddresDTO();
+        this.addres = new AddressDTO();
     }
 }

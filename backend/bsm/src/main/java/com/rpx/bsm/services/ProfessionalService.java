@@ -72,12 +72,12 @@ public class ProfessionalService {
         entidade.getUsuario().setRg(record.usuario().rg());
         entidade.getUsuario().setIsActive(record.usuario().isActive());
 
-        entidade.getUsuario().getAddres().setZipCode(record.usuario().addres().zipCode());
-        entidade.getUsuario().getAddres().setPublicPlace(record.usuario().addres().publicPlace());
-        entidade.getUsuario().getAddres().setNeighborhood(record.usuario().addres().neighborhood());
-        entidade.getUsuario().getAddres().setComplement(record.usuario().addres().complement());
-        entidade.getUsuario().getAddres().setCity(record.usuario().addres().city());
-        entidade.getUsuario().getAddres().setState(record.usuario().addres().state());
+        entidade.getUsuario().getAddres().setZipCode(record.usuario().address().zipCode());
+        entidade.getUsuario().getAddres().setPublicPlace(record.usuario().address().publicPlace());
+        entidade.getUsuario().getAddres().setNeighborhood(record.usuario().address().neighborhood());
+        entidade.getUsuario().getAddres().setComplement(record.usuario().address().complement());
+        entidade.getUsuario().getAddres().setCity(record.usuario().address().city());
+        entidade.getUsuario().getAddres().setState(record.usuario().address().state());
 
         entidade.getUsuario().getNivelAcesso().setAuthority(NivelAcessoEnum.ROLE_ADMIN);
 
@@ -93,24 +93,27 @@ public class ProfessionalService {
 
         entidade.getUsuario().setName(record.usuario().name());
         entidade.getUsuario().setEmail(record.usuario().email());
-        entidade.getUsuario().setPassword(bCryptPasswordEncoder.encode(record.usuario().password()));
+        if (!record.usuario().password().equals("*******")) {
+            entidade.getUsuario().setPassword(bCryptPasswordEncoder.encode(record.usuario().password()));
+        }
         entidade.getUsuario().setPhoneNumber(record.usuario().phoneNumber());
         entidade.getUsuario().setCpf(record.usuario().cpf());
         entidade.getUsuario().setRg(record.usuario().rg());
         entidade.getUsuario().setIsActive(record.usuario().isActive());
 
-        entidade.getUsuario().getAddres().setZipCode(record.usuario().addres().zipCode());
-        entidade.getUsuario().getAddres().setPublicPlace(record.usuario().addres().publicPlace());
-        entidade.getUsuario().getAddres().setNeighborhood(record.usuario().addres().neighborhood());
-        entidade.getUsuario().getAddres().setComplement(record.usuario().addres().complement());
-        entidade.getUsuario().getAddres().setCity(record.usuario().addres().city());
-        entidade.getUsuario().getAddres().setState(record.usuario().addres().state());
+        entidade.getUsuario().getAddres().setZipCode(record.usuario().address().zipCode());
+        entidade.getUsuario().getAddres().setPublicPlace(record.usuario().address().publicPlace());
+        entidade.getUsuario().getAddres().setNeighborhood(record.usuario().address().neighborhood());
+        entidade.getUsuario().getAddres().setComplement(record.usuario().address().complement());
+        entidade.getUsuario().getAddres().setCity(record.usuario().address().city());
+        entidade.getUsuario().getAddres().setState(record.usuario().address().state());
         for (ProcedimentoIdRecord p : record.procedimentos()) {
             entidade.getProcedimentos().add(new Procedure(p.id()));
         }
 
         return entidade;
     }
+
     @Transactional
     private ProfissionalDTO converteEmDTO(Profissional profissional) {
 

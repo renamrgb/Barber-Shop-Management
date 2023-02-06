@@ -11,10 +11,10 @@ public record UserRecord(
         @NotBlank(message = "Nome é obrigatório") @Length(min = 2, max = 100) String name,
         @Email @Length(min = 2, max = 60) String email,
         @NotBlank(message = "Senha é obrigatório") @Length(min = 2, max = 10) String password,
-        @Length(min = 2, max = 11) String phoneNumber,
-        @Length(min = 2, max = 11) String cpf,
-        @Length(min = 2, max = 11) String rg,
-        @Valid AddresRecord addres,
+        @Length(min = 11, max = 12) String phoneNumber,
+        @Length(max = 15) String cpf,
+        @Length(max = 11) String rg,
+        @Valid AddresRecord address,
         @NotNull Boolean isActive
 ) {
 }

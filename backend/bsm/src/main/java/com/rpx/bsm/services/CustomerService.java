@@ -66,50 +66,48 @@ public class CustomerService {
 
         Customer entity = new Customer();
 
-        entity.getUser().setName(record.usuario().name());
-        entity.getUser().setEmail(record.usuario().email());
-        entity.getUser().setPassword(bCryptPasswordEncoder.encode(record.usuario().password()));
-        entity.getUser().setPhoneNumber(record.usuario().phoneNumber());
-        entity.getUser().setCpf(record.usuario().cpf());
-        entity.getUser().setRg(record.usuario().rg());
-        entity.getUser().setIsActive(record.usuario().isActive());
+        entity.getUser().setName(record.user().name());
+        entity.getUser().setEmail(record.user().email());
+        entity.getUser().setPassword(bCryptPasswordEncoder.encode(record.user().password()));
+        entity.getUser().setPhoneNumber(record.user().phoneNumber());
+        entity.getUser().setCpf(record.user().cpf());
+        entity.getUser().setRg(record.user().rg());
+        entity.getUser().setIsActive(record.user().isActive());
 
-        entity.getUser().getAddres().setZipCode(record.usuario().addres().zipCode());
-        entity.getUser().getAddres().setPublicPlace(record.usuario().addres().publicPlace());
-        entity.getUser().getAddres().setNeighborhood(record.usuario().addres().neighborhood());
-        entity.getUser().getAddres().setComplement(record.usuario().addres().complement());
-        entity.getUser().getAddres().setCity(record.usuario().addres().city());
-        entity.getUser().getAddres().setState(record.usuario().addres().state());
+        entity.getUser().getAddres().setZipCode(record.user().address().zipCode());
+        entity.getUser().getAddres().setPublicPlace(record.user().address().publicPlace());
+        entity.getUser().getAddres().setNeighborhood(record.user().address().neighborhood());
+        entity.getUser().getAddres().setComplement(record.user().address().complement());
+        entity.getUser().getAddres().setCity(record.user().address().city());
+        entity.getUser().getAddres().setState(record.user().address().state());
 
         entity.getUser().getNivelAcesso().setAuthority(NivelAcessoEnum.ROLE_ADMIN);
 
         return entity;
     }
 
-    private Customer updateData(CustomerRecord record, Customer entidade) {
+    private Customer updateData(CustomerRecord record, Customer entity) {
 
+        entity.getUser().setName(record.user().name());
+        entity.getUser().setEmail(record.user().email());
+        if (!record.user().password().equals("*******")) {
+            entity.getUser().setPassword(bCryptPasswordEncoder.encode(record.user().password()));
+        }
+        entity.getUser().setPassword(bCryptPasswordEncoder.encode(record.user().password()));
+        entity.getUser().setPhoneNumber(record.user().phoneNumber());
+        entity.getUser().setCpf(record.user().cpf());
+        entity.getUser().setRg(record.user().rg());
+        entity.getUser().setIsActive(record.user().isActive());
 
-        entidade = new Customer(
-                new User(
-                        record.usuario().name(),
-                        record.usuario().email(),
-                        bCryptPasswordEncoder.encode(record.usuario().password()),
-                        record.usuario().phoneNumber(),
-                        record.usuario().cpf(),
-                        record.usuario().rg(),
-                        new Addres(
-                                record.usuario().addres().zipCode(),
-                                record.usuario().addres().publicPlace(),
-                                record.usuario().addres().neighborhood(),
-                                record.usuario().addres().complement(),
-                                record.usuario().addres().city(),
-                                record.usuario().addres().state()
-                        ),
-                        new NivelAcesso(NivelAcessoEnum.ROLE_ADMIN),
-                        record.usuario().isActive()
-                )
-        );
-        return entidade;
+        entity.getUser().getAddres().setZipCode(record.user().address().zipCode());
+        entity.getUser().getAddres().setPublicPlace(record.user().address().publicPlace());
+        entity.getUser().getAddres().setNeighborhood(record.user().address().neighborhood());
+        entity.getUser().getAddres().setComplement(record.user().address().complement());
+        entity.getUser().getAddres().setCity(record.user().address().city());
+        entity.getUser().getAddres().setState(record.user().address().state());
+
+        entity.getUser().getNivelAcesso().setAuthority(NivelAcessoEnum.ROLE_ADMIN);
+        return entity;
     }
 
     public Customer findById(Long id) {

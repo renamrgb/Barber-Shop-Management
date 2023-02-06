@@ -9,7 +9,7 @@ import java.io.Serializable;
 @Getter
 @Setter
 @NoArgsConstructor
-public class AddresDTO implements Serializable {
+public class AddressDTO implements Serializable {
 
     private String zipCode;
     private String publicPlace;
@@ -18,7 +18,7 @@ public class AddresDTO implements Serializable {
     private String city;
     private String state;
 
-    public AddresDTO(String zipCode, String publicPlace, String neighborhood, String complement, String city, String state) {
+    public AddressDTO(String zipCode, String publicPlace, String neighborhood, String complement, String city, String state) {
     }
 }
 

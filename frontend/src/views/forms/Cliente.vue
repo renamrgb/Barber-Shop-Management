@@ -13,76 +13,92 @@
                 name="nome"
                 type="text"
                 placeholder=""
-                v-model="form.usuario.name"
+                v-model="form.user.name"
               />
               <div
-                v-if="v$.form.usuario.name.$errors.length > 0"
+                v-if="v$.form.user.name.$errors.length > 0"
                 class="invalid-input-form"
               >
-                {{ v$.form.usuario.name.$errors[0].$message }}
+                {{ v$.form.user.name.$errors[0].$message }}
               </div>
             </div>
-
             <div class="mb-3">
               <CFormLabel for="email">* E-mail</CFormLabel>
               <CFormInput
                 name="email"
                 type="email"
                 placeholder="exemplo@gmail.com"
-                v-model="form.usuario.email"
+                v-model="form.user.email"
               />
               <div
-                v-if="v$.form.usuario.email.$errors.length > 0"
+                v-if="v$.form.user.email.$errors.length > 0"
                 class="invalid-input-form"
               >
-                {{ v$.form.usuario.email.$errors[0].$message }}
+                {{ v$.form.user.email.$errors[0].$message }}
               </div>
             </div>
             <div class="row mb-3">
-              <div class="col">
-                <CFormLabel for="senha">* Senha</CFormLabel>
-                <CFormInput
-                  name="senha"
-                  type="password"
-                  placeholder="*******"
-                  v-model="form.usuario.password"
-                />
-                <div
-                  v-if="v$.form.usuario.password.$errors.length > 0"
-                  class="invalid-input-form"
-                >
-                  {{ v$.form.usuario.password.$errors[0].$message }}
+              <div v-if="btnChangePassword != true">
+                <div class="col">
+                  <CFormLabel for="senha">* Senha</CFormLabel>
+                  <CFormInput
+                    id="senha"
+                    name="senha"
+                    type="password"
+                    placeholder="*******"
+                    v-model="form.user.password"
+                  />
+                  <div
+                    v-if="v$.form.user.password.$errors.length > 0"
+                    class="invalid-input-form"
+                  >
+                    {{ v$.form.user.password.$errors[0].$message }}
+                  </div>
                 </div>
-              </div>
-              <div class="col">
-                <CFormLabel for="confirmaeSenha">* Confirmar senha</CFormLabel>
-                <CFormInput
-                  name="confirmaeSenha"
-                  type="password"
-                  placeholder="*******"
-                  v-model="form.usuario.confirmPassword"
-                />
-                <div
-                  v-if="v$.form.usuario.confirmPassword.$errors.length > 0"
-                  class="invalid-input-form"
-                >
-                  {{ v$.form.usuario.confirmPassword.$errors[0].$message }}
+                <div class="col">
+                  <CFormLabel for="confirmaSenha">* Confirmar senha</CFormLabel>
+                  <CFormInput
+                    id="confirmaSenha"
+                    name="confirmaSenha"
+                    type="password"
+                    placeholder="*******"
+                    v-model="form.user.confirmPassword"
+                  />
+                  <div
+                    v-if="v$.form.user.confirmPassword.$errors.length > 0"
+                    class="invalid-input-form"
+                  >
+                    {{ v$.form.user.confirmPassword.$errors[0].$message }}
+                  </div>
                 </div>
+                <div class="invalid-input-form">
+                  {{ messagePassword }}
+                </div>
+                <CFormSwitch
+                  name="mostraSenha"
+                  label="Mostrar Senha"
+                  v-model="mostraSenha"
+                  @change="mostrarSenha()"
+                />
               </div>
-              <div class="invalid-input-form">
-                {{ messagePassword }}
+              <div v-else>
+                <button
+                  type="button"
+                  class="btn btn-light"
+                  @click="
+                    () => {
+                      btnChangePassword = false
+                    }
+                  "
+                >
+                  Alterar senha
+                </button>
               </div>
             </div>
-            <CFormSwitch
-              name="mostraSenha"
-              label="Mostrar Senha"
-              v-model="mostraSenha"
-              @change="mostrarSenha()"
-            />
             <div class="row mb-3">
               <div class="col">
                 <CFormLabel for="rg">RG</CFormLabel>
-                <CFormInput name="rg" type="text" v-model="form.usuario.rg" />
+                <CFormInput name="rg" type="text" v-model="form.user.rg" />
               </div>
               <div class="col">
                 <CFormLabel for="cpf">CPF / CNPJ</CFormLabel>
@@ -90,7 +106,7 @@
                   type="text"
                   class="form-control"
                   v-mask="['###.###.###-##', '##.###.###/####-##']"
-                  v-model="form.usuario.cpf"
+                  v-model="form.user.cpf"
                 />
               </div>
             </div>
@@ -101,13 +117,13 @@
                 type="tel"
                 class="form-control"
                 v-mask="['(##) #####-####']"
-                v-model="form.usuario.phoneNumber"
+                v-model="form.user.phoneNumber"
               />
               <div
-                v-if="v$.form.usuario.phoneNumber.$errors.length > 0"
+                v-if="v$.form.user.phoneNumber.$errors.length > 0"
                 class="invalid-input-form"
               >
-                {{ v$.form.usuario.phoneNumber.$errors[0].$message }}
+                {{ v$.form.user.phoneNumber.$errors[0].$message }}
               </div>
             </div>
             <div name="addres">
@@ -119,14 +135,8 @@
                     type="text"
                     class="form-control"
                     v-mask="'#####-###'"
-                    v-model="form.usuario.address.zipCode"
+                    v-model="form.user.address.zipCode"
                   />
-                  <div
-                    v-if="v$.form.usuario.address.zipCode.$errors.length > 0"
-                    class="invalid-input-form"
-                  >
-                    {{ v$.form.usuario.address.zipCode.$errors[0].$message }}
-                  </div>
                 </div>
                 <div class="col">
                   <CFormLabel for="descricao">Logradouro</CFormLabel>
@@ -134,7 +144,7 @@
                     name="quantidade"
                     type="logradouro"
                     placeholder="Rua..."
-                    v-model="form.usuario.address.publicPlace"
+                    v-model="form.user.address.publicPlace"
                   />
                 </div>
               </div>
@@ -145,7 +155,7 @@
                     name="bairro"
                     type="text"
                     placeholder="Centro"
-                    v-model="form.usuario.address.neighborhood"
+                    v-model="form.user.address.neighborhood"
                   />
                 </div>
                 <div class="col">
@@ -154,7 +164,7 @@
                     name="complemento"
                     type="complemento"
                     placeholder=""
-                    v-model="form.usuario.address.complement"
+                    v-model="form.user.address.complement"
                   />
                 </div>
                 <div class="col">
@@ -163,7 +173,7 @@
                     name="cidade"
                     type="cidade"
                     placeholder="Tarabai"
-                    v-model="form.usuario.address.city"
+                    v-model="form.user.address.city"
                     disabled
                   />
                 </div>
@@ -173,7 +183,7 @@
                     name="uf"
                     placeholder="SP"
                     class="form-control"
-                    v-model="form.usuario.address.state"
+                    v-model="form.user.address.state"
                     max="2"
                     disabled
                   />
@@ -185,14 +195,14 @@
               <CFormSwitch
                 name="formSwitchCheckDefault"
                 label="Ativo"
-                v-model="form.usuario.isActive"
+                v-model="form.user.isActive"
               />
             </div>
             <div class="d-grid gap-2 d-md-flex justify-content-md-end">
               <CButton color="primary" class="me-md-2" @click="submitForm"
                 >Confirmar</CButton
               >
-              <a href="/forms/cliente" class="btn btn-danger">Cancelar</a>
+              <a href="/#/forms/cliente" class="btn btn-danger">Cancelar</a>
             </div>
           </CForm>
         </CCardBody>
@@ -218,8 +228,9 @@ export default {
       service: new Service(),
       mostraSenha: false,
       messagePassword: '',
+      btnChangePassword: false,
       form: {
-        usuario: {
+        user: {
           name: '',
           email: '',
           password: '',
@@ -246,7 +257,7 @@ export default {
   validations() {
     return {
       form: {
-        usuario: {
+        user: {
           name: {
             required: this.validationsMessage.requiredMessage,
             maxLength: this.validationsMessage.maxLengthMenssage(100),
@@ -266,13 +277,7 @@ export default {
           },
           phoneNumber: {
             required: this.validationsMessage.requiredMessage,
-            maxLength: this.validationsMessage.maxLengthMenssage(11),
-            numeric: this.validationsMessage.phoneNumberMessage,
-          },
-          address: {
-            zipCode: {
-              numeric: this.validationsMessage.phoneNumberMessage,
-            },
+            maxLength: this.validationsMessage.maxLengthMenssage(15),
           },
         },
       },
@@ -280,40 +285,52 @@ export default {
   },
   methods: {
     submitForm() {
+      if (this.form.user.password == undefined) {
+        this.form.user.password = '*******'
+        this.form.user.confirmPassword = '*******'
+      }
       this.v$.$validate()
-      let passwordConfirm = this.compararSenhas()
-      if (!this.v$.$error && passwordConfirm) {
+      // console.log(`${this.v$.$error} && !${this.btnChangePassword} && ${this.compararSenhas()}`)
+      if (!this.v$.$error && !this.btnChangePassword && this.compararSenhas()) {
+        this.salvar()
+      } else if (!this.v$.$error && this.btnChangePassword) {
         this.salvar()
       }
     },
     async salvar() {
       let res = undefined
-      if (this.compararSenhas()) {
-        if (this.id == undefined) {
-          res = await this.service.cadastrar(dados)
-        } else {
-          res = await this.service.alterar(this.id, dados)
-        }
-        if (res.status == 201) {
-          this.$refs.toast.createToast('Cadastrado com sucesso!')
-          this.$router.push('/forms/cliente')
-        } else if (res.status == 200) {
-          this.$refs.toast.createToast('Alterado com sucesso!')
-        } else {
-          let vetErros = res.response.data.fieldErrors
-          vetErros.forEach((element) => {
-            this.$refs.toast.createToast(
-              ` [${element.fieldName}] ${element.message} `,
-            )
-          })
-        }
+      let dados = this.form
+      dados.user.address.zipCode = dados.user.address.zipCode.replace(
+        /[^\w\s]/gi,
+        '',
+      )
+      dados.user.phoneNumber = dados.user.phoneNumber.replace(/[^\w\s]/gi, '')
+      dados.user.phoneNumber = dados.user.phoneNumber.replace(' ', '')
+      dados.user.cpf = dados.user.cpf.replace(/[^\w\s]/gi, '')
+
+      if (this.id == undefined) {
+        res = await this.service.cadastrar(dados)
       } else {
-        this.messagePassword = 'As senhas não são iguais.'
+        this.form.password = ''
+        res = await this.service.alterar(this.id, dados)
+      }
+      if (res.status == 201) {
+        this.$refs.toast.createToast('Cadastrado com sucesso!')
+        this.$router.push('/forms/cliente')
+      } else if (res.status == 200) {
+        this.$refs.toast.createToast('Alterado com sucesso!')
+      } else {
+        let vetErros = res.response.data.fieldErrors
+        vetErros.forEach((element) => {
+          this.$refs.toast.createToast(
+            ` [${element.fieldName}] ${element.message} `,
+          )
+        })
       }
     },
     async consultarUm() {
       if (this.id != undefined) {
-        this.form.usuario = await this.service.buscarUm(this.id)
+        this.form.user = await this.service.buscarUm(this.id)
       }
     },
     mostrarSenha() {
@@ -326,16 +343,18 @@ export default {
       }
     },
     compararSenhas() {
-      if (this.form.usuario.password != this.form.usuario.confirmPassword) {
-        this.messagePassword = 'As senhas não são iguais.'
+      if (this.form.user.password == this.form.user.confirmPassword) {
         return true
+      } else {
+        this.messagePassword = 'As senhas não são iguais.'
+        return false
       }
-      return false
     },
   },
   mounted() {
     if (this.id != undefined) {
       this.consultarUm()
+      this.btnChangePassword = true
     }
   },
 }
