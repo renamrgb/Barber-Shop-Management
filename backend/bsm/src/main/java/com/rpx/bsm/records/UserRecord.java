@@ -8,7 +8,7 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
 public record UserRecord(
-        @NotBlank(message = "Nome é obrigatório") @Length(min = 2, max = 100) String name,
+        @NotBlank(message = "Nome é obrigatório") @Length(min = 2, max = 60) String name,
         @Email @Length(min = 2, max = 60) String email,
         @NotBlank(message = "Senha é obrigatório") @Length(min = 2, max = 10) String password,
         @Length(min = 11, max = 12) String phoneNumber,

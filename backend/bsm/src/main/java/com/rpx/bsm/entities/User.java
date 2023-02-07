@@ -30,7 +30,7 @@ public class User implements UserDetails, Serializable {
 
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "endereco_id")
-    private Addres address;
+    private Address address;
 
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "nivelacesso_id")
@@ -38,11 +38,11 @@ public class User implements UserDetails, Serializable {
 
     private Boolean isActive;
     public User() {
-        this.address = new Addres();
+        this.address = new Address();
         this.nivelAcesso = new NivelAcesso();
     }
 
-    public User(String name, String email, String password, String phoneNumber, String cpf, String rg, Addres address, NivelAcesso nivelAcesso, Boolean isActive) {
+    public User(String name, String email, String password, String phoneNumber, String cpf, String rg, Address address, NivelAcesso nivelAcesso, Boolean isActive) {
         this.name = name;
         this.email = email;
         this.password = password;

@@ -13,7 +13,7 @@ import java.util.Objects;
 @Getter
 @Setter
 @NoArgsConstructor
-public class Addres implements Serializable {
+public class Address implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY) //Auto incremento
     private Integer id;
@@ -24,7 +24,7 @@ public class Addres implements Serializable {
     private String city;
     private String state;
 
-    public Addres(String zipCode, String publicPlace, String neighborhood, String complement, String city, String state) {
+    public Address(String zipCode, String publicPlace, String neighborhood, String complement, String city, String state) {
         this.zipCode = zipCode;
         this.publicPlace = publicPlace;
         this.neighborhood = neighborhood;
@@ -37,7 +37,7 @@ public class Addres implements Serializable {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        Addres endereco = (Addres) o;
+        Address endereco = (Address) o;
         return Objects.equals(id, endereco.id);
     }
 
