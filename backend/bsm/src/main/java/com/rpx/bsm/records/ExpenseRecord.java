@@ -1,8 +1,11 @@
 package com.rpx.bsm.records;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.rpx.bsm.entities.ExpenseType;
 import org.hibernate.validator.constraints.Length;
+import org.springframework.format.annotation.DateTimeFormat;
 
+import javax.validation.Valid;
 import javax.validation.constraints.*;
 import java.time.LocalDate;
 
@@ -13,11 +16,11 @@ public record ExpenseRecord(
         Double total,
         @NotNull @Min(value = 0, message = "daysBeetwenInstallments deve ser maior ou igual a 0")
         Integer daysBeetwenInstallments,
+        @NotNull @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
         LocalDate releaseDate,
         @NotNull @Min(value = 0, message = "quantityOfInstallments deve ser maior ou igual a 0")
         Integer quantityOfInstallments,
         @NotNull
         ExpenseType expenseType
-
 ) {
 }

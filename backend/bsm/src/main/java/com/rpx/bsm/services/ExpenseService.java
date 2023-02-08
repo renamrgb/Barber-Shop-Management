@@ -1,11 +1,16 @@
 package com.rpx.bsm.services;
 
 import com.rpx.bsm.entities.Expense;
+import com.rpx.bsm.records.CustomerRecord;
 import com.rpx.bsm.records.ExpenseRecord;
 import com.rpx.bsm.repositories.ExpenseRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.validation.Valid;
+import java.text.DateFormat;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 @Service
@@ -31,10 +36,11 @@ public class ExpenseService {
 
         obj.setDescription(r.description());
         obj.setReleaseDate(r.releaseDate());
+        System.out.println(r.releaseDate());
         obj.setTotal(r.total());
         obj.setDaysBeetwenInstallments(r.daysBeetwenInstallments());
         obj.setQuantityOfInstallments(r.quantityOfInstallments());
-        obj.setExpenseType(r.expenseType());
+        //obj.setExpenseType(r.expenseType());
 
         return obj;
     }

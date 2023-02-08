@@ -6,6 +6,7 @@ import lombok.Setter;
 import javax.persistence.*;
 import java.io.Serializable;
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Objects;
 
 @Getter
@@ -29,17 +30,13 @@ public class Expense implements Serializable {
 
     private Integer quantityOfInstallments;
 
-    @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "expense_type_id")
-    private ExpenseType expenseType;
-
     public Expense(String description, Double total, Integer daysBeetwenInstallments, LocalDate releaseDate, Integer quantityOfInstallments, ExpenseType expenseType) {
         this.description = description;
         this.total = total;
         this.daysBeetwenInstallments = daysBeetwenInstallments;
         this.releaseDate = releaseDate;
         this.quantityOfInstallments = quantityOfInstallments;
-        this.expenseType = expenseType;
+        //this.expenseType = expenseType;
     }
 
     @Override
@@ -64,7 +61,7 @@ public class Expense implements Serializable {
                 ", daysBeetwenInstallments=" + daysBeetwenInstallments +
                 ", releaseDate=" + releaseDate +
                 ", quantityOfInstallments=" + quantityOfInstallments +
-                ", expenseType=" + expenseType +
+                //", expenseType=" + expenseType +
                 '}';
     }
 }

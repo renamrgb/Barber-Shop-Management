@@ -2,16 +2,14 @@ package com.rpx.bsm.config;
 
 import com.rpx.bsm.entities.*;
 import com.rpx.bsm.enums.NivelAcessoEnum;
-import com.rpx.bsm.repositories.PaymentMethodRepository;
-import com.rpx.bsm.repositories.ProcedureRepository;
-import com.rpx.bsm.repositories.ProductRepository;
-import com.rpx.bsm.repositories.UsuarioRepository;
+import com.rpx.bsm.repositories.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
+import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -29,6 +27,13 @@ public class TestConfig implements CommandLineRunner {
 
     @Autowired
     private ProcedureRepository procedimentoRepository;
+
+    @Autowired
+    private ExpenseRepository expenseRepository;
+
+    @Autowired
+    private ExpenseTypeRepository expenseTypeRepository;
+
     @Autowired
     private BCryptPasswordEncoder bCryptPasswordEncoder;
 
@@ -68,7 +73,18 @@ public class TestConfig implements CommandLineRunner {
 
         PaymentMethod fp = new PaymentMethod("Cartão de Credito", true);
         formaPagamentoRepository.save(fp);
-
+        /*============================================================================================================*/
+        ExpenseType expenseType = new ExpenseType("Padrão", true);
+        expenseTypeRepository.save(expenseType);
+        /*Expense expense = new Expense();
+        expense.setDescription("Despesa de teste");
+        expense.setTotal(100.00);
+        expense.setReleaseDate(LocalDate.now());
+        expense.setDaysBeetwenInstallments(30);
+        //expense.setExpenseType(expenseType);
+        expense.setQuantityOfInstallments(2);
+        //expenseRepository.save(expense);
+        */
     }
 
 }

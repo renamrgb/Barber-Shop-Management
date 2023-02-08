@@ -5,7 +5,10 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
 public record ExpenseTypeRecord(
-        @NotBlank(message = "O campo 'descrição' é obrigatório") @Length(min = 2, max = 60, message = "O campo 'descrição' deve conter até 60 caracteres") String description,
-        @NotNull(message = "O campo 'ativo' é obrigatório") Boolean isActive
+        @NotBlank(message = "O campo 'description' é obrigatório")
+        @Length(max = 60, message = "O campo 'descrição' deve conter até 60 caracteres")
+        String description,
+        @NotNull(message = "O campo 'isActive' é obrigatório")
+        Boolean isActive
 ) {
 }
