@@ -25,9 +25,9 @@ public class ExpenseDTO {
         setDescription(obj.getDescription());
         setExpenseType(new ExpenseTypeDTO(obj.getExpenseType()));
         setTotal(obj.getTotal());
-        setDaysBeetwenInstallments(getDaysBeetwenInstallments());
-        setReleaseDate(getReleaseDate());
-        setQuantityOfInstallments(getQuantityOfInstallments());
+        setDaysBeetwenInstallments(obj.getDaysBeetwenInstallments());
+        setReleaseDate(obj.getReleaseDate());
+        setQuantityOfInstallments(obj.getQuantityOfInstallments());
     }
 
 }
