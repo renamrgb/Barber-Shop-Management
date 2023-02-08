@@ -6,7 +6,6 @@ import lombok.Setter;
 
 import javax.persistence.*;
 import java.io.Serializable;
-import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 
@@ -23,9 +22,8 @@ public class ExpenseType implements Serializable {
     private String description;
     private Boolean isActive;
 
-    @OneToMany(cascade = CascadeType.ALL)
-    @JoinColumn(name="expense_type_id")
-    private Set<Expense> tarefas;
+    @OneToMany(mappedBy = "expenseType", cascade = CascadeType.ALL)
+    private Set<Expense> expenses;
 
     public ExpenseType(String description, Boolean isActive) {
         this.description = description;
