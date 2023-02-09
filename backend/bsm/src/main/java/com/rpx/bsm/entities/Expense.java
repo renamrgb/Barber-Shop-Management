@@ -1,13 +1,11 @@
 package com.rpx.bsm.entities;
 
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
 import java.io.Serializable;
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
@@ -25,7 +23,7 @@ public class Expense implements Serializable {
     private Integer daysBeetwenInstallments;
     private LocalDate releaseDate;
     private Integer quantityOfInstallments;
-    @ManyToOne//(fetch = FetchType.LAZY)
+    @ManyToOne
     private ExpenseType expenseType;
     @OneToMany(mappedBy = "expense", cascade = CascadeType.ALL)
     private Set<Installment> installments;
@@ -65,7 +63,7 @@ public class Expense implements Serializable {
                 ", daysBeetwenInstallments=" + daysBeetwenInstallments +
                 ", releaseDate=" + releaseDate +
                 ", quantityOfInstallments=" + quantityOfInstallments +
-                //", expenseType=" + expenseType +
+                ", expenseType=" + expenseType +
                 '}';
     }
 }

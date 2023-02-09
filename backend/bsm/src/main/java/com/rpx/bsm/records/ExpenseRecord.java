@@ -13,7 +13,7 @@ import java.util.Set;
 public record ExpenseRecord(
         @NotBlank(message = "description é obrigatório") @Length(min = 2, max = 60)
         String description,
-        @NotNull @DecimalMin(value = "0.1", message = "total precisa ser maior que 0.0") @Digits(integer = 3, fraction = 2)
+        @NotNull @DecimalMin(value = "0.1", message = "total precisa ser maior que 0.0") @Digits(integer = 10, fraction = 2)
         Double total,
         @NotNull @Min(value = 0, message = "daysBeetwenInstallments deve ser maior ou igual a 0")
         Integer daysBeetwenInstallments,

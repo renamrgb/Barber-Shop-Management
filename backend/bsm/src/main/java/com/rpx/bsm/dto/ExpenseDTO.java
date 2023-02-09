@@ -5,9 +5,10 @@ import com.rpx.bsm.entities.Installment;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 
 @Getter
@@ -22,9 +23,7 @@ public class ExpenseDTO {
     private Integer daysBeetwenInstallments;
     private LocalDate releaseDate;
     private Integer quantityOfInstallments;
-
-    private List<InstallmentDTO> installments;
-
+    private Set<InstallmentDTO> installments;
     public ExpenseDTO(Expense obj){
         setId(obj.getId());
         setDescription(obj.getDescription());
@@ -33,8 +32,7 @@ public class ExpenseDTO {
         setDaysBeetwenInstallments(obj.getDaysBeetwenInstallments());
         setReleaseDate(obj.getReleaseDate());
         setQuantityOfInstallments(obj.getQuantityOfInstallments());
-
-        installments = new ArrayList<>();
+        installments = new HashSet<>();
         for (Installment e : obj.getInstallments()){
             installments.add(new InstallmentDTO(e));
         }

@@ -6,7 +6,6 @@ import com.rpx.bsm.records.ExpenseRecord;
 import com.rpx.bsm.repositories.ExpenseRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.RequestParam;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -17,13 +16,8 @@ public class ExpenseService {
     @Autowired
     private ExpenseRepository repository;
 
-    public List<Expense> find(String description) {
-        List<Expense> list = null;
-
-        if (description.isEmpty())
-            list = repository.findAll();
-        else list = repository.findByDescriptionContaining(description);
-        return list;
+    public List<Expense> findAll() {
+        return repository.findAll();
     }
 
     public Expense insert(ExpenseRecord r) {
@@ -38,7 +32,7 @@ public class ExpenseService {
         List<Installment> installments = new ArrayList<>();
         for (Long i = 0L; i < r.quantityOfInstallments(); i++) {
             dtStart = dtStart.plusDays(r.daysBeetwenInstallments());
-            installments.add(new Installment(i+1, installmentsValue, dtStart));
+            installments.add(new Installment(i + 1, installmentsValue, dtStart));
         }
 
         return installments;

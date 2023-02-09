@@ -1,6 +1,5 @@
 package com.rpx.bsm.resources;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
 import com.rpx.bsm.dto.ExpenseDTO;
 import com.rpx.bsm.dto.InstallmentDTO;
 import com.rpx.bsm.entities.Expense;
@@ -9,12 +8,12 @@ import com.rpx.bsm.records.ExpenseRecord;
 import com.rpx.bsm.services.ExpenseService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import javax.validation.Valid;
 import java.net.URI;
-import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -26,8 +25,9 @@ public class ExpenseResource {
     private ExpenseService service;
 
     @GetMapping
-    public ResponseEntity<List<ExpenseDTO>> find(@RequestParam(defaultValue = "", name = "description") String description) {
-        List<Expense> list = service.find(description);
+    @Transactional
+    public ResponseEntity<List<ExpenseDTO>> findAll() {
+        List<Expense> list = service.findAll();
         List<ExpenseDTO> listDto = list.stream().map(x -> new ExpenseDTO(x)).collect(Collectors.toList());
         return ResponseEntity.ok().body(listDto);
     }
