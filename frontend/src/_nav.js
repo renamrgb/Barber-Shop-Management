@@ -45,6 +45,19 @@ export default [
         name: 'Tipo de Despesa',
         to: '/forms/tipoDespesas',
       },
-    ],
+    ],    
   },
+  {
+    component: 'CNavGroup',
+    name: 'Despesas',
+    // to: '/forms',
+    icon: 'cil-notes',
+    items: [  
+      {
+        component: 'CNavItem',
+        name: 'Despesas',
+        to: '/expense',
+      },          
+    ],
+  }
 ]

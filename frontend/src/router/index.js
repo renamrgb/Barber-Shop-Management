@@ -336,6 +336,33 @@ const routes = [
         name: 'Widgets',
         component: () => import('@/views/widgets/Widgets.vue'),
       },
+      {
+        path: '/expense',
+        name: 'Expense',
+        component: {
+          render() {
+            return h(resolveComponent('router-view'))
+          },
+        },
+        redirect: '/expense',
+        children: [          
+          {
+            path: '/expense',
+            name: 'Expense',
+            component: () => import('@/views/expense/ExpenseList.vue'),
+          },
+          {
+            path: '/expense/form/:id',
+            name: 'Alterar Despesa',
+            component: () => import('@/views/expense/ExpenseForm.vue'),
+          },
+          {
+            path: '/expense/form',
+            name: 'Cadastrar despesa',
+            component: () => import('@/views/expense/ExpenseForm.vue'),
+          },   
+        ],
+      },
     ],
   },
   {
