@@ -7,31 +7,32 @@ import lombok.Setter;
 import javax.persistence.*;
 import java.io.Serializable;
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Objects;
+import java.util.Set;
 
 @Getter
 @Setter
-@NoArgsConstructor
 @Entity
 @Table(name = "expense")
 public class Expense implements Serializable {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY) //Auto incremento
     private Long Id;
-
     private String description;
-
     private Double total;
-
     private Integer daysBeetwenInstallments;
-
     private LocalDate releaseDate;
-
     private Integer quantityOfInstallments;
-
     @ManyToOne//(fetch = FetchType.LAZY)
     private ExpenseType expenseType;
+    @OneToMany(mappedBy = "expense", cascade = CascadeType.ALL)
+    private Set<Installment> installments;
+
+    public Expense() {
+        installments = new HashSet<>();
+    }
 
     public Expense(String description, Double total, Integer daysBeetwenInstallments, LocalDate releaseDate, Integer quantityOfInstallments, ExpenseType expenseType) {
         this.description = description;
@@ -64,7 +65,7 @@ public class Expense implements Serializable {
                 ", daysBeetwenInstallments=" + daysBeetwenInstallments +
                 ", releaseDate=" + releaseDate +
                 ", quantityOfInstallments=" + quantityOfInstallments +
-                ", expenseType=" + expenseType +
+                //", expenseType=" + expenseType +
                 '}';
     }
 }

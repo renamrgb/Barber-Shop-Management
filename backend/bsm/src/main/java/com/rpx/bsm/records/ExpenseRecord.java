@@ -2,12 +2,13 @@ package com.rpx.bsm.records;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.rpx.bsm.entities.ExpenseType;
+import com.rpx.bsm.entities.Installment;
 import org.hibernate.validator.constraints.Length;
-import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.validation.Valid;
 import javax.validation.constraints.*;
 import java.time.LocalDate;
+import java.util.Set;
 
 public record ExpenseRecord(
         @NotBlank(message = "description é obrigatório") @Length(min = 2, max = 60)
@@ -21,6 +22,7 @@ public record ExpenseRecord(
         @NotNull @Min(value = 0, message = "quantityOfInstallments deve ser maior ou igual a 0")
         Integer quantityOfInstallments,
         @NotNull
-        ExpenseType expenseType
+        ExpenseType expenseType,
+        @Valid Set<Installment> installments
 ) {
 }
