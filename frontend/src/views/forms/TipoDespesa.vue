@@ -26,6 +26,14 @@
               <br />
               <CFormSwitch
                 id="formSwitchCheckDefault"
+                label="Esse tipo gera parcelas?"
+                v-model="form.generateInstallments"
+              />
+            </div>
+            <div>
+              <br />
+              <CFormSwitch
+                id="formSwitchCheckDefault"
                 label="Ativo"
                 v-model="form.isActive"
               />
@@ -64,6 +72,7 @@ export default {
       validatedCustom: null,
       form: {
         description: '',
+        generateInstallments: false,
         isActive: false,
       },
     }
@@ -79,7 +88,7 @@ export default {
     }
   },
   methods: {
-    submitForm(event) {
+    submitForm(event) {      
       this.v$.$validate()
       if (!this.v$.$error) {
         this.salvar()
@@ -87,14 +96,11 @@ export default {
     },
     async salvar(event) {
       let res = undefined
-      let dados = {
-        description: this.form.description,
-        isActive: this.form.isActive,
-      }
       if (this.id == undefined) {
-        res = await this.service.cadastrar(dados)
+        res = await this.service.cadastrar(this.form)
       } else {
-        res = await this.service.alterar(this.id, dados)
+        console.log(this.form);
+        res = await this.service.alterar(this.id, this.form)
       }
       if (res.status == 201) {
         this.$refs.toast.createToast('Cadastrado com sucesso!')
@@ -115,9 +121,8 @@ export default {
     },
     async consultarUm() {
       if (this.id != undefined) {
-        let item = await this.service.buscarUm(this.id)
-        this.descricao = item.data.descricao
-        this.ativo = item.data.ativo
+        this.form = await this.service.buscarUm(this.id)
+        
       }
     },
   },

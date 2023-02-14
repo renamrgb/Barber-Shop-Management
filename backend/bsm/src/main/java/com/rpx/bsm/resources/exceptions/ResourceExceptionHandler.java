@@ -34,6 +34,15 @@ public class ResourceExceptionHandler {
         return ResponseEntity.status(status).body(err);
     }
 
+    @ExceptionHandler(ValidateInstallments.class)
+    public ResponseEntity<StandardError> hasInstallment(ValidateInstallments e) {
+        String error = "Parcelas em aberto";
+        HttpStatus status = HttpStatus.BAD_REQUEST;
+        //String message =  "A despesa não pode ser excluída, pois existe parcelas pendentes";
+        StandardError err = new StandardError(Instant.now(), status.value(), error, e.getMessage(), "/expenses");
+        return ResponseEntity.status(status).body(err);
+    }
+
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ValidationError> validation(MethodArgumentNotValidException e, HttpServletRequest request) {
         String error = "Validação error";

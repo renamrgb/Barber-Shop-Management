@@ -19,6 +19,8 @@ public record ExpenseRecord(
         Integer daysBeetwenInstallments,
         @NotNull @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
         LocalDate releaseDate,
+        @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
+        LocalDate dueDate,
         @NotNull @Min(value = 0, message = "quantityOfInstallments deve ser maior ou igual a 0")
         Integer quantityOfInstallments,
         @NotNull

@@ -8,6 +8,7 @@ public record ExpenseTypeRecord(
         @NotBlank(message = "O campo 'description' é obrigatório")
         @Length(max = 60, message = "O campo 'descrição' deve conter até 60 caracteres")
         String description,
+        @NotNull Boolean generateInstallments,
         @NotNull(message = "O campo 'isActive' é obrigatório")
         Boolean isActive
 ) {

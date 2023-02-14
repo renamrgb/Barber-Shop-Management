@@ -15,13 +15,13 @@ import java.util.Set;
 @Setter
 @NoArgsConstructor
 public class ExpenseDTO {
-
     private Long Id;
     private String description;
     private ExpenseTypeDTO expenseType;
     private Double total;
     private Integer daysBeetwenInstallments;
     private LocalDate releaseDate;
+    private LocalDate dueDate;
     private Integer quantityOfInstallments;
     private Set<InstallmentDTO> installments;
     public ExpenseDTO(Expense obj){
@@ -32,6 +32,7 @@ public class ExpenseDTO {
         setDaysBeetwenInstallments(obj.getDaysBeetwenInstallments());
         setReleaseDate(obj.getReleaseDate());
         setQuantityOfInstallments(obj.getQuantityOfInstallments());
+        setDueDate(obj.getDueDate());
         installments = new HashSet<>();
         for (Installment e : obj.getInstallments()){
             installments.add(new InstallmentDTO(e));

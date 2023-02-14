@@ -74,17 +74,10 @@ public class TestConfig implements CommandLineRunner {
         PaymentMethod fp = new PaymentMethod("Cartão de Credito", true);
         formaPagamentoRepository.save(fp);
         /*============================================================================================================*/
-        ExpenseType expenseType = new ExpenseType("Padrão", true);
+        ExpenseType expenseType = new ExpenseType("Com parcelas", true, true);
         expenseTypeRepository.save(expenseType);
-        /*Expense expense = new Expense();
-        expense.setDescription("Despesa de teste");
-        expense.setTotal(100.00);
-        expense.setReleaseDate(LocalDate.now());
-        expense.setDaysBeetwenInstallments(30);
-        //expense.setExpenseType(expenseType);
-        expense.setQuantityOfInstallments(2);
-        //expenseRepository.save(expense);
-        */
+        expenseType = new ExpenseType("Sem parcelas", false, true);
+        expenseTypeRepository.save(expenseType);
     }
 
 }

@@ -59,10 +59,11 @@ public class ExpenseTypeService {
     private void updateData(ExpenseType entity, ExpenseType obj) {
         entity.setDescription(obj.getDescription());
         entity.setIsActive(obj.getIsActive());
+        entity.setGenerateInstallments(obj.getGenerateInstallments());
     }
 
     private ExpenseType converterEmentidade(ExpenseTypeRecord record) {
-        return new ExpenseType(record.description(), record.isActive());
+        return new ExpenseType(record.description(), record.generateInstallments(), record.isActive());
     }
     public ExpenseType findById(Long id) {
         Optional<ExpenseType> obj = repository.findById(id);

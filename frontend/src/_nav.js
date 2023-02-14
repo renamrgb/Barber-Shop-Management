@@ -51,11 +51,11 @@ export default [
     component: 'CNavGroup',
     name: 'Despesas',
     // to: '/forms',
-    icon: 'cil-notes',
+    icon: 'cil-dollar',
     items: [  
       {
         component: 'CNavItem',
-        name: 'Despesas',
+        name: 'Registrar Despesa',
         to: '/expense',
       },          
     ],

@@ -3,7 +3,7 @@
     <CCol :xs="12">
       <CCard class="mb-4">
         <CCardHeader>
-          <strong>Lançar depesa</strong>
+          <strong>Registar Despesa</strong>
         </CCardHeader>
         <CCardBody>
           <CForm>
@@ -23,17 +23,31 @@
                 {{ v$.form.description.$errors[0].$message }}
               </div>
             </div>
-            <div class="mb-3">
-              <Multiselect
-                v-model="value"
-                placeholder="Procedimentos que o profissional realiza..."
-                label="description"
-                trackBy="description"
-                :options="options"
-                :searchable="true"
-                mode="tags"
-              >
-              </Multiselect>
+            <div class="row mb-3">
+              <div class="col">
+                <CFormLabel for="typeExpense">* Tipo De Despesa</CFormLabel>
+                <CFormSelect
+                  v-model="form.expenseType.id"
+                  :options="optionsSelect"
+                  :searchable="true"
+                  @click="
+                    () => {
+                      if (
+                        this.form.expenseType.id != undefined &&
+                        this.optionsSelect[this.form.expenseType.id]
+                          .generateInstallments == true
+                      ) {
+                        this.minQtyInstallments = 1
+                        this.minDaysBInstallments = 1
+                      } else {
+                        this.minQtyInstallments = 0
+                        this.minDaysBInstallments = 0
+                      }
+                    }
+                  "
+                >
+                </CFormSelect>
+              </div>
             </div>
             <div class="row mb-3">
               <div class="col">
@@ -50,22 +64,6 @@
                 </div>
               </div>
               <div class="col">
-                <CFormLabel for="total">* Dias entre as parcelas</CFormLabel>
-                <CFormInput
-                  id="total"
-                  v-model="form.daysBeetwenInstallments"
-                  min="0"
-                />
-                <div
-                  v-if="v$.form.daysBeetwenInstallments.$errors.length > 0"
-                  class="invalid-input-form"
-                >
-                  {{ v$.form.daysBeetwenInstallments.$errors[0].$message }}
-                </div>
-              </div>
-            </div>
-            <div class="row mb-3">
-              <div class="col">
                 <CFormLabel for="releaseDate">* Data de lançamento</CFormLabel>
                 <input
                   type="date"
@@ -80,33 +78,69 @@
                   {{ v$.form.releaseDate.$errors[0].$message }}
                 </div>
               </div>
-              <div class="col">
-                <CFormLabel for="quantityOfInstallments"
-                  >* Qtd de parcelas</CFormLabel
-                >
-                <CFormInput
-                  name="quantityOfInstallments"
-                  type="number"
-                  v-model="form.quantityOfInstallments"
-                  min="0"
-                  required
-                />
-                <div
-                  v-if="v$.form.quantityOfInstallments.$errors.length > 0"
-                  class="invalid-input-form"
-                >
-                  {{ v$.form.quantityOfInstallments.$errors[0].$message }}
+            </div>
+            <div
+              class="row"
+              v-if="
+                this.form.expenseType.id != undefined &&
+                this.optionsSelect[this.form.expenseType.id]
+                  .generateInstallments == false
+              "
+            >
+              <div class="col mb-3">
+                <div class="col">
+                  <CFormLabel for="releaseDate"
+                    >* Data de vencimento</CFormLabel
+                  >
+                  <input
+                    type="date"
+                    name="releaseDate"
+                    v-model="form.dueDate"
+                    class="form-control"
+                  />
                 </div>
               </div>
             </div>
-            <div v-if="!this.generateInstallment">
-              <div class="d-grid gap-2 d-md-flex justify-content-md-end">
-                <CButton
-                  color="primary"
-                  class="me-md-2"
-                  @click="this.generateInstallments()"
-                  >Gerar parcelas</CButton
-                >
+            <div
+              v-if="
+                this.form.expenseType.id != undefined &&
+                this.optionsSelect[this.form.expenseType.id]
+                  .generateInstallments == true
+              "
+            >
+              <div class="row mb-3">
+                <div class="col">
+                  <CFormLabel for="quantityOfInstallments"
+                    >* Qtde de parcelas</CFormLabel
+                  >
+                  <CFormInput
+                    name="quantityOfInstallments"
+                    type="number"
+                    v-model="form.quantityOfInstallments"
+                    min="0"
+                    required
+                  />
+                  <div
+                    v-if="v$.form.quantityOfInstallments.$errors.length > 0"
+                    class="invalid-input-form"
+                  >
+                    {{ v$.form.quantityOfInstallments.$errors[0].$message }}
+                  </div>
+                </div>
+                <div class="col">
+                  <CFormLabel for="total">* Dias entre as parcelas</CFormLabel>
+                  <CFormInput
+                    id="total"
+                    v-model="form.daysBeetwenInstallments"
+                    min="0"
+                  />
+                  <div
+                    v-if="v$.form.daysBeetwenInstallments.$errors.length > 0"
+                    class="invalid-input-form"
+                  >
+                    {{ v$.form.daysBeetwenInstallments.$errors[0].$message }}
+                  </div>
+                </div>
               </div>
             </div>
           </CForm>
@@ -117,6 +151,7 @@
                   <CTableHead class="table-dark">
                     <CTableRow>
                       <CTableHeaderCell scope="col">#</CTableHeaderCell>
+                      <CTableHeaderCell scope="col">Descrição</CTableHeaderCell>
                       <CTableHeaderCell scope="col">Valor</CTableHeaderCell>
                       <CTableHeaderCell scope="col"
                         >Vencimento</CTableHeaderCell
@@ -129,23 +164,51 @@
                         e.id
                       }}</CTableHeaderCell>
                       <CTableDataCell>{{
-                        e.installmentValue.toFixed(2)
+                        this.form.description
                       }}</CTableDataCell>
-                      <CTableDataCell>{{ e.dueDate }}</CTableDataCell>
+                      <CTableDataCell
+                        >R$ {{ e.installmentValue.toFixed(2) }}</CTableDataCell
+                      >
+                      <CTableDataCell>
+                        <input
+                          type="date"
+                          name="releaseDate"
+                          v-model="e.dueDate"
+                          class="form-control"
+                        />
+                      </CTableDataCell>
                     </CTableRow>
                   </CTableBody>
                 </CTable>
-                <div v-if="this.generateInstallment">
-                  <div class="d-grid gap-2 d-md-flex justify-content-md-end">
-                    <CButton color="primary" class="me-md-2" @click="submitForm"
-                      >Confirmar</CButton
-                    >
-                    <a href="/#/forms/produto" class="btn btn-danger"
-                      >Cancelar</a
-                    >
-                  </div>
-                </div>
               </div>
+            </div>
+          </div>
+          <div>
+            <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+              <CButton
+                v-if="
+                  this.form.expenseType.id != undefined &&
+                  this.optionsSelect[this.form.expenseType.id]
+                    .generateInstallments == true
+                "
+                color="primary"
+                class="me-md-2"
+                @click="this.generateInstallments()"
+                >Gerar parcelas</CButton
+              >
+              <CButton
+                v-if="
+                  (this.form.expenseType.id != undefined &&
+                    this.optionsSelect[this.form.expenseType.id]
+                      .generateInstallments == false) ||
+                  this.installments.length > 0
+                "
+                color="primary"
+                class="me-md-2"
+                @click="submitForm"
+                >Confirmar</CButton
+              >
+              <a href="/#/expense" class="btn btn-danger">Cancelar</a>
             </div>
           </div>
         </CCardBody>
@@ -161,11 +224,9 @@ import ValidationsMessage from '@/util/ValidationsMessage.js'
 import { decimal } from '@vuelidate/validators'
 import Service from '@/Services/expenseService.js'
 import Toast from '@/components/Toast.vue'
-import Multiselect from '@vueform/multiselect/src/Multiselect'
 import TipoDespesaService from '@/Services/tipoDespesaService'
-
 export default {
-  components: { Toast, Multiselect },
+  components: { Toast },
   name: 'Produtos',
   data() {
     return {
@@ -174,20 +235,24 @@ export default {
       tipoDeDespesaService: new TipoDespesaService(),
       id: this.$route.params.id,
       service: new Service(),
+      alreadyGeneratedInstallments: false,
       generateInstallment: false,
       form: {
         description: '',
         expenseType: {
-          id: '',
+          id: undefined,
         },
         total: '00.00',
         daysBeetwenInstallments: 0,
-        releaseDate: '',
+        quantityOfInstallments: 0,
+        releaseDate: this.currentDate(),
+        dueDate: this.currentDate(),
         installments: [],
       },
+      optionsSelect: ['Abra este menu de seleção'],
       installments: [],
-      value: [],
-      options: [],
+      minQtyInstallments: 0,
+      minDaysBInstallments: 0,
     }
   },
   validations() {
@@ -200,45 +265,56 @@ export default {
         total: {
           required: this.validationsMessage.requiredMessage,
           decimal,
-          minValue: this.validationsMessage.minMenssage(0),
+          minValue: this.validationsMessage.minMenssage(0.1),
         },
-        total: { maxLength: this.validationsMessage.maxLengthMenssage(60) },
         releaseDate: {
           required: this.validationsMessage.requiredMessage,
         },
         daysBeetwenInstallments: {
           required: this.validationsMessage.requiredMessage,
-          minValue: this.validationsMessage.minMenssage(0),
+          minValue: this.validationsMessage.minMenssage(
+            this.minDaysBInstallments,
+          ),
         },
         quantityOfInstallments: {
           required: this.validationsMessage.requiredMessage,
-          minValue: this.validationsMessage.minMenssage(0),
+          minValue: this.validationsMessage.minMenssage(
+            this.minQtyInstallments,
+          ),
         },
       },
     }
   },
   methods: {
-    submitForm() {        
+    submitForm() {
       this.v$.$validate()
       if (!this.v$.$error) {
         this.salvar()
       }
     },
+    currentDate() {
+      const timeElapsed = Date.now()
+      const today = new Date(timeElapsed)
+      let date = today.toISOString().split('T')
+      return date[0]
+    },
     async salvar() {
-      let res = undefined    
-      this.form.expenseType.id = this.value[0]
-      this.installments.forEach((element) => {
-        this.form.installments.push({
-          installmentValue: element.installmentValue.toFixed(2),
-          dueDate: element.dueDate,
+      let res = undefined
+      this.form.expenseType.id = this.form.expenseType.id[0]
+
+      if (this.installments != undefined) {
+        this.installments.forEach((element) => {
+          this.form.installments.push({
+            installmentValue: element.installmentValue.toFixed(2),
+            dueDate: element.dueDate,
+          })
         })
-      })
-      console.log(this.form)
+      }      
       if (this.id == undefined) {
         this.total = this.form.total.replace(',', '.')
         res = await this.service.cadastrar(this.form)
       } else {
-        res = await this.service.alterar(this.id, this.form)
+        res = await this.service.alterar(this.form, this.id)
       }
       if (res.status == 201) {
         this.$refs.toast.createToast('Cadastrado com sucesso!')
@@ -253,17 +329,13 @@ export default {
         })
       }
     },
-    async consultarUm() {
-      if (this.id != undefined) {
-        this.form = await this.service.buscarUm(this.id)
-      }
-    },
-    async carregarMultiSelect() {
+    async carregarOptionsSelect() {
       let res = await this.tipoDeDespesaService.consultarTodos()
       res.forEach((element) => {
-        this.options.push({
+        this.optionsSelect.push({
           value: element.id,
-          description: element.description,
+          label: element.description,
+          generateInstallments: element.generateInstallments,
         })
       })
     },
@@ -274,11 +346,15 @@ export default {
         this.generateInstallment = true
       }
     },
+    async getOneExpense(id) {
+      this.form = await this.service.getOneExpense(id)
+      this.installments = this.form.installments
+    },
   },
   mounted() {
-    this.carregarMultiSelect()
+    this.carregarOptionsSelect()
     if (this.id != undefined) {
-      this.consultarUm()
+      this.getOneExpense(this.id)
     }
   },
 }
@@ -288,19 +364,6 @@ export default {
   display: flex;
   justify-content: center;
   margin: 30px;
-}
-.label {
-  margin-right: 10px;
-}
-.error {
-  border: 3px solid red;
-}
-.button-submit {
-  margin-top: 15px;
-  width: 250px;
-}
-.error-color {
-  color: red;
 }
 </style>
 <style src="@vueform/multiselect/themes/default.css"></style>

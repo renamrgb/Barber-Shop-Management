@@ -46,7 +46,7 @@ export default class TipoDespesaService {
   async buscarUm(id) {
     try {
       const res = await api.get(`${this.url}/${id}`)
-      return res
+      return res.data
     } catch (error) {
       return error
     }

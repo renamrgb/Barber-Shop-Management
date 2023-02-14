@@ -19,12 +19,36 @@ export default class ExpenseService {
       return error
     }
   }
+  async alterar(item, id) {
+    try {
+      const res = await api.put(`${this.url}/${id}`, item)
+      return res.data
+    } catch (error) {
+      return error
+    }
+  }
   async generateInstallments(item) {
     try {
       const res = await api.post(`${this.url}/generateInstallments`, item)
       return res.data
     } catch (error) {
       return error
+    }
+  }
+  async getOneExpense(id) {
+    try {
+      const res = await api.get(`${this.url}/${id}`)
+      return res.data
+    } catch (error) {
+      return error
+    }
+  }
+  async delete(id) {
+    try {
+      const res = await api.delete(`${this.url}/${id}`)
+      return res.data
+    } catch (error) {
+      return error.response.data
     }
   }
 }

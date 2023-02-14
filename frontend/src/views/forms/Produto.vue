@@ -59,7 +59,7 @@
                 </div>
               </div>
               <div class="col">
-                <CFormLabel for="quantity">* Qtd em estoque</CFormLabel>
+                <CFormLabel for="quantity">* Qtde em estoque</CFormLabel>
                 <CFormInput
                   name="quantity"
                   type="number"

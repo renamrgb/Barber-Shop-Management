@@ -20,13 +20,21 @@ public class ExpenseType implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY) //Auto incremento
     private Long Id;
     private String description;
+    private Boolean generateInstallments;
     private Boolean isActive;
-
     @OneToMany(mappedBy = "expenseType", cascade = CascadeType.ALL)
     private Set<Expense> expenses;
 
-    public ExpenseType(String description, Boolean isActive) {
+    public ExpenseType(Long id, String description, Boolean generateInstallments, Boolean isActive) {
+        Id = id;
         this.description = description;
+        this.generateInstallments = generateInstallments;
+        this.isActive = isActive;
+    }
+
+    public ExpenseType(String description, Boolean generateInstallments, Boolean isActive) {
+        this.description = description;
+        this.generateInstallments = generateInstallments;
         this.isActive = isActive;
     }
 
