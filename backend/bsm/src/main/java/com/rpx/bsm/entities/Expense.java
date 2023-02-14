@@ -7,9 +7,9 @@ import lombok.Setter;
 import javax.persistence.*;
 import java.io.Serializable;
 import java.time.LocalDate;
-import java.util.HashSet;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
-import java.util.Set;
 
 @Getter
 @Setter
@@ -28,10 +28,10 @@ public class Expense implements Serializable {
     @ManyToOne
     private ExpenseType expenseType;
     @OneToMany(mappedBy = "expense", cascade = CascadeType.ALL)
-    private Set<Installment> installments;
+    private List<Installment> installments;
 
     public Expense() {
-        installments = new HashSet<>();
+        installments = new ArrayList<>();
     }
 
     public Expense(String description, Double total, Integer daysBeetwenInstallments, LocalDate releaseDate, Integer quantityOfInstallments, ExpenseType expenseType) {

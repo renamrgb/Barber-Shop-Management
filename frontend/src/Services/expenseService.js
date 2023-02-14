@@ -20,9 +20,9 @@ export default class ExpenseService {
     }
   }
   async alterar(item, id) {
-    try {
+    try {      
       const res = await api.put(`${this.url}/${id}`, item)
-      return res.data
+      return res
     } catch (error) {
       return error
     }

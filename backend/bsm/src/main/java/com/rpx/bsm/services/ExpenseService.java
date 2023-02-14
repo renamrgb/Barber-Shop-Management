@@ -14,11 +14,10 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
 import javax.persistence.EntityNotFoundException;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 public class ExpenseService {
@@ -35,9 +34,9 @@ public class ExpenseService {
         Expense obj = null;
         ExpenseType expenseType = expenseTypeService.findById(r.expenseType().getId());
 
-        if(expenseType.getGenerateInstallments() == false && r.installments().size() > 0){
+        if (expenseType.getGenerateInstallments() == false && r.installments().size() > 0) {
             throw new ValidateInstallments("O tipo de despesa não permite que a despesa tenha parcelas");
-        }else{
+        } else {
             obj = repository.save(convertToEntity(r));
         }
         return obj;
@@ -59,10 +58,10 @@ public class ExpenseService {
 
     public void delete(Long id) {
         try {
-            Expense obj =  findById(id);
-            if(obj.getExpenseType().getGenerateInstallments() == false){
+            Expense obj = findById(id);
+            if (obj.getExpenseType().getGenerateInstallments() == false) {
                 repository.deleteById(id);
-            }else{
+            } else {
                 throw new ValidateInstallments("A despesa não pode ser excluída, pois existe parcelas pendentes");
             }
         } catch (EmptyResultDataAccessException e) {
@@ -111,12 +110,16 @@ public class ExpenseService {
 
         obj.setDescription(r.description());
         obj.setTotal(r.total());
-        obj.setInstallments(obj.getInstallments());
         obj.setExpenseType(r.expenseType());
         obj.setDaysBeetwenInstallments(r.daysBeetwenInstallments());
         obj.setQuantityOfInstallments(r.quantityOfInstallments());
         obj.setDueDate(r.dueDate());
         obj.setReleaseDate(r.releaseDate());
+
+        for(int i=0; i<obj.getInstallments().size(); i++){
+            obj.getInstallments().get(i).setDueDate(r.installments().get(i).getDueDate());
+            obj.getInstallments().get(i).setInstallmentValue(r.installments().get(i).getInstallmentValue());
+        }
 
         return obj;
     }

@@ -300,20 +300,19 @@ export default {
     },
     async salvar() {
       let res = undefined
-      this.form.expenseType.id = this.form.expenseType.id[0]
-
-      if (this.installments != undefined) {
-        this.installments.forEach((element) => {
-          this.form.installments.push({
-            installmentValue: element.installmentValue.toFixed(2),
-            dueDate: element.dueDate,
-          })
-        })
-      }      
       if (this.id == undefined) {
+        if (this.installments != undefined) {
+          this.installments.forEach((element) => {
+            this.form.installments.push({
+              installmentValue: element.installmentValue,
+              dueDate: element.dueDate,
+            })
+          })
+        }
         this.total = this.form.total.replace(',', '.')
         res = await this.service.cadastrar(this.form)
       } else {
+        this.form.installments = this.installments
         res = await this.service.alterar(this.form, this.id)
       }
       if (res.status == 201) {
@@ -323,7 +322,6 @@ export default {
         this.$refs.toast.createToast('Alterado com sucesso!')
       } else {
         let vetErros = res.response.data.fieldErrors
-
         vetErros.forEach((element) => {
           this.$refs.toast.createToast(`${element.message} `)
         })

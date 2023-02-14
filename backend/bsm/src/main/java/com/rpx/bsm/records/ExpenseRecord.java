@@ -8,7 +8,7 @@ import org.hibernate.validator.constraints.Length;
 import javax.validation.Valid;
 import javax.validation.constraints.*;
 import java.time.LocalDate;
-import java.util.Set;
+import java.util.List;
 
 public record ExpenseRecord(
         @NotBlank(message = "description é obrigatório") @Length(min = 2, max = 60)
@@ -25,6 +25,6 @@ public record ExpenseRecord(
         Integer quantityOfInstallments,
         @NotNull
         ExpenseType expenseType,
-        @Valid Set<Installment> installments
+        @Valid List<Installment> installments
 ) {
 }
