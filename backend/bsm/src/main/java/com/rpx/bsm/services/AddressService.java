@@ -33,7 +33,6 @@ public class AddressService {
             throw new RuntimeException(e);
         }
     }
-
     private Object getHeaders() {
         return new HttpHeaders();
     }

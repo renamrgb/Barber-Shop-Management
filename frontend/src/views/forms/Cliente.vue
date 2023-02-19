@@ -126,12 +126,12 @@
                 {{ v$.form.user.phoneNumber.$errors[0].$message }}
               </div>
             </div>
-            <div name="addres">
+            <div id="getAddres">
               <div class="row">
                 <CFormLabel for="cep">CEP</CFormLabel>
               </div>
               <div class="row g-4 mb-3">
-                <div class="col-md-2">                  
+                <div class="col-md-2">
                   <input
                     name="cep"
                     type="text"
@@ -141,9 +141,17 @@
                   />
                 </div>
                 <div class="col">
-                  <button type="button" class="btn btn-primary" @click="getAddressByCep">Consultar CEP</button>
+                  <button
+                    type="button"
+                    class="btn btn-primary"
+                    @click="getAddressByCep"
+                  >
+                    Consultar CEP
+                  </button>
                 </div>
               </div>
+            </div>
+            <div id="addres" v-if="this.consultedZipCode == true">              
               <div class="row g-4 mb-3">
                 <div class="col">
                   <CFormLabel for="descricao">Logradouro</CFormLabel>
@@ -235,6 +243,7 @@ export default {
       mostraSenha: false,
       messagePassword: '',
       btnChangePassword: false,
+      consultedZipCode: false,
       form: {
         user: {
           name: '',
@@ -357,12 +366,16 @@ export default {
     },
     async getAddressByCep(){
       this.form.user.address = await this.addressService.getAddressByCep(this.form.user.address.zipCode);
+      if(this.form.user.address.zipCode != undefined){
+        this.consultedZipCode = true
+      }
     }
   },
   mounted() {
     if (this.id != undefined) {
       this.consultarUm()
       this.btnChangePassword = true
+      
     }
   },
 }

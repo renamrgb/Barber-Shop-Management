@@ -127,9 +127,11 @@
               </div>
             </div>
             <div class="mb-3">
+              <CFormLabel for="procedure"
+                >* Procedimentos que o profissional realiza</CFormLabel
+              >
               <Multiselect
                 v-model="value"
-                placeholder="Procedimentos que o profissional realiza..."
                 label="description"
                 trackBy="description"
                 :options="options"
@@ -138,10 +140,12 @@
               >
               </Multiselect>
             </div>
-            <div name="addres">
+            <div id="getAddres">
+              <div class="row">
+                <CFormLabel for="cep">CEP</CFormLabel>
+              </div>
               <div class="row g-4 mb-3">
                 <div class="col-md-2">
-                  <CFormLabel for="cep">CEP</CFormLabel>
                   <input
                     name="cep"
                     type="text"
@@ -150,6 +154,19 @@
                     v-model="form.user.address.zipCode"
                   />
                 </div>
+                <div class="col">
+                  <button
+                    type="button"
+                    class="btn btn-primary"
+                    @click="getAddressByCep"
+                  >
+                    Consultar CEP
+                  </button>
+                </div>
+              </div>
+            </div>
+            <div id="addres" v-if="this.consultedZipCode == true">
+              <div class="row g-4 mb-3">
                 <div class="col">
                   <CFormLabel for="descricao">Logradouro</CFormLabel>
                   <CFormInput
@@ -231,6 +248,7 @@ import { useVuelidate } from '@vuelidate/core'
 import ValidationsMessage from '@/util/ValidationsMessage.js'
 import Service from '@/Services/profissionalService.js'
 import ProcedimentoService from '@/Services/procedimentoService.js'
+import AddressService from '@/Services/addressService.js'
 import Toast from '@/components/Toast.vue'
 import Multiselect from '@vueform/multiselect/src/Multiselect'
 
@@ -244,9 +262,11 @@ export default {
       id: this.$route.params.id,
       service: new Service(),
       procedimentoService: new ProcedimentoService(),
+      addressService: new AddressService(),
       mostraSenha: false,
       messagePassword: '',
       btnChangePassword: false,
+      consultedZipCode: false,
       form: {
         user: {
           name: '',
@@ -267,9 +287,9 @@ export default {
           nivelAcesso: {
             authority: 'ROLE_ADMIN',
           },
+          procedures: [],
           isActive: false,
-        },
-        procedures: [],
+        },        
       },
       value: [],
       options: [],
@@ -311,7 +331,7 @@ export default {
         this.form.user.confirmPassword = '*******'
       }
       this.v$.$validate()
-      console.log(this.v$.$errors);
+      // console.log(this.v$.$errors);
       if (!this.v$.$error && !this.btnChangePassword && this.compararSenhas()) {
         this.salvar()
       } else if (!this.v$.$error && this.btnChangePassword) {
@@ -320,7 +340,7 @@ export default {
     },
     async salvar() {
       this.value.forEach((element) => {
-        this.form.procedures.push({ id: element })
+        this.form.user.procedures.push({ id: element })
       })
       let res = undefined
       let dados = this.form
@@ -340,14 +360,14 @@ export default {
       }
       if (res.status == 201) {
         this.$refs.toast.createToast('Cadastrado com sucesso!')
-        this.$router.push('/forms/cliente')
+        this.$router.push('/forms/profissional')
       } else if (res.status == 200) {
         this.$refs.toast.createToast('Alterado com sucesso!')
       } else {
         let vetErros = res.response.data.fieldErrors
         vetErros.forEach((element) => {
           this.$refs.toast.createToast(
-            ` [${element.fieldName}] ${element.message} `,
+            `[${element.fieldName}] ${element.message}`,
           )
         })
       }
@@ -355,6 +375,10 @@ export default {
     async consultarUm() {
       if (this.id != undefined) {
         this.form.user = await this.service.buscarUm(this.id)
+        console.log(this.form.user.procedures);
+        this.form.user.procedures.forEach(element => {
+          this.value.push(element.id)
+        });
       }
     },
     mostrarSenha() {
@@ -376,7 +400,7 @@ export default {
     },
     async carregarSelectProcedimentos() {
       let res = await this.procedimentoService.consultarTodos()
-      console.log(res)
+      // console.log(res)
       res.forEach((element) => {
         this.options.push({
           value: element.id,
@@ -389,12 +413,23 @@ export default {
         this.value.push(element.id)
       })
     },
+    async getAddressByCep() {
+      this.form.user.address = await this.addressService.getAddressByCep(
+        this.form.user.address.zipCode,
+      )
+      if(this.form.user.address.zipCode != undefined){
+        this.consultedZipCode = true
+      }
+    },
   },
   mounted() {
     this.carregarSelectProcedimentos()
     if (this.id != undefined) {
       this.consultarUm()
       this.btnChangePassword = true
+      if(this.form.user.address.zipCode != undefined){
+        this.consultedZipCode = true
+      }
     }
   },
 }

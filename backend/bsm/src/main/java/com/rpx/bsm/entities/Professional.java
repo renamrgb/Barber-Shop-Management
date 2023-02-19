@@ -18,7 +18,6 @@ public class Professional implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY) //Auto incremento
     private Long Id;
-    private Boolean isActive;
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "usuario_id")
     private User user;
@@ -50,7 +49,6 @@ public class Professional implements Serializable {
     public String toString() {
         return "Profissional{" +
                 "Id=" + Id +
-                ", ativo=" + isActive +
                 ", procedimentos=" + procedures  +
                 '}';
     }
