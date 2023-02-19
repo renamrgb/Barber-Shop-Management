@@ -1,8 +1,7 @@
 package com.rpx.bsm.resources.exceptions;
 
-import com.rpx.bsm.resources.exceptions.DatabaseException;
-import com.rpx.bsm.resources.exceptions.ResourceNotFoundException;
-import com.rpx.bsm.resources.exceptions.StandardError;
+import org.springframework.core.Ordered;
+import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
@@ -11,8 +10,9 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.ConstraintViolationException;
 import java.time.Instant;
-
+@Order(Ordered.HIGHEST_PRECEDENCE)
 @ControllerAdvice
 public class ResourceExceptionHandler {
 
@@ -40,6 +40,13 @@ public class ResourceExceptionHandler {
         HttpStatus status = HttpStatus.BAD_REQUEST;
         //String message =  "A despesa não pode ser excluída, pois existe parcelas pendentes";
         StandardError err = new StandardError(Instant.now(), status.value(), error, e.getMessage(), "/expenses");
+        return ResponseEntity.status(status).body(err);
+    }
+    @ExceptionHandler(ConstraintViolationException.class)
+    public ResponseEntity<StandardError> validationViaCep(ConstraintViolationException e, HttpServletRequest request) {
+        String error = "Validação error";
+        HttpStatus status = HttpStatus.BAD_REQUEST;
+        StandardError err = new StandardError(Instant.now(), status.value(), error, e.getMessage(), request.getRequestURI());
         return ResponseEntity.status(status).body(err);
     }
 

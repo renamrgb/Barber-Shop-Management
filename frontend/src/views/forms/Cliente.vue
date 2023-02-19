@@ -127,9 +127,11 @@
               </div>
             </div>
             <div name="addres">
+              <div class="row">
+                <CFormLabel for="cep">CEP</CFormLabel>
+              </div>
               <div class="row g-4 mb-3">
-                <div class="col-md-2">
-                  <CFormLabel for="cep">CEP</CFormLabel>
+                <div class="col-md-2">                  
                   <input
                     name="cep"
                     type="text"
@@ -138,6 +140,11 @@
                     v-model="form.user.address.zipCode"
                   />
                 </div>
+                <div class="col">
+                  <button type="button" class="btn btn-primary" @click="getAddressByCep">Consultar CEP</button>
+                </div>
+              </div>
+              <div class="row g-4 mb-3">
                 <div class="col">
                   <CFormLabel for="descricao">Logradouro</CFormLabel>
                   <CFormInput
@@ -170,9 +177,7 @@
                 <div class="col">
                   <CFormLabel for="cidade">Cidade</CFormLabel>
                   <CFormInput
-                    name="cidade"
-                    type="cidade"
-                    placeholder="Tarabai"
+                    name="cidade"                                  
                     v-model="form.user.address.city"
                     disabled
                   />
@@ -180,8 +185,7 @@
                 <div class="col-md-2">
                   <CFormLabel for="uf">UF</CFormLabel>
                   <input
-                    name="uf"
-                    placeholder="SP"
+                    name="uf"                    
                     class="form-control"
                     v-model="form.user.address.state"
                     max="2"
@@ -216,6 +220,7 @@
 import { useVuelidate } from '@vuelidate/core'
 import ValidationsMessage from '@/util/ValidationsMessage.js'
 import Service from '@/Services/clienteService.js'
+import AddressService from '@/Services/addressService.js'
 import Toast from '@/components/Toast.vue'
 export default {
   components: { Toast },
@@ -226,6 +231,7 @@ export default {
       validationsMessage: new ValidationsMessage(),
       id: this.$route.params.id,
       service: new Service(),
+      addressService: new AddressService(),
       mostraSenha: false,
       messagePassword: '',
       btnChangePassword: false,
@@ -250,7 +256,7 @@ export default {
             authority: 'ROLE_ADMIN',
           },
           isActive: false,
-        }
+        },
       },
     }
   },
@@ -290,7 +296,6 @@ export default {
         this.form.user.confirmPassword = '*******'
       }
       this.v$.$validate()
-      // console.log(`${this.v$.$error} && !${this.btnChangePassword} && ${this.compararSenhas()}`)
       if (!this.v$.$error && !this.btnChangePassword && this.compararSenhas()) {
         this.salvar()
       } else if (!this.v$.$error && this.btnChangePassword) {
@@ -350,6 +355,9 @@ export default {
         return false
       }
     },
+    async getAddressByCep(){
+      this.form.user.address = await this.addressService.getAddressByCep(this.form.user.address.zipCode);
+    }
   },
   mounted() {
     if (this.id != undefined) {
