@@ -5,8 +5,8 @@ import com.rpx.bsm.enums.NivelAcessoEnum;
 import javax.persistence.*;
 
 @Entity
-@Table(name = "nivelAcesso")
-public class NivelAcesso {
+@Table(name = "access_level")
+public class AccessLevel {
 
     private static final long serialVersionUID = 1L;
 
@@ -16,10 +16,10 @@ public class NivelAcesso {
     @Enumerated(EnumType.STRING)
     private NivelAcessoEnum authority;
 
-    public NivelAcesso() {
+    public AccessLevel() {
     }
 
-    public NivelAcesso(NivelAcessoEnum authority) {
+    public AccessLevel(NivelAcessoEnum authority) {
         this.authority = authority;
     }
 
@@ -55,7 +55,7 @@ public class NivelAcesso {
             return false;
         if (getClass() != obj.getClass())
             return false;
-        NivelAcesso other = (NivelAcesso) obj;
+        AccessLevel other = (AccessLevel) obj;
         if (id == null) {
             if (other.id != null)
                 return false;

@@ -13,7 +13,7 @@ import java.util.Objects;
 import java.util.Set;
 
 @Entity
-@Table(name = "procedimento")
+@Table(name = "procedure")
 @Getter
 @Setter
 @NoArgsConstructor

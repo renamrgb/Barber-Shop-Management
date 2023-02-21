@@ -101,6 +101,13 @@
                 <CFormInput name="rg" type="text" v-model="form.user.rg" />
               </div>
               <div class="col">
+                <CFormLabel for="rg">Tipo De Pessoa</CFormLabel>
+                <select class="form-select" v-model="typePerson">
+                  <option value="1" selected>Pessoa Física</option>
+                  <option value="2">Pessoa Jurícida</option>
+                </select>
+              </div>
+              <div class="col">
                 <CFormLabel for="cpf">CPF / CNPJ</CFormLabel>
                 <input
                   type="text"
@@ -108,6 +115,12 @@
                   v-mask="['###.###.###-##', '##.###.###/####-##']"
                   v-model="form.user.cpf"
                 />
+                <div
+                  v-if="messageTypePersonValid != undefined"
+                  class="invalid-input-form"
+                >
+                  {{ messageTypePersonValid.message }}
+                </div>
               </div>
             </div>
             <div class="mb-3">
@@ -151,7 +164,7 @@
                 </div>
               </div>
             </div>
-            <div id="addres" v-if="this.consultedZipCode == true">              
+            <div id="addres" v-if="this.consultedZipCode == true">
               <div class="row g-4 mb-3">
                 <div class="col">
                   <CFormLabel for="descricao">Logradouro</CFormLabel>
@@ -185,7 +198,7 @@
                 <div class="col">
                   <CFormLabel for="cidade">Cidade</CFormLabel>
                   <CFormInput
-                    name="cidade"                                  
+                    name="cidade"
                     v-model="form.user.address.city"
                     disabled
                   />
@@ -193,7 +206,7 @@
                 <div class="col-md-2">
                   <CFormLabel for="uf">UF</CFormLabel>
                   <input
-                    name="uf"                    
+                    name="uf"
                     class="form-control"
                     v-model="form.user.address.state"
                     max="2"
@@ -229,6 +242,7 @@ import { useVuelidate } from '@vuelidate/core'
 import ValidationsMessage from '@/util/ValidationsMessage.js'
 import Service from '@/Services/clienteService.js'
 import AddressService from '@/Services/addressService.js'
+import ValidationTypePerson from '@/util/validationTypePerson.js'
 import Toast from '@/components/Toast.vue'
 export default {
   components: { Toast },
@@ -240,10 +254,13 @@ export default {
       id: this.$route.params.id,
       service: new Service(),
       addressService: new AddressService(),
+      validationTypePerson: new ValidationTypePerson(),
       mostraSenha: false,
       messagePassword: '',
       btnChangePassword: false,
       consultedZipCode: false,
+      typePerson: 1,
+      messageTypePersonValid: undefined,
       form: {
         user: {
           name: '',
@@ -305,7 +322,8 @@ export default {
         this.form.user.confirmPassword = '*******'
       }
       this.v$.$validate()
-      if (!this.v$.$error && !this.btnChangePassword && this.compararSenhas()) {
+      this.messageTypePersonValid = this.validationTypePerson();
+      if (!this.v$.$error && !this.btnChangePassword && this.compararSenhas() && this.messageTypePersonValid == undefined) {
         this.salvar()
       } else if (!this.v$.$error && this.btnChangePassword) {
         this.salvar()
@@ -364,18 +382,22 @@ export default {
         return false
       }
     },
-    async getAddressByCep(){
-      this.form.user.address = await this.addressService.getAddressByCep(this.form.user.address.zipCode);
-      if(this.form.user.address.zipCode != undefined){
+    async getAddressByCep() {
+      this.form.user.address = await this.addressService.getAddressByCep(
+        this.form.user.address.zipCode,
+      )
+      if (this.form.user.address.zipCode != undefined) {
         this.consultedZipCode = true
       }
-    }
+    },
+    validationTypePerson() {
+      this.validationTypePerson.validation(this.typePerson, this.form.user.cpf)
+    },
   },
   mounted() {
     if (this.id != undefined) {
       this.consultarUm()
       this.btnChangePassword = true
-      
     }
   },
 }

@@ -9,7 +9,6 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
-import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -61,7 +60,7 @@ public class TestConfig implements CommandLineRunner {
         u.setEmail("rafael8paulo@gmail.com");
         u.setIsActive(true);
         u.setPassword(bCryptPasswordEncoder.encode("12345678"));
-        u.setNivelAcesso(new NivelAcesso(NivelAcessoEnum.ROLE_ADMIN));
+        u.setNivelAcesso(new AccessLevel(NivelAcessoEnum.ROLE_ADMIN));
 
         Professional prof = new Professional();
         prof.setUser(u);

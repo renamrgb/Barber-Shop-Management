@@ -12,7 +12,7 @@ import java.util.*;
 
 
 @Entity
-@Table(name = "usuario")
+@Table(name = "usertab")
 @Getter
 @Setter
 public class User implements UserDetails, Serializable {
@@ -29,20 +29,20 @@ public class User implements UserDetails, Serializable {
     private String rg;
 
     @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "endereco_id")
+    @JoinColumn(name = "address_id")
     private Address address;
 
     @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "nivelacesso_id")
-    private NivelAcesso nivelAcesso;
+    @JoinColumn(name = "accesslevel_id")
+    private AccessLevel nivelAcesso;
 
     private Boolean isActive;
     public User() {
         this.address = new Address();
-        this.nivelAcesso = new NivelAcesso();
+        this.nivelAcesso = new AccessLevel();
     }
 
-    public User(String name, String email, String password, String phoneNumber, String cpf, String rg, Address address, NivelAcesso nivelAcesso, Boolean isActive) {
+    public User(String name, String email, String password, String phoneNumber, String cpf, String rg, Address address, AccessLevel nivelAcesso, Boolean isActive) {
         this.name = name;
         this.email = email;
         this.password = password;
@@ -54,7 +54,7 @@ public class User implements UserDetails, Serializable {
         this.isActive = isActive;
     }
 
-    public User(String name, String email, String password, String phoneNumber, String cpf, String rg, NivelAcesso nivelAcesso, Boolean isActive) {
+    public User(String name, String email, String password, String phoneNumber, String cpf, String rg, AccessLevel nivelAcesso, Boolean isActive) {
         this.name = name;
         this.email = email;
         this.password = password;

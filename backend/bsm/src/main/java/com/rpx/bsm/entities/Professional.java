@@ -10,7 +10,7 @@ import java.util.Objects;
 import java.util.Set;
 
 @Entity
-@Table(name = "profissional")
+@Table(name = "professional")
 @Getter
 @Setter
 public class Professional implements Serializable {
@@ -19,12 +19,12 @@ public class Professional implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY) //Auto incremento
     private Long Id;
     @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "usuario_id")
+    @JoinColumn(name = "usertab_id")
     private User user;
     @ManyToMany(fetch = FetchType.EAGER)
-    @JoinTable(name = "profissionaisProcedimentos",
-            joinColumns = @JoinColumn(name = "profissional_id"),
-            inverseJoinColumns = @JoinColumn(name = "procedimento_id")
+    @JoinTable(name = "professional_procedures",
+            joinColumns = @JoinColumn(name = "professional_id"),
+            inverseJoinColumns = @JoinColumn(name = "procedure_id")
     )
     private Set<Procedure> procedures = new HashSet<>();
 

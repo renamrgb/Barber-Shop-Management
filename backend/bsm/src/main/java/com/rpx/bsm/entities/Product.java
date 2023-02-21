@@ -7,10 +7,9 @@ import lombok.Setter;
 import javax.persistence.*;
 import java.io.Serializable;
 import java.util.Objects;
-import java.util.Set;
 
 @Entity
-@Table(name = "produto")
+@Table(name = "product")
 @Getter
 @Setter
 @NoArgsConstructor
