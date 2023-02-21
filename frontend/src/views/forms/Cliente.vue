@@ -279,7 +279,7 @@ export default {
             state: '',
           },
           nivelAcesso: {
-            authority: 'ROLE_ADMIN',
+            authority: 'ROLE_USER',
           },
           isActive: false,
         },
