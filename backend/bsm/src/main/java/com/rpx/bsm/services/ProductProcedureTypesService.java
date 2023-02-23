@@ -1,6 +1,6 @@
 package com.rpx.bsm.services;
 
-import com.rpx.bsm.entities.ProductProcedureTypes;
+import com.rpx.bsm.entities.ProductProcedureType;
 import com.rpx.bsm.records.ProductProcedureTypesRecord;
 import com.rpx.bsm.repositories.ProductProcedureTypesRepository;
 import com.rpx.bsm.resources.exceptions.DatabaseException;
@@ -21,8 +21,8 @@ public class ProductProcedureTypesService {
     @Autowired
     private ProductProcedureTypesRepository repository;
 
-    public List<ProductProcedureTypes> find(String description) {
-        List<ProductProcedureTypes> list;
+    public List<ProductProcedureType> find(String description) {
+        List<ProductProcedureType> list;
 
         if (description.isEmpty())
             list = repository.findAll();
@@ -32,7 +32,7 @@ public class ProductProcedureTypesService {
         return list;
     }
 
-    public ProductProcedureTypes insert(ProductProcedureTypesRecord record) {
+    public ProductProcedureType insert(ProductProcedureTypesRecord record) {
         return repository.save(this.converterEmentidade(record));
     }
 
@@ -47,9 +47,9 @@ public class ProductProcedureTypesService {
     }
 
     @Transactional
-    public ProductProcedureTypes update(Long id, ProductProcedureTypesRecord record) {
+    public ProductProcedureType update(Long id, ProductProcedureTypesRecord record) {
         try {
-            ProductProcedureTypes entity = repository.getReferenceById(id);
+            ProductProcedureType entity = repository.getReferenceById(id);
             updateData(entity, this.converterEmentidade(record));
             return repository.save(entity);
         } catch (EntityNotFoundException e) {
@@ -57,17 +57,17 @@ public class ProductProcedureTypesService {
         }
     }
 
-    private void updateData(ProductProcedureTypes entity, ProductProcedureTypes obj) {
+    private void updateData(ProductProcedureType entity, ProductProcedureType obj) {
         entity.setDescription(obj.getDescription());
         entity.setIsActive(obj.getIsActive());
     }
 
-    private ProductProcedureTypes converterEmentidade(ProductProcedureTypesRecord record) {
-        return new ProductProcedureTypes(record.description(), record.isActive());
+    private ProductProcedureType converterEmentidade(ProductProcedureTypesRecord record) {
+        return new ProductProcedureType(record.description(), record.isActive());
     }
 
-    public ProductProcedureTypes findById(Long id) {
-        Optional<ProductProcedureTypes> obj = repository.findById(id);
+    public ProductProcedureType findById(Long id) {
+        Optional<ProductProcedureType> obj = repository.findById(id);
         return obj.get();
     }
 

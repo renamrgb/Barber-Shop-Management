@@ -20,21 +20,18 @@ public class TestConfig implements CommandLineRunner {
     private UsuarioRepository usuarioRepository;
     @Autowired
     private PaymentMethodRepository formaPagamentoRepository;
-
     @Autowired
     private ProductRepository produtoRepository;
-
     @Autowired
     private ProcedureRepository procedimentoRepository;
-
     @Autowired
     private ExpenseRepository expenseRepository;
-
     @Autowired
     private ExpenseTypeRepository expenseTypeRepository;
-
     @Autowired
     private BCryptPasswordEncoder bCryptPasswordEncoder;
+    @Autowired
+    private ProductProcedureTypesRepository productProcedureTypesRepository;
 
     @Override
     public void run(String... args) throws Exception {
@@ -77,6 +74,10 @@ public class TestConfig implements CommandLineRunner {
         expenseTypeRepository.save(expenseType);
         expenseType = new ExpenseType("Sem parcelas", false, true);
         expenseTypeRepository.save(expenseType);
+        /*============================================================================================================*/
+        ProductProcedureType productProcedureTypes = new ProductProcedureType("Padrão", true);
+        productProcedureTypesRepository.save(productProcedureTypes);
+
     }
 
 }

@@ -29,6 +29,9 @@ public class Procedure implements Serializable {
     @NonNull
     private Boolean isActive;
 
+    @ManyToOne
+    private ProductProcedureType productProcedureType;
+
     @JsonIgnore
     @ManyToMany(mappedBy = "procedures") //Nome do set
     private Set<Professional> professionals = new HashSet<>();

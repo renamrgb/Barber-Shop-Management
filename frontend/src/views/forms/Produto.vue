@@ -23,6 +23,17 @@
                 {{ v$.form.title.$errors[0].$message }}
               </div>
             </div>
+            <div class="row mb-3">
+              <div class="col">
+                <CFormLabel for="typeExpense">* Tipo De Produto</CFormLabel>
+                <CFormSelect
+                  v-model="form.productType.id"
+                  :options="optionsSelect"
+                  :searchable="true"
+                >
+                </CFormSelect>
+              </div>
+            </div>
             <div class="mb-3">
               <CFormLabel for="descricao">Marca</CFormLabel>
               <CFormInput
@@ -46,11 +57,11 @@
                   <CInputGroupText>R$</CInputGroupText>
                   <CFormInput
                     name="price"
-                    v-model="form.price"
-                    min="0"
+                    v-model="form.price"                                        
                     required
                   />
                 </CInputGroup>
+                <!-- v-mask="'###.###.###.###,##'" -->
                 <div
                   v-if="v$.form.price.$errors.length > 0"
                   class="invalid-input-form"
@@ -97,29 +108,35 @@
 </template>
 
 <script>
-import { useVuelidate } from '@vuelidate/core'
-import ValidationsMessage from '@/util/ValidationsMessage.js'
-import { decimal } from '@vuelidate/validators'
-import Service from '@/Services/produtoService.js'
-import Toast from '@/components/Toast.vue'
+import { useVuelidate } from "@vuelidate/core";
+import ValidationsMessage from "@/util/ValidationsMessage.js";
+import { decimal } from "@vuelidate/validators";
+import Service from "@/Services/produtoService.js";
+import TypeProductProcedure from '@/Services/typeProductProcedureService.js'
+import Toast from "@/components/Toast.vue";
 
 export default {
   components: { Toast },
-  name: 'Produtos',
+  name: "Produtos",
   data() {
     return {
       v$: useVuelidate(),
       validationsMessage: new ValidationsMessage(),
-      id: this.$route.params.id,
+      typeProductProcedureService: new TypeProductProcedure(),      
       service: new Service(),
-      form: {
-        title: '',
-        brand: '',
+      id: this.$route.params.id,
+      form: {        
+        title: "",
+        brand: "",
+        productType: {
+          id: "",
+        },
         quantity: 0,
-        price: '00.00',
+        price: "00.00",
         isActive: false,
       },
-    }
+      optionsSelect: ['Abra este menu de seleção'],
+    };
   },
   validations() {
     return {
@@ -139,73 +156,51 @@ export default {
           minValue: this.validationsMessage.minMenssage(0),
         },
       },
-    }
+    };
   },
   methods: {
     submitForm() {
-      this.v$.$validate()
+      this.v$.$validate();
       if (!this.v$.$error) {
-        this.salvar()
+        this.salvar();
       }
     },
     async salvar() {
-      let res = undefined      
-      let dados = {
-        title: this.form.title,
-        brand: this.form.brand,
-        quantity: this.form.quantity,
-        price: parseFloat(this.form.price),
-        isActive: this.form.isActive,
-      }
-      if (this.id == undefined) {
-        dados.price = this.form.price.replace(',', '.')
-        res = await this.service.cadastrar(dados)
-      } else {
-        res = await this.service.alterar(this.id, dados)
-      }
+      let res = await this.service.updateOrInsert(this.id, this.form);      
       if (res.status == 201) {
-        this.$refs.toast.createToast('Cadastrado com sucesso!')
-        this.$router.push('/forms/produto')
+        this.$refs.toast.createToast("Cadastrado com sucesso!");
+        this.$router.push("/forms/produto");
       } else if (res.status == 200) {
-        this.$refs.toast.createToast('Alterado com sucesso!')
+        this.$refs.toast.createToast("Alterado com sucesso!");
       } else {
-        let vetErros = res.response.data.fieldErrors
-
+        let vetErros = res.response.data.fieldErrors;
         vetErros.forEach((element) => {
-          this.$refs.toast.createToast(`${element.message} `)
-        })
+          this.$refs.toast.createToast(`${element.message} `);
+        });
       }
     },
-    async consultarUm() {
+    async consultarUm() {      
       if (this.id != undefined) {
-        this.form = await this.service.buscarUm(this.id)
+        this.form = await this.service.buscarUm(this.id);
       }
+    },
+    async carregarOptionsSelect() {
+      let res = await this.typeProductProcedureService.consultarTodos()
+      res.forEach((element) => {
+        this.optionsSelect.push({
+          value: element.id,
+          label: element.description,
+          generateInstallments: element.generateInstallments,
+        })
+      })      
     },
   },
   mounted() {
+    this.carregarOptionsSelect();
     if (this.id != undefined) {
-      this.consultarUm()
+      this.consultarUm();
     }
   },
-}
+};
 </script>
-<style scoped>
-.div-center {
-  display: flex;
-  justify-content: center;
-  margin: 30px;
-}
-.label {
-  margin-right: 10px;
-}
-.error {
-  border: 3px solid red;
-}
-.button-submit {
-  margin-top: 15px;
-  width: 250px;
-}
-.error-color {
-  color: red;
-}
-</style>
+<style scoped></style>

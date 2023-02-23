@@ -47,7 +47,7 @@
 </template>
 
 <script>
-import Service from '@/Services/tipoProdutoProcedimentoService.js'
+import Service from '@/Services/typeProductProcedureService.js'
 import Toast from '@/components/Toast.vue'
 import { useVuelidate } from '@vuelidate/core'
 import ValidationsMessage from '@/util/ValidationsMessage.js'
@@ -56,7 +56,7 @@ export default {
   data() {
     return {
       v$: useVuelidate(),
-      validationsMessage: new ValidationsMessage(),
+      validationsMessage: new ValidationsMessage(),      
       id: this.$route.params.id,
       service: new Service(),
       visibleLiveDemo: false,

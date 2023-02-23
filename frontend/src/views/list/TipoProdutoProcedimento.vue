@@ -121,7 +121,7 @@
 </template>
 
 <script>
-import Service from '@/Services/tipoProdutoProcedimentoService.js'
+import Service from '@/Services/typeProductProcedureService.js'
 import Toast from '@/components/Toast.vue'
 export default {
   components: { Toast },

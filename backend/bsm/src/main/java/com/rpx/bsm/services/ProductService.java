@@ -33,7 +33,7 @@ public class ProductService {
     }
 
     public Product insert(ProductRecord record) {
-        return repository.save(this.converterEmentidade(record));
+        return repository.save(new Product(record));
     }
 
     public void delete(Long id) {
@@ -49,7 +49,7 @@ public class ProductService {
     public Product update(Long id, ProductRecord record) {
         try {
             Product entity = repository.getReferenceById(id);
-            updateData(entity, this.converterEmentidade(record));
+            updateData(entity, new Product(record));
             return repository.save(entity);
         } catch (EntityNotFoundException e) {
             throw new ResourceNotFoundException(id);
@@ -62,10 +62,7 @@ public class ProductService {
         entity.setBrand(obj.getBrand());
         entity.setQuantity(obj.getQuantity());
         entity.setIsActive(obj.getIsActive());
-    }
-
-    private Product converterEmentidade(ProductRecord record) {
-        return new Product(record.title(), record.price(), record.brand(), record.quantity(), record.isActive());
+        entity.setProductProcedureType(obj.getProductProcedureType());
     }
     public Product findById(Long id) {
         Optional<Product> obj = repository.findById(id);

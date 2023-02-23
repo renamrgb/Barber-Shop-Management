@@ -1,5 +1,6 @@
 package com.rpx.bsm.entities;
 
+import com.rpx.bsm.records.ProductRecord;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -22,6 +23,8 @@ public class Product implements Serializable {
     private Double price;
     private String brand;
     private Integer quantity;
+    @ManyToOne
+    private ProductProcedureType productProcedureType;
     private Boolean isActive;
 
     public Product(String title, Double price, String brand, Integer quantity, Boolean isActive) {
@@ -30,6 +33,15 @@ public class Product implements Serializable {
         this.brand = brand;
         this.quantity = quantity;
         this.isActive = isActive;
+    }
+
+    public Product(ProductRecord record){
+        setTitle(record.title());
+        setPrice(record.price());
+        setBrand(record.brand());
+        setQuantity(record.quantity());
+        setProductProcedureType(record.productType());
+        setIsActive(record.isActive());
     }
 
     @Override

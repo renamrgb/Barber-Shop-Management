@@ -1,5 +1,6 @@
 package com.rpx.bsm.resources;
 
+import com.rpx.bsm.dto.ProductDTO;
 import com.rpx.bsm.entities.Product;
 import com.rpx.bsm.records.ProductRecord;
 import com.rpx.bsm.services.ProductService;
@@ -11,6 +12,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import javax.validation.Valid;
 import java.net.URI;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping(value = "/products")
@@ -20,15 +22,16 @@ public class ProductResource {
     private ProductService service;
 
     @GetMapping
-    public ResponseEntity<List<Product>> find(@RequestParam(defaultValue = "", name = "title") String title) {
+    public ResponseEntity<List<ProductDTO>> find(@RequestParam(defaultValue = "", name = "title") String title) {
         List<Product> list = service.find(title);
-        return ResponseEntity.ok().body(list);
+        List<ProductDTO> listDto = list.stream().map(x -> new ProductDTO(x)).collect(Collectors.toList());
+        return ResponseEntity.ok().body(listDto);
     }
 
     @GetMapping(value = "/{id}")
-    public ResponseEntity<Product> findById(@PathVariable Long id){
+    public ResponseEntity<ProductDTO> findById(@PathVariable Long id){
         Product obj = service.findById(id);
-        return ResponseEntity.ok().body(obj);
+        return ResponseEntity.ok().body(new ProductDTO(obj));
     }
 
     @PostMapping
