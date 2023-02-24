@@ -15,16 +15,20 @@ import java.util.Objects;
 @Setter
 @NoArgsConstructor
 public class Product implements Serializable {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY) //Auto incremento
     private Long Id;
+    @Column(nullable = false, columnDefinition = "VARCHAR(60)")
     private String title;
+    @Column(nullable = false)
     private Double price;
+    @Column(columnDefinition = "VARCHAR(60)")
     private String brand;
+    @Column(nullable = false)
     private Integer quantity;
     @ManyToOne
     private ProductProcedureType productProcedureType;
+    @Column(nullable = false)
     private Boolean isActive;
 
     public Product(String title, Double price, String brand, Integer quantity, Boolean isActive) {

@@ -22,16 +22,14 @@ public class Procedure implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY) //Auto incremento
     private Long Id;
-    @NonNull
+    @Column(nullable = false, columnDefinition = "VARCHAR(60)")
     private String description;
-    @NonNull
+    @Column(nullable = false)
     private Double price;
-    @NonNull
+    @Column(nullable = false)
     private Boolean isActive;
-
     @ManyToOne
     private ProductProcedureType productProcedureType;
-
     @JsonIgnore
     @ManyToMany(mappedBy = "procedures") //Nome do set
     private Set<Professional> professionals = new HashSet<>();
