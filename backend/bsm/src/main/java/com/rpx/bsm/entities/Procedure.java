@@ -1,6 +1,7 @@
 package com.rpx.bsm.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.rpx.bsm.records.ProcedureRecord;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
@@ -36,6 +37,13 @@ public class Procedure implements Serializable {
 
     public Procedure(Long id) {
         Id = id;
+    }
+
+    public Procedure(ProcedureRecord record){
+        setDescription(record.description());
+        setPrice(record.price());
+        setProductProcedureType(record.procedureType());
+        setIsActive(record.isActive());
     }
 
     public Procedure(String description, Double price, Boolean isActive, Set<Professional> professionals) {

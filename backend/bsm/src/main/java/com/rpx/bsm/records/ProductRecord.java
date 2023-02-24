@@ -11,7 +11,7 @@ public record ProductRecord(
         String title,
         @NotNull
         @DecimalMin(value = "0.1", message = "O campo 'preço' precisa ser maior que 0.0")
-        @Digits(integer = 3, fraction = 2)
+        @Digits(integer = 5, fraction = 2)
         Double price,
         @Length(max = 60, message = "O campo 'marca' deve conter até 60 caracteres")
         String brand,

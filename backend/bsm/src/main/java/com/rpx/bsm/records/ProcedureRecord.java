@@ -12,7 +12,7 @@ public record ProcedureRecord(
         @NotBlank(message = "O campo 'descrição' é obrigatório")
         @Length(max = 60)
         String description,
-        @Digits(integer = 3, fraction = 2)
+        @Digits(integer = 5, fraction = 2)
         @DecimalMin(value = "0.1", message = "O campo 'preço' precisa ser maior que 0.0")
         @NotNull
         Double price,

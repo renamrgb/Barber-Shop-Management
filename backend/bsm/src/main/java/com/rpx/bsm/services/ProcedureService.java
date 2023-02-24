@@ -1,6 +1,5 @@
 package com.rpx.bsm.services;
 
-import com.rpx.bsm.dto.ProcedureDTO;
 import com.rpx.bsm.entities.Procedure;
 import com.rpx.bsm.records.ProcedureRecord;
 import com.rpx.bsm.repositories.ProcedureRepository;
@@ -33,8 +32,8 @@ public class ProcedureService {
         return list;
     }
 
-    public ProcedureDTO insert(ProcedureRecord obj) {
-        return converteEmDTO(repository.save(converteEmEntidade(obj)));
+    public Procedure insert(ProcedureRecord record) {
+        return repository.save(new Procedure(record));
     }
 
     public void delete(Long id) {
@@ -48,11 +47,11 @@ public class ProcedureService {
     }
 
     @Transactional
-    public ProcedureDTO update(Long id, ProcedureRecord obj) {
+    public Procedure update(Long id, ProcedureRecord obj) {
         try {
             Procedure entity = repository.getReferenceById(id);
             updateData(entity, obj);
-            return converteEmDTO(repository.save(entity));
+            return repository.save(entity);
         } catch (EntityNotFoundException e) {
             throw new ResourceNotFoundException(id);
         }
@@ -62,29 +61,7 @@ public class ProcedureService {
         entity.setDescription(record.description());
         entity.setIsActive(record.isActive());
         entity.setPrice(record.price());
-    }
-
-    private Procedure converteEmEntidade(ProcedureRecord record) {
-
-        Procedure entidade = new Procedure();
-
-        entidade.setDescription(record.description());
-        entidade.setPrice(record.price());
-        entidade.setIsActive(record.isActive());
-
-        return entidade;
-    }
-
-    private ProcedureDTO converteEmDTO(Procedure entidade) {
-
-        ProcedureDTO dto = new ProcedureDTO(
-                entidade.getId(),
-                entidade.getDescription(),
-                entidade.getPrice(),
-                entidade.getIsActive()
-        );
-
-        return dto;
+        entity.setProductProcedureType(record.procedureType());
     }
     public Procedure findById(Long id) {
         Optional<Procedure> obj = repository.findById(id);
