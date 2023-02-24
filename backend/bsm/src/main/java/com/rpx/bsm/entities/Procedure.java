@@ -38,14 +38,14 @@ public class Procedure implements Serializable {
         Id = id;
     }
 
-    public Procedure(@NonNull String description, @NonNull Double price, @NonNull Boolean isActive, Set<Professional> professionals) {
+    public Procedure(String description, Double price, Boolean isActive, Set<Professional> professionals) {
         this.description = description;
         this.price = price;
         this.isActive = isActive;
         this.professionals = professionals;
     }
 
-    public Procedure(@NonNull String description, @NonNull Double price, @NonNull Boolean isActive) {
+    public Procedure(String description, Double price, Boolean isActive) {
         this.description = description;
         this.price = price;
         this.isActive = isActive;
