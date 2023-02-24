@@ -132,7 +132,7 @@ export default {
           id: "",
         },
         quantity: 0,
-        price: "00.00",
+        price: "",
         isActive: false,
       },
       optionsSelect: ['Abra este menu de seleção'],
@@ -153,7 +153,7 @@ export default {
         price: {
           required: this.validationsMessage.requiredMessage,
           decimal,
-          minValue: this.validationsMessage.minMenssage(0),
+          minValue: this.validationsMessage.minMenssage(0.1),
         },
       },
     };

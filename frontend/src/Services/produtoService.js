@@ -4,7 +4,7 @@ export default class ProdutoService {
   url = "/products";
 
   async updateOrInsert(id, data) {
-    if (this.id == undefined) {      
+    if (id == undefined) {      
       return await this.cadastrar(data);
     } else {
       return await this.alterar(id, data);

@@ -22,6 +22,19 @@
                 {{ v$.form.description.$errors[0].$message }}
               </div>
             </div>
+            <div class="row mb-3">
+              <div class="col">
+                <CFormLabel for="typeExpense"
+                  >* Tipo De Procedimento</CFormLabel
+                >
+                <CFormSelect
+                  v-model="form.procedureType.id"
+                  :options="optionsSelect"
+                  :searchable="true"
+                >
+                </CFormSelect>
+              </div>
+            </div>
             <div class="row">
               <div class="col-auto">
                 <CFormLabel for="price">* Preço</CFormLabel>
@@ -67,26 +80,31 @@
 </template>
 
 <script>
-import Service from '@/Services/procedimentoService.js'
-import Toast from '@/components/Toast.vue'
-import { useVuelidate } from '@vuelidate/core'
-import ValidationsMessage from '@/util/ValidationsMessage.js'
-import { decimal } from '@vuelidate/validators'
+import Service from "@/Services/procedimentoService.js";
+import Toast from "@/components/Toast.vue";
+import { useVuelidate } from "@vuelidate/core";
+import ValidationsMessage from "@/util/ValidationsMessage.js";
+import TypeProductProcedure from "@/Services/typeProductProcedureService.js";
 export default {
   components: { Toast },
-  name: 'Procedimento',
+  name: "Procedimento",
   data() {
     return {
       v$: useVuelidate(),
       validationsMessage: new ValidationsMessage(),
+      typeProductProcedureService: new TypeProductProcedure(),
       id: this.$route.params.id,
       service: new Service(),
       form: {
-        description: '',
-        price: '00.00',
+        description: "",
+        price: "",
+        procedureType: {
+          id: "",
+        },
         isActive: false,
       },
-    }
+      optionsSelect: ["Abra este menu de seleção"],
+    };
   },
   validations() {
     return {
@@ -98,61 +116,61 @@ export default {
         price: {
           required: this.validationsMessage.requiredMessage,
           decimal: this.validationsMessage.decimalMessage,
-          minValue: this.validationsMessage.minMenssage(0),
-        },       
+          minValue: this.validationsMessage.minMenssage(0.1),
+        },
       },
-    }
+    };
   },
   methods: {
     submitForm(event) {
-      this.v$.$validate()
+      this.v$.$validate();
       if (!this.v$.$error) {
-        this.salvar()
+        this.salvar();
       }
     },
-    async salvar(event) {
-      let res = undefined
-      let dados = {
-        description: this.form.description,
-        price: this.form.price,
-        isActive: this.form.isActive,
-      }
-      if (this.id == undefined) {
-        dados.price = dados.price.replace(',', '.')
-        res = await this.service.cadastrar(dados)
-      } else {
-        res = await this.service.alterar(this.id, dados)
-      }
+    async salvar() {
+      let res = await this.service.updateOrInsert(this.id, this.form);
       if (res.status == 201) {
-        this.$refs.toast.createToast('Cadastrado com sucesso!')
-        this.$router.push('/forms/procedimento')
+        this.$refs.toast.createToast("Cadastrado com sucesso!");
+        this.$router.push("/forms/procedimento");
       } else if (res.status == 200) {
-        this.$refs.toast.createToast('Alterado com sucesso!')
+        this.$refs.toast.createToast("Alterado com sucesso!");
       } else {
         if (res.status == 500) {
-          this.$refs.toast.createToast(res.error)
+          this.$refs.toast.createToast(res.error);
         } else {
-          let vetErros = res.response.data.fieldErrors
-
+          console.log(res);
+          let vetErros = res.response.data.fieldErrors;
           vetErros.forEach((element) => {
             this.$refs.toast.createToast(
-              ` [${element.fieldName}] ${element.message} `,
-            )
-          })
+              ` [${element.fieldName}] ${element.message} `
+            );
+          });
         }
       }
     },
+    async carregarOptionsSelect() {
+      let res = await this.typeProductProcedureService.consultarTodos();
+      res.forEach((element) => {
+        this.optionsSelect.push({
+          value: element.id,
+          label: element.description,
+          generateInstallments: element.generateInstallments,
+        });
+      });
+    },
     async consultarUm() {
       if (this.id != undefined) {
-        this.form = await this.service.buscarUm(this.id) 
-        console.log(`DATA: ${this.form}`);       
+        this.form = await this.service.buscarUm(this.id);
+        console.log(`DATA: ${this.form}`);
       }
     },
   },
-  mounted() {    
+  mounted() {
+    this.carregarOptionsSelect();
     if (this.id != undefined) {
-      this.consultarUm()
+      this.consultarUm();
     }
   },
-}
+};
 </script>
