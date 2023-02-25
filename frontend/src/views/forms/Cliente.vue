@@ -87,7 +87,7 @@
                   class="btn btn-light"
                   @click="
                     () => {
-                      btnChangePassword = false
+                      btnChangePassword = false;
                     }
                   "
                 >
@@ -108,19 +108,11 @@
                 </select>
               </div>
               <div class="col">
-                <CFormLabel for="cpf">CPF / CNPJ</CFormLabel>
-                <input
-                  type="text"
-                  class="form-control"
-                  v-mask="['###.###.###-##', '##.###.###/####-##']"
+                <DocumentForUser
                   v-model="form.user.cpf"
+                  :typePerson="this.typePerson"
+                  placeholder="Digite aqui"
                 />
-                <div
-                  v-if="messageTypePersonValid != undefined"
-                  class="invalid-input-form"
-                >
-                  {{ messageTypePersonValid.message }}
-                </div>
               </div>
             </div>
             <div class="mb-3">
@@ -238,15 +230,16 @@
 </template>
 
 <script>
-import { useVuelidate } from '@vuelidate/core'
-import ValidationsMessage from '@/util/ValidationsMessage.js'
-import Service from '@/Services/clienteService.js'
-import AddressService from '@/Services/addressService.js'
-import ValidationTypePerson from '@/util/validationTypePerson.js'
-import Toast from '@/components/Toast.vue'
+import { useVuelidate } from "@vuelidate/core";
+import ValidationsMessage from "@/util/ValidationsMessage.js";
+import ValidationTypePerson from "@/util/validationTypePerson.js";
+import Service from "@/Services/clienteService.js";
+import AddressService from "@/Services/addressService.js";
+import Toast from "@/components/Toast.vue";
+import DocumentForUser from "@/components/DocumentForUser.vue";
 export default {
-  components: { Toast },
-  name: 'Cliente',
+  components: { Toast, DocumentForUser },
+  name: "Cliente",
   data() {
     return {
       v$: useVuelidate(),
@@ -256,35 +249,35 @@ export default {
       addressService: new AddressService(),
       validationTypePerson: new ValidationTypePerson(),
       mostraSenha: false,
-      messagePassword: '',
+      messagePassword: "",
       btnChangePassword: false,
       consultedZipCode: false,
       typePerson: 1,
       messageTypePersonValid: undefined,
       form: {
         user: {
-          name: '',
-          email: '',
-          password: '',
-          confirmPassword: '',
-          phoneNumber: '',
-          cpf: '',
-          rg: '',
+          name: "",
+          email: "",
+          password: "",
+          confirmPassword: "",
+          phoneNumber: "",
+          cpf: "",
+          rg: "",
           address: {
-            zipCode: '',
-            publicPlace: '',
-            neighborhood: '',
-            complement: '',
-            city: '',
-            state: '',
+            zipCode: "",
+            publicPlace: "",
+            neighborhood: "",
+            complement: "",
+            city: "",
+            state: "",
           },
           nivelAcesso: {
-            authority: 'ROLE_USER',
+            authority: "ROLE_USER",
           },
           isActive: false,
         },
       },
-    }
+    };
   },
   validations() {
     return {
@@ -313,92 +306,97 @@ export default {
           },
         },
       },
-    }
+    };
   },
   methods: {
     submitForm() {
       if (this.form.user.password == undefined) {
-        this.form.user.password = '*******'
-        this.form.user.confirmPassword = '*******'
+        this.form.user.password = "*******";
+        this.form.user.confirmPassword = "*******";
       }
-      this.v$.$validate()
+      this.v$.$validate();
       this.messageTypePersonValid = this.validationTypePerson();
-      if (!this.v$.$error && !this.btnChangePassword && this.compararSenhas() && this.messageTypePersonValid == undefined) {
-        this.salvar()
+      if (
+        !this.v$.$error &&
+        !this.btnChangePassword &&
+        this.compararSenhas() &&
+        this.messageTypePersonValid == undefined
+      ) {
+        this.salvar();
       } else if (!this.v$.$error && this.btnChangePassword) {
-        this.salvar()
+        this.salvar();
       }
     },
     async salvar() {
-      let res = undefined
-      let dados = this.form
+      let res = undefined;
+      let dados = this.form;
       dados.user.address.zipCode = dados.user.address.zipCode.replace(
         /[^\w\s]/gi,
-        '',
-      )
-      dados.user.phoneNumber = dados.user.phoneNumber.replace(/[^\w\s]/gi, '')
-      dados.user.phoneNumber = dados.user.phoneNumber.replace(' ', '')
-      dados.user.cpf = dados.user.cpf.replace(/[^\w\s]/gi, '')
+        ""
+      );
+      dados.user.phoneNumber = dados.user.phoneNumber.replace(/[^\w\s]/gi, "");
+      dados.user.phoneNumber = dados.user.phoneNumber.replace(" ", "");
+      dados.user.cpf = dados.user.cpf.replace(/[^\w\s]/gi, "");
 
       if (this.id == undefined) {
-        res = await this.service.cadastrar(dados)
+        res = await this.service.cadastrar(dados);
       } else {
-        this.form.password = ''
-        res = await this.service.alterar(this.id, dados)
+        this.form.password = "";
+        res = await this.service.alterar(this.id, dados);
       }
       if (res.status == 201) {
-        this.$refs.toast.createToast('Cadastrado com sucesso!')
-        this.$router.push('/forms/cliente')
+        this.$refs.toast.createToast("Cadastrado com sucesso!");
+        this.$router.push("/forms/cliente");
       } else if (res.status == 200) {
-        this.$refs.toast.createToast('Alterado com sucesso!')
+        this.$refs.toast.createToast("Alterado com sucesso!");
       } else {
-        let vetErros = res.response.data.fieldErrors
+        let vetErros = res.response.data.fieldErrors;
         vetErros.forEach((element) => {
           this.$refs.toast.createToast(
-            ` [${element.fieldName}] ${element.message} `,
-          )
-        })
+            ` [${element.fieldName}] ${element.message} `
+          );
+        });
       }
     },
     async consultarUm() {
       if (this.id != undefined) {
-        this.form.user = await this.service.buscarUm(this.id)
+        this.form.user = await this.service.buscarUm(this.id);
       }
     },
     mostrarSenha() {
       if (this.mostraSenha == false) {
-        document.getElementById('senha').type = 'text'
-        document.getElementById('confirmaSenha').type = 'text'
+        document.getElementById("senha").type = "text";
+        document.getElementById("confirmaSenha").type = "text";
       } else {
-        document.getElementById('senha').type = 'password'
-        document.getElementById('confirmaSenha').type = 'password'
+        document.getElementById("senha").type = "password";
+        document.getElementById("confirmaSenha").type = "password";
       }
     },
     compararSenhas() {
       if (this.form.user.password == this.form.user.confirmPassword) {
-        return true
+        return true;
       } else {
-        this.messagePassword = 'As senhas não são iguais.'
-        return false
+        this.messagePassword = "As senhas não são iguais.";
+        return false;
       }
     },
     async getAddressByCep() {
       this.form.user.address = await this.addressService.getAddressByCep(
-        this.form.user.address.zipCode,
-      )
+        this.form.user.address.zipCode
+      );
       if (this.form.user.address.zipCode != undefined) {
-        this.consultedZipCode = true
+        this.consultedZipCode = true;
       }
     },
     validationTypePerson() {
-      this.validationTypePerson.validation(this.typePerson, this.form.user.cpf)
+      this.validationTypePerson.validation(this.typePerson, this.form.user.cpf);
     },
   },
   mounted() {
     if (this.id != undefined) {
-      this.consultarUm()
-      this.btnChangePassword = true
+      this.consultarUm();
+      this.btnChangePassword = true;
     }
   },
-}
+};
 </script>
