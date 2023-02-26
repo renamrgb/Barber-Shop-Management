@@ -3,97 +3,104 @@ export default class ValidationTypePerson {
   2 ==> Pessoa Jurícida */
 
   validation(typePerson, document) {
-    if (typePerson == 2 && !this.validarCNPJ(document)) {
+    if (typePerson == "LEGAL_PERSON" && !this.validarCNPJ(document)) {
       return {
         status: false,
-        message: 'CPNJ é invalido, por favor digite novamente.',
-      }
-    } else if (typePerson == 1 && !this.validarCPF(document)) {
+        message: "CPNJ é invalido, por favor digite novamente.",
+      };
+    } else if (typePerson == "PHYSICAL_PERSON" && !this.validarCPF(document)) {
       return {
         status: false,
-        message: 'CPF é invalido, por favor digite novamente.',
-      }
+        message: "CPF é invalido, por favor digite novamente.",
+      };
     }
   }
 
   validarCPF(cpf) {
-    cpf = cpf.replace(/[^\d]+/g, '')
-    if (cpf == '') return false
-    // Elimina CPFs invalidos conhecidos
+    cpf = cpf.replace(/[^\d]+/g, ""); // Remove caracteres não numéricos
+
+    // Verifica se o CPF tem 11 dígitos e não é uma sequência repetida
+    if (cpf.length != 11 || /^(\d)\1{10}$/.test(cpf)) {
+      return false;
+    }
+
+    // Validação dos dígitos do CPF
+    var digito1 = 0;
+    var digito2 = 0;
+
+    for (var i = 0; i < 9; i++) {
+      digito1 += parseInt(cpf.charAt(i)) * (10 - i);
+      digito2 += parseInt(cpf.charAt(i)) * (11 - i);
+    }
+
+    digito1 = digito1 % 11 < 2 ? 0 : 11 - (digito1 % 11);
+    digito2 =
+      (digito2 + digito1 * 2) % 11 < 2
+        ? 0
+        : 11 - ((digito2 + digito1 * 2) % 11);
+
+    // Verifica se os dígitos calculados são iguais aos dígitos informados
     if (
-      cpf.length != 11 ||
-      cpf == '00000000000' ||
-      cpf == '11111111111' ||
-      cpf == '22222222222' ||
-      cpf == '33333333333' ||
-      cpf == '44444444444' ||
-      cpf == '55555555555' ||
-      cpf == '66666666666' ||
-      cpf == '77777777777' ||
-      cpf == '88888888888' ||
-      cpf == '99999999999'
-    )
-      return false
-    // Valida 1o digito
-    add = 0
-    for (i = 0; i < 9; i++) add += parseInt(cpf.charAt(i)) * (10 - i)
-    rev = 11 - (add % 11)
-    if (rev == 10 || rev == 11) rev = 0
-    if (rev != parseInt(cpf.charAt(9))) return false
-    // Valida 2o digito
-    add = 0
-    for (i = 0; i < 10; i++) add += parseInt(cpf.charAt(i)) * (11 - i)
-    rev = 11 - (add % 11)
-    if (rev == 10 || rev == 11) rev = 0
-    if (rev != parseInt(cpf.charAt(10))) return false
-    return true
+      digito1 != parseInt(cpf.charAt(9)) ||
+      digito2 != parseInt(cpf.charAt(10))
+    ) {
+      return false;
+    }
+
+    return true; // CPF válido
   }
+
   validarCNPJ(cnpj) {
-    cnpj = cnpj.replace(/[^\d]+/g, '')
+    cnpj = cnpj.replace(/[^\d]+/g, ""); // Remove caracteres não numéricos
 
-    if (cnpj == '') return false
-
-    if (cnpj.length != 14) return false
-
-    // Elimina CNPJs invalidos conhecidos
-    if (
-      cnpj == '00000000000000' ||
-      cnpj == '11111111111111' ||
-      cnpj == '22222222222222' ||
-      cnpj == '33333333333333' ||
-      cnpj == '44444444444444' ||
-      cnpj == '55555555555555' ||
-      cnpj == '66666666666666' ||
-      cnpj == '77777777777777' ||
-      cnpj == '88888888888888' ||
-      cnpj == '99999999999999'
-    )
-      return false
-
-    // Valida DVs
-    tamanho = cnpj.length - 2
-    numeros = cnpj.substring(0, tamanho)
-    digitos = cnpj.substring(tamanho)
-    soma = 0
-    pos = tamanho - 7
-    for (i = tamanho; i >= 1; i--) {
-      soma += numeros.charAt(tamanho - i) * pos--
-      if (pos < 2) pos = 9
+    // Verifica se o CNPJ tem 14 dígitos
+    if (cnpj.length != 14) {
+      return false;
     }
-    resultado = soma % 11 < 2 ? 0 : 11 - (soma % 11)
-    if (resultado != digitos.charAt(0)) return false
 
-    tamanho = tamanho + 1
-    numeros = cnpj.substring(0, tamanho)
-    soma = 0
-    pos = tamanho - 7
-    for (i = tamanho; i >= 1; i--) {
-      soma += numeros.charAt(tamanho - i) * pos--
-      if (pos < 2) pos = 9
+    // Verifica se todos os dígitos são iguais
+    if (/^(\d)\1{13}$/.test(cnpj)) {
+      return false;
     }
-    resultado = soma % 11 < 2 ? 0 : 11 - (soma % 11)
-    if (resultado != digitos.charAt(1)) return false
 
-    return true
+    // Validação dos dígitos do CNPJ
+    var tamanho = cnpj.length - 2;
+    var numeros = cnpj.substring(0, tamanho);
+    var digitos = cnpj.substring(tamanho);
+    var soma = 0;
+    var pos = tamanho - 7;
+
+    for (var i = tamanho; i >= 1; i--) {
+      soma += numeros.charAt(tamanho - i) * pos--;
+      if (pos < 2) {
+        pos = 9;
+      }
+    }
+
+    var resultado = soma % 11 < 2 ? 0 : 11 - (soma % 11);
+
+    if (resultado != digitos.charAt(0)) {
+      return false;
+    }
+
+    tamanho = tamanho + 1;
+    numeros = cnpj.substring(0, tamanho);
+    soma = 0;
+    pos = tamanho - 7;
+
+    for (var i = tamanho; i >= 1; i--) {
+      soma += numeros.charAt(tamanho - i) * pos--;
+      if (pos < 2) {
+        pos = 9;
+      }
+    }
+
+    resultado = soma % 11 < 2 ? 0 : 11 - (soma % 11);
+
+    if (resultado != digitos.charAt(1)) {
+      return false;
+    }
+
+    return true; // CNPJ válido
   }
 }

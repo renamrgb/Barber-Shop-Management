@@ -96,24 +96,12 @@
               </div>
             </div>
             <div class="row mb-3">
-              <div class="col">
-                <CFormLabel for="rg">RG</CFormLabel>
-                <CFormInput name="rg" type="text" v-model="form.user.rg" />
-              </div>
-              <div class="col">
-                <CFormLabel for="rg">Tipo De Pessoa</CFormLabel>
-                <select class="form-select" v-model="typePerson">
-                  <option value="1" selected>Pessoa Física</option>
-                  <option value="2">Pessoa Jurícida</option>
-                </select>
-              </div>
-              <div class="col">
-                <DocumentForUser
-                  v-model="form.user.cpf"
-                  :typePerson="this.typePerson"
-                  placeholder="Digite aqui"
-                />
-              </div>
+              <DocumentForUser
+                ref="documentForUser"
+                :typePersonProps="this.form.user.typePerson"
+                :documentProps="this.form.user.document"
+                :rgProps="this.form.user.rg"
+              />
             </div>
             <div class="mb-3">
               <CFormLabel for="telefone">* Telefone / Celular</CFormLabel>
@@ -232,7 +220,6 @@
 <script>
 import { useVuelidate } from "@vuelidate/core";
 import ValidationsMessage from "@/util/ValidationsMessage.js";
-import ValidationTypePerson from "@/util/validationTypePerson.js";
 import Service from "@/Services/clienteService.js";
 import AddressService from "@/Services/addressService.js";
 import Toast from "@/components/Toast.vue";
@@ -247,13 +234,10 @@ export default {
       id: this.$route.params.id,
       service: new Service(),
       addressService: new AddressService(),
-      validationTypePerson: new ValidationTypePerson(),
       mostraSenha: false,
       messagePassword: "",
       btnChangePassword: false,
       consultedZipCode: false,
-      typePerson: 1,
-      messageTypePersonValid: undefined,
       form: {
         user: {
           name: "",
@@ -261,7 +245,8 @@ export default {
           password: "",
           confirmPassword: "",
           phoneNumber: "",
-          cpf: "",
+          typePerson: "",
+          document: "",
           rg: "",
           address: {
             zipCode: "",
@@ -315,13 +300,7 @@ export default {
         this.form.user.confirmPassword = "*******";
       }
       this.v$.$validate();
-      this.messageTypePersonValid = this.validationTypePerson();
-      if (
-        !this.v$.$error &&
-        !this.btnChangePassword &&
-        this.compararSenhas() &&
-        this.messageTypePersonValid == undefined
-      ) {
+      if (!this.v$.$error && !this.btnChangePassword && this.compararSenhas()) {
         this.salvar();
       } else if (!this.v$.$error && this.btnChangePassword) {
         this.salvar();
@@ -329,21 +308,16 @@ export default {
     },
     async salvar() {
       let res = undefined;
-      let dados = this.form;
-      dados.user.address.zipCode = dados.user.address.zipCode.replace(
-        /[^\w\s]/gi,
-        ""
-      );
-      dados.user.phoneNumber = dados.user.phoneNumber.replace(/[^\w\s]/gi, "");
-      dados.user.phoneNumber = dados.user.phoneNumber.replace(" ", "");
-      dados.user.cpf = dados.user.cpf.replace(/[^\w\s]/gi, "");
-
+      this.form.user.document = this.$refs.documentForUser.document;
+      this.form.user.rg = this.$refs.documentForUser.rg;
+      this.form.user.typePerson = this.$refs.documentForUser.typePerson;
       if (this.id == undefined) {
-        res = await this.service.cadastrar(dados);
+        res = await this.service.cadastrar(this.form);
       } else {
         this.form.password = "";
-        res = await this.service.alterar(this.id, dados);
+        res = await this.service.alterar(this.id, this.form);
       }
+      console.log(res);
       if (res.status == 201) {
         this.$refs.toast.createToast("Cadastrado com sucesso!");
         this.$router.push("/forms/cliente");
@@ -361,6 +335,9 @@ export default {
     async consultarUm() {
       if (this.id != undefined) {
         this.form.user = await this.service.buscarUm(this.id);
+        this.$refs.documentForUser.document = this.form.user.document;
+        this.$refs.documentForUser.rg = this.form.user.rg;
+        this.$refs.documentForUser.typePerson = this.form.user.typePerson;
       }
     },
     mostrarSenha() {
@@ -387,10 +364,7 @@ export default {
       if (this.form.user.address.zipCode != undefined) {
         this.consultedZipCode = true;
       }
-    },
-    validationTypePerson() {
-      this.validationTypePerson.validation(this.typePerson, this.form.user.cpf);
-    },
+    },    
   },
   mounted() {
     if (this.id != undefined) {

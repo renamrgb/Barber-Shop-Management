@@ -1,39 +1,92 @@
 <template>
-  <CFormLabel for="cpf">{{ txtLabel }}</CFormLabel>
-  <input
-    type="text"
-    class="form-control"
-    :value="valor"
-    :placeholder="placeholder"
-    @input="$emit('input', $event.target.value)"
-  />
-  <!-- v-mask="['###.###.###-##', '##.###.###/####-##']" -->
-  <!-- <div v-if="messageTypePersonValid != undefined" class="invalid-input-form">{{ messageTypePersonValid.message }}</div> -->
+  <div class="col">
+    <CFormLabel for="typePerson">Tipo De Pessoa</CFormLabel>
+    <select
+      class="form-select"
+      v-model="typePerson"
+      @change="updatePlaceholderAndLabel()"
+    >
+      <option value="PHYSICAL_PERSON" selected>Pessoa Física</option>
+      <option value="LEGAL_PERSON">Pessoa Jurícida</option>
+    </select>
+  </div>
+  <div class="col" v-if="this.typePerson == 'PHYSICAL_PERSON'">
+    <CFormLabel for="rg">RG</CFormLabel>
+    <CFormInput name="rg" type="text" v-model="rg" />
+  </div>
+  <div class="col" v-if="typePerson != undefined">
+    <CFormLabel for="document">{{ txtLabel }}</CFormLabel>
+    <input
+      name="document"
+      type="text"
+      class="form-control"
+      v-model="document"
+      v-mask="maskDocument"
+      @input="validationDocument()"
+    />
+    <div v-if="resValidation != undefined" class="warning-input-form">
+      {{ resValidation.message }}
+    </div>
+  </div>
 </template>
 
 <script>
+import ValidationTypePerson from "@/util/validationTypePerson";
 export default {
-  name: "MeuInput",
+  name: "DocumentForUser",
   props: {
-    valor: String,
-    typePerson: Number,
-    placeholder: String,
+    documentProps: String,
+    typePersonProps: String,
+    rgProps: String,
   },
   data() {
     return {
+      typePerson: "PHYSICAL_PERSON",
+      rg: "",
       txtLabel: "",
+      document: "",
+      maskDocument: "###.###.###-##",
+      validationTypePerson: new ValidationTypePerson(),
+      resValidation: undefined,
     };
   },
   methods: {
+    validationDocument() {
+      // console.log(`TypePerson ${this.typePerson} | Lenght ${this.document.length}`);
+      if (this.typePerson == "PHYSICAL_PERSON" && this.document.length == 14) {
+        this.resValidation = this.validationTypePerson.validation(
+          this.typePerson,
+          this.document
+        );
+      } else if (
+        this.typePerson == "LEGAL_PERSON" &&
+        this.document.length == 18
+      ) {
+        this.resValidation = this.validationTypePerson.validation(
+          this.typePerson,
+          this.document
+        );
+      }
+    },
     updatePlaceholderAndLabel() {
-      if (this.$props.typePerson == 1) {
+      this.resValidation = "";
+      this.document = "";
+      if (this.typePerson == "PHYSICAL_PERSON") {
         this.txtLabel = "CPF";
+        this.maskDocument = "###.###.###-##";
       } else {
         this.txtLabel = "CNPJ";
+        this.maskDocument = "##.###.###/####-##";
+        console.log(this.maskDocument);
       }
     },
   },
   mounted() {
+    if (this.$props.typePerson != 0) {
+      this.typePerson = this.$props.typePersonProps;
+      this.document = this.$props.documentProps;
+      this.rg = this.$props.rgProps;
+    }
     this.updatePlaceholderAndLabel();
   },
 };

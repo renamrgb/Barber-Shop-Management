@@ -12,14 +12,13 @@ import java.util.Set;
 @Getter
 @Setter
 public class ProfissionalDTO implements Serializable {
-
     private Long id;
     private String name;
     private String email;
     private String phoneNumber;
-    private String cpf;
+    private String typePerson;
+    private String document;
     private String rg;
-
     private AddressDTO address;
     private Set<ProcedureDTO> procedures = new HashSet<>();
     private Boolean isActive;
@@ -33,8 +32,9 @@ public class ProfissionalDTO implements Serializable {
         id = obj.getId();
         name = obj.getUser().getName();
         email = obj.getUser().getEmail();
+        typePerson = obj.getUser().getTypePerson();
         phoneNumber = obj.getUser().getPhoneNumber();
-        cpf = obj.getUser().getCpf();
+        document = obj.getUser().getDocument();
         rg = obj.getUser().getRg();
         address.setState(obj.getUser().getAddress().getState());
         address.setZipCode(obj.getUser().getAddress().getZipCode());

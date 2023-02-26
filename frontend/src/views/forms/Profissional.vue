@@ -87,7 +87,7 @@
                   class="btn btn-light"
                   @click="
                     () => {
-                      btnChangePassword = false
+                      btnChangePassword = false;
                     }
                   "
                 >
@@ -96,17 +96,12 @@
               </div>
             </div>
             <div class="row mb-3">
-              <div class="col">
-                <CFormLabel for="rg">RG</CFormLabel>
-                <CFormInput name="rg" type="text" v-model="form.user.rg" />
-              </div>
-              <div class="col">
-                <CFormLabel for="cpf">CPF / CNPJ</CFormLabel>
-                <input
-                  type="text"
-                  class="form-control"
-                  v-mask="['###.###.###-##', '##.###.###/####-##']"
-                  v-model="form.user.cpf"
+              <div class="row mb-3">
+                <DocumentForUser
+                  ref="documentForUser"
+                  :typePersonProps="this.form.user.typePerson"
+                  :documentProps="this.form.user.document"
+                  :rgProps="this.form.user.rg"
                 />
               </div>
             </div>
@@ -244,17 +239,18 @@
 </template>
 
 <script>
-import { useVuelidate } from '@vuelidate/core'
-import ValidationsMessage from '@/util/ValidationsMessage.js'
-import Service from '@/Services/profissionalService.js'
-import ProcedimentoService from '@/Services/procedimentoService.js'
-import AddressService from '@/Services/addressService.js'
-import Toast from '@/components/Toast.vue'
-import Multiselect from '@vueform/multiselect/src/Multiselect'
+import { useVuelidate } from "@vuelidate/core";
+import ValidationsMessage from "@/util/ValidationsMessage.js";
+import Service from "@/Services/profissionalService.js";
+import ProcedimentoService from "@/Services/procedimentoService.js";
+import AddressService from "@/Services/addressService.js";
+import Toast from "@/components/Toast.vue";
+import Multiselect from "@vueform/multiselect/src/Multiselect";
+import DocumentForUser from "@/components/DocumentForUser.vue";
 
 export default {
-  components: { Toast, Multiselect },
-  name: 'Profissional',
+  components: { Toast, Multiselect, DocumentForUser },
+  name: "Profissional",
   data() {
     return {
       v$: useVuelidate(),
@@ -264,36 +260,37 @@ export default {
       procedimentoService: new ProcedimentoService(),
       addressService: new AddressService(),
       mostraSenha: false,
-      messagePassword: '',
+      messagePassword: "",
       btnChangePassword: false,
       consultedZipCode: false,
       form: {
         user: {
-          name: '',
-          email: '',
-          password: '',
-          confirmPassword: '',
-          phoneNumber: '',
-          cpf: '',
-          rg: '',
+          name: "",
+          email: "",
+          password: "",
+          confirmPassword: "",
+          phoneNumber: "",
+          typePerson: "",
+          document: "",
+          rg: "",
           address: {
-            zipCode: '',
-            publicPlace: '',
-            neighborhood: '',
-            complement: '',
-            city: '',
-            state: '',
+            zipCode: "",
+            publicPlace: "",
+            neighborhood: "",
+            complement: "",
+            city: "",
+            state: "",
           },
           nivelAcesso: {
-            authority: 'ROLE_ADMIN',
+            authority: "ROLE_ADMIN",
           },
           procedures: [],
           isActive: false,
-        },        
+        },
       },
       value: [],
       options: [],
-    }
+    };
   },
   validations() {
     return {
@@ -322,116 +319,111 @@ export default {
           },
         },
       },
-    }
+    };
   },
   methods: {
     submitForm() {
       if (this.form.user.password == undefined) {
-        this.form.user.password = '*******'
-        this.form.user.confirmPassword = '*******'
+        this.form.user.password = "*******";
+        this.form.user.confirmPassword = "*******";
       }
-      this.v$.$validate()
+      this.v$.$validate();
       // console.log(this.v$.$errors);
       if (!this.v$.$error && !this.btnChangePassword && this.compararSenhas()) {
-        this.salvar()
+        this.salvar();
       } else if (!this.v$.$error && this.btnChangePassword) {
-        this.salvar()
+        this.salvar();
       }
     },
     async salvar() {
       this.value.forEach((element) => {
-        this.form.user.procedures.push({ id: element })
-      })
-      let res = undefined
-      let dados = this.form
-      dados.user.address.zipCode = dados.user.address.zipCode.replace(
-        /[^\w\s]/gi,
-        '',
-      )
-      dados.user.phoneNumber = dados.user.phoneNumber.replace(/[^\w\s]/gi, '')
-      dados.user.phoneNumber = dados.user.phoneNumber.replace(' ', '')
-      dados.user.cpf = dados.user.cpf.replace(/[^\w\s]/gi, '')
-
+        this.form.user.procedures.push({ id: element });
+      });
+      let res = undefined;
+      let dados = this.form;
       if (this.id == undefined) {
-        res = await this.service.cadastrar(dados)
+        res = await this.service.cadastrar(dados);
       } else {
-        this.form.password = ''
-        res = await this.service.alterar(this.id, dados)
+        this.form.password = "";
+        res = await this.service.alterar(this.id, dados);
       }
       if (res.status == 201) {
-        this.$refs.toast.createToast('Cadastrado com sucesso!')
-        this.$router.push('/forms/profissional')
+        this.$refs.toast.createToast("Cadastrado com sucesso!");
+        this.$router.push("/forms/profissional");
       } else if (res.status == 200) {
-        this.$refs.toast.createToast('Alterado com sucesso!')
+        this.$refs.toast.createToast("Alterado com sucesso!");
       } else {
-        let vetErros = res.response.data.fieldErrors
+        let vetErros = res.response.data.fieldErrors;
         vetErros.forEach((element) => {
           this.$refs.toast.createToast(
-            `[${element.fieldName}] ${element.message}`,
-          )
-        })
+            `[${element.fieldName}] ${element.message}`
+          );
+        });
       }
     },
     async consultarUm() {
       if (this.id != undefined) {
-        this.form.user = await this.service.buscarUm(this.id)
+        this.form.user = await this.service.buscarUm(this.id);
         console.log(this.form.user.procedures);
-        this.form.user.procedures.forEach(element => {
-          this.value.push(element.id)
+        this.form.user.procedures.forEach((element) => {
+          this.value.push(element.id);
         });
+        this.$refs.documentForUser.document = this.form.user.document;
+        this.$refs.documentForUser.rg = this.form.user.rg;
+        this.$refs.documentForUser.typePerson = this.form.user.typePerson;
       }
     },
     mostrarSenha() {
       if (this.mostraSenha == false) {
-        document.getElementById('senha').type = 'text'
-        document.getElementById('confirmaSenha').type = 'text'
+        document.getElementById("senha").type = "text";
+        document.getElementById("confirmaSenha").type = "text";
       } else {
-        document.getElementById('senha').type = 'password'
-        document.getElementById('confirmaSenha').type = 'password'
+        document.getElementById("senha").type = "password";
+        document.getElementById("confirmaSenha").type = "password";
       }
     },
     compararSenhas() {
       if (this.form.user.password == this.form.user.confirmPassword) {
-        return true
+        return true;
       } else {
-        this.messagePassword = 'As senhas não são iguais.'
-        return false
+        this.messagePassword = "As senhas não são iguais.";
+        return false;
       }
     },
     async carregarSelectProcedimentos() {
-      let res = await this.procedimentoService.consultarTodos()
+      let res = await this.procedimentoService.consultarTodos();
       // console.log(res)
       res.forEach((element) => {
         this.options.push({
           value: element.id,
           description: element.description,
-        })
-      })
+        });
+      });
     },
     carregaValue(itens) {
       itens.forEach((element) => {
-        this.value.push(element.id)
-      })
+        this.value.push(element.id);
+      });
     },
     async getAddressByCep() {
       this.form.user.address = await this.addressService.getAddressByCep(
-        this.form.user.address.zipCode,
-      )
-      if(this.form.user.address.zipCode != undefined){
-        this.consultedZipCode = true
+        this.form.user.address.zipCode
+      );
+      if (this.form.user.address.zipCode != undefined) {
+        this.consultedZipCode = true;
       }
-    },
+    },    
   },
   mounted() {
-    this.carregarSelectProcedimentos()
+    this.carregarSelectProcedimentos();
     if (this.id != undefined) {
-      this.consultarUm()
-      this.btnChangePassword = true
-      if(this.form.user.address.zipCode != undefined){
-        this.consultedZipCode = true
+      this.consultarUm();
+      this.btnChangePassword = true;
+      if (this.form.user.address.zipCode != undefined) {
+        this.consultedZipCode = true;
       }
     }
   },
-}
+};
 </script>
 <style src="@vueform/multiselect/themes/default.css"></style>
