@@ -36,9 +36,9 @@ public class CustomerResource {
 
     @PostMapping
     public ResponseEntity<CustomerDTO> insert(@Valid @RequestBody CustomerRecord obj) {
-        CustomerDTO cli = service.insert(obj);
+        Customer cli = service.insert(obj);
         URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(cli.getId()).toUri();
-        return ResponseEntity.created(uri).body(cli);
+        return ResponseEntity.created(uri).body(new CustomerDTO(cli));
     }
 
     @DeleteMapping(value = "/{id}")

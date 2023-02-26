@@ -1,6 +1,6 @@
 package com.rpx.bsm.resources;
 
-import com.rpx.bsm.dto.ProfissionalDTO;
+import com.rpx.bsm.dto.ProfessionalDTO;
 import com.rpx.bsm.entities.Professional;
 import com.rpx.bsm.records.ProfessionalRecord;
 import com.rpx.bsm.services.ProfessionalService;
@@ -22,23 +22,23 @@ public class ProfessionalResouce {
     private ProfessionalService service;
 
     @GetMapping
-    public ResponseEntity<List<ProfissionalDTO>> findAll(@RequestParam(defaultValue = "", name = "name") String name) {
+    public ResponseEntity<List<ProfessionalDTO>> findAll(@RequestParam(defaultValue = "", name = "name") String name) {
         List<Professional> list = service.find(name);
-        List<ProfissionalDTO> listDto = list.stream().map(x -> new ProfissionalDTO(x)).collect(Collectors.toList());
+        List<ProfessionalDTO> listDto = list.stream().map(x -> new ProfessionalDTO(x)).collect(Collectors.toList());
         return ResponseEntity.ok().body(listDto);
     }
 
     @GetMapping(value = "/{id}")
-    public ResponseEntity<ProfissionalDTO> findById(@PathVariable Long id){
+    public ResponseEntity<ProfessionalDTO> findById(@PathVariable Long id){
         Professional obj = service.findById(id);
-        return ResponseEntity.ok().body(new ProfissionalDTO(obj));
+        return ResponseEntity.ok().body(new ProfessionalDTO(obj));
     }
 
     @PostMapping
-    public ResponseEntity<ProfissionalDTO> insert(@Valid @RequestBody ProfessionalRecord obj) {
-        ProfissionalDTO dto = service.insert(obj);
-        URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(dto.getId()).toUri();
-        return ResponseEntity.created(uri).body(dto);
+    public ResponseEntity<ProfessionalDTO> insert(@Valid @RequestBody ProfessionalRecord record) {
+        Professional obj = service.insert(record);
+        URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(obj.getId()).toUri();
+        return ResponseEntity.created(uri).body(new ProfessionalDTO(obj));
     }
 
     @DeleteMapping(value = "/{id}")
@@ -48,15 +48,13 @@ public class ProfessionalResouce {
     }
 
     @PutMapping(value = "/{id}")
-    public ResponseEntity<ProfissionalDTO> update(@PathVariable Long id, @RequestBody ProfessionalRecord obj) {
-        ProfissionalDTO objDto = service.update(id, obj);
-        return ResponseEntity.ok().body(objDto);
+    public ResponseEntity<ProfessionalDTO> update(@PathVariable Long id, @RequestBody ProfessionalRecord record) {
+        Professional obj = service.update(id, record);
+        return ResponseEntity.ok().body(new ProfessionalDTO(obj));
     }
 
     public static class ResourceNotFoundException extends RuntimeException {
-
         private static final long serialVersionUID = 1L;
-
         public ResourceNotFoundException(Object id) {
             super("Resouce not found. Id " + id);
         }

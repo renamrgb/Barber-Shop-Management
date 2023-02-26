@@ -1,5 +1,8 @@
 package com.rpx.bsm.entities;
 
+import com.rpx.bsm.enums.NivelAcessoEnum;
+import com.rpx.bsm.records.ProcedimentoIdRecord;
+import com.rpx.bsm.records.ProfessionalRecord;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -31,7 +34,13 @@ public class Professional implements Serializable {
     public Professional() {
         this.user = new User();
     }
-
+    public Professional(ProfessionalRecord record){
+        this.user = new User(record.user());
+        this.user.getAccessLevel().setAuthority(NivelAcessoEnum.ROLE_ADMIN);
+        for (ProcedimentoIdRecord p : record.procedures()) {
+            this.getProcedures().add(new Procedure(p.id()));
+        }
+    }
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -39,7 +48,6 @@ public class Professional implements Serializable {
         Professional that = (Professional) o;
         return Objects.equals(Id, that.Id);
     }
-
     @Override
     public int hashCode() {
         return Objects.hash(Id);

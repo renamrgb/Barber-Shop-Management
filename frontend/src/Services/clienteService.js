@@ -13,9 +13,7 @@ export default class ClienteService {
   }
   async cadastrar(item) {
     try {
-      item.user.phoneNumber = item.user.phoneNumber.replace(/[^\d]+/g, "");
-      item.user.document = item.user.document.replace(/[^\d]+/g, "");
-      const res = await api.post(this.url, item);
+      const res = await api.post(this.url, this.replaceItem(item));
       return res;
     } catch (error) {
       return error;
@@ -31,7 +29,7 @@ export default class ClienteService {
   }
   async alterar(id, item) {
     try {
-      const res = await api.put(`${this.url}/${id}`, item);
+      const res = await api.put(`${this.url}/${id}`, this.replaceItem(item));
       return res;
     } catch (error) {
       return error;
@@ -52,5 +50,14 @@ export default class ClienteService {
     } catch (error) {
       return error;
     }
+  }
+  replaceItem(item) {
+    item.user.phoneNumber = item.user.phoneNumber.replace(/[^\d]+/g, "");
+    item.user.document = item.user.document.replace(/[^\d]+/g, "");
+    item.user.address.zipCode = item.user.address.zipCode.replace(
+      /[^\d]+/g,
+      ""
+    );
+    return item;
   }
 }

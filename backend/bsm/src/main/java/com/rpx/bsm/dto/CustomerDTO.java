@@ -13,7 +13,8 @@ public class CustomerDTO implements Serializable {
     private String name;
     private String email;
     private String phoneNumber;
-    private String cpf;
+    private String typePerson;
+    private String document;
     private String rg;
     private AddressDTO address;
     private Boolean isActive;
@@ -28,7 +29,8 @@ public class CustomerDTO implements Serializable {
         name = obj.getUser().getName();
         email = obj.getUser().getEmail();
         phoneNumber = obj.getUser().getPhoneNumber();
-        cpf = obj.getUser().getCpf();
+        typePerson = obj.getUser().getTypePerson();
+        document = obj.getUser().getDocument();
         rg = obj.getUser().getRg();
         address.setState(obj.getUser().getAddress().getState());
         address.setZipCode(obj.getUser().getAddress().getZipCode());

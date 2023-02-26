@@ -76,8 +76,7 @@ export default {
         this.maskDocument = "###.###.###-##";
       } else {
         this.txtLabel = "CNPJ";
-        this.maskDocument = "##.###.###/####-##";
-        console.log(this.maskDocument);
+        this.maskDocument = "##.###.###/####-##";        
       }
     },
   },

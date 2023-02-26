@@ -1,9 +1,7 @@
 package com.rpx.bsm.services;
 
-import com.rpx.bsm.dto.ProfissionalDTO;
 import com.rpx.bsm.entities.Procedure;
 import com.rpx.bsm.entities.Professional;
-import com.rpx.bsm.enums.NivelAcessoEnum;
 import com.rpx.bsm.records.ProcedimentoIdRecord;
 import com.rpx.bsm.records.ProfessionalRecord;
 import com.rpx.bsm.repositories.ProfessionalRepository;
@@ -39,8 +37,8 @@ public class ProfessionalService {
         return list;
     }
 
-    public ProfissionalDTO insert(ProfessionalRecord obj) {
-        return new ProfissionalDTO(repository.save(converteEmEntidade(obj)));
+    public Professional insert(ProfessionalRecord record) {
+        return repository.save(new Professional(record));
     }
 
     public void delete(Long id) {
@@ -54,42 +52,14 @@ public class ProfessionalService {
     }
 
     @Transactional
-    public ProfissionalDTO update(Long id, ProfessionalRecord obj) {
+    public Professional update(Long id, ProfessionalRecord obj) {
         try {
             Professional entity = repository.getReferenceById(id);
             updateData(obj, entity);
-            return new ProfissionalDTO(repository.save(entity));
+            return repository.save(entity);
         } catch (EntityNotFoundException e) {
             throw new ResourceNotFoundException(id);
         }
-    }
-
-    private Professional converteEmEntidade(ProfessionalRecord record) {
-
-        Professional entidade = new Professional();
-
-        entidade.getUser().setName(record.user().name());
-        entidade.getUser().setEmail(record.user().email());
-        entidade.getUser().setPassword(bCryptPasswordEncoder.encode(record.user().password()));
-        entidade.getUser().setPhoneNumber(record.user().phoneNumber());
-        entidade.getUser().setCpf(record.user().cpf());
-        entidade.getUser().setRg(record.user().rg());
-        entidade.getUser().setIsActive(record.user().isActive());
-
-        entidade.getUser().getAddress().setZipCode(record.user().address().zipCode());
-        entidade.getUser().getAddress().setPublicPlace(record.user().address().publicPlace());
-        entidade.getUser().getAddress().setNeighborhood(record.user().address().neighborhood());
-        entidade.getUser().getAddress().setComplement(record.user().address().complement());
-        entidade.getUser().getAddress().setCity(record.user().address().city());
-        entidade.getUser().getAddress().setState(record.user().address().state());
-
-        entidade.getUser().getNivelAcesso().setAuthority(NivelAcessoEnum.ROLE_ADMIN);
-
-        for (ProcedimentoIdRecord p : record.procedures()) {
-            entidade.getProcedures().add(new Procedure(p.id()));
-        }
-
-        return entidade;
     }
 
     private Professional updateData(ProfessionalRecord record, Professional entidade) {
@@ -100,7 +70,8 @@ public class ProfessionalService {
             entidade.getUser().setPassword(bCryptPasswordEncoder.encode(record.user().password()));
         }
         entidade.getUser().setPhoneNumber(record.user().phoneNumber());
-        entidade.getUser().setCpf(record.user().cpf());
+        entidade.getUser().setTypePerson(record.user().typePerson());
+        entidade.getUser().setDocument(record.user().document());
         entidade.getUser().setRg(record.user().rg());
         entidade.getUser().setIsActive(record.user().isActive());
 
@@ -116,8 +87,6 @@ public class ProfessionalService {
 
         return entidade;
     }
-
-
 
     public Professional findById(Long id) {
         Optional<Professional> obj = repository.findById(id);

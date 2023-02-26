@@ -11,7 +11,7 @@ import java.util.Set;
 
 @Getter
 @Setter
-public class ProfissionalDTO implements Serializable {
+public class ProfessionalDTO implements Serializable {
     private Long id;
     private String name;
     private String email;
@@ -23,11 +23,11 @@ public class ProfissionalDTO implements Serializable {
     private Set<ProcedureDTO> procedures = new HashSet<>();
     private Boolean isActive;
 
-    public ProfissionalDTO() {
+    public ProfessionalDTO() {
         this.address = new AddressDTO();
     }
 
-    public ProfissionalDTO(Professional obj) {
+    public ProfessionalDTO(Professional obj) {
         this.address = new AddressDTO();
         id = obj.getId();
         name = obj.getUser().getName();

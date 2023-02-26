@@ -1,14 +1,19 @@
 package com.rpx.bsm.entities;
 
 
+import com.rpx.bsm.records.UserRecord;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+
 import javax.persistence.*;
 import java.io.Serializable;
-import java.util.*;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Objects;
 
 
 @Entity
@@ -23,45 +28,64 @@ public class User implements UserDetails, Serializable {
     private String name;
     @Column(unique = true)
     private String email;
+    @Column(columnDefinition = "VARCHAR(16)")
+    private String typePerson;
     private String password;
     private String phoneNumber;
-    private String cpf;
+    private String document;
     private String rg;
-
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "address_id")
     private Address address;
-
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "accesslevel_id")
-    private AccessLevel nivelAcesso;
-
+    private AccessLevel accessLevel;
     private Boolean isActive;
     public User() {
         this.address = new Address();
-        this.nivelAcesso = new AccessLevel();
+        this.accessLevel = new AccessLevel();
     }
-
-    public User(String name, String email, String password, String phoneNumber, String cpf, String rg, Address address, AccessLevel nivelAcesso, Boolean isActive) {
+    
+    public User(UserRecord record){
+        BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
+        this.setName(record.name());
+        this.setEmail(record.email());
+        this.setPassword(bCryptPasswordEncoder.encode(record.password()));
+        this.setPhoneNumber(record.phoneNumber());
+        this.setDocument(record.document());
+        this.setTypePerson(record.typePerson());
+        this.setRg(record.rg());
+        this.setIsActive(record.isActive());
+        this.address = new Address();
+        this.getAddress().setZipCode(record.address().zipCode());
+        this.getAddress().setPublicPlace(record.address().publicPlace());
+        this.getAddress().setNeighborhood(record.address().neighborhood());
+        this.getAddress().setComplement(record.address().complement());
+        this.getAddress().setCity(record.address().city());
+        this.getAddress().setState(record.address().state());
+        this.accessLevel = new AccessLevel();
+    }
+    
+    public User(String name, String email, String password, String phoneNumber, String document, String rg, Address address, AccessLevel accessLevel, Boolean isActive) {
         this.name = name;
         this.email = email;
         this.password = password;
         this.phoneNumber = phoneNumber;
-        this.cpf = cpf;
+        this.document = document;
         this.rg = rg;
         this.address = address;
-        this.nivelAcesso = nivelAcesso;
+        this.accessLevel = accessLevel;
         this.isActive = isActive;
     }
 
-    public User(String name, String email, String password, String phoneNumber, String cpf, String rg, AccessLevel nivelAcesso, Boolean isActive) {
+    public User(String name, String email, String password, String phoneNumber, String document, String rg, AccessLevel accessLevel, Boolean isActive) {
         this.name = name;
         this.email = email;
         this.password = password;
         this.phoneNumber = phoneNumber;
-        this.cpf = cpf;
+        this.document = document;
         this.rg = rg;
-        this.nivelAcesso = nivelAcesso;
+        this.accessLevel = accessLevel;
         this.isActive = isActive;
     }
 
@@ -86,10 +110,10 @@ public class User implements UserDetails, Serializable {
                 ", email='" + email + '\'' +
                 ", password='" + password + '\'' +
                 ", phoneNumber='" + phoneNumber + '\'' +
-                ", cpf='" + cpf + '\'' +
+                ", document='" + document + '\'' +
                 ", rg='" + rg + '\'' +
                 ", address=" + address +
-                ", nivelAcesso=" + nivelAcesso +
+                ", accessLevel=" + accessLevel +
                 ", isActive=" + isActive +
                 '}';
     }
@@ -97,7 +121,7 @@ public class User implements UserDetails, Serializable {
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return Collections.singleton(new SimpleGrantedAuthority(
-                nivelAcesso.getAuthority().name()
+                accessLevel.getAuthority().name()
         ));
     }
 

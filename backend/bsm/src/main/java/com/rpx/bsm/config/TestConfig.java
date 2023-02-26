@@ -57,7 +57,7 @@ public class TestConfig implements CommandLineRunner {
         u.setEmail("rafael8paulo@gmail.com");
         u.setIsActive(true);
         u.setPassword(bCryptPasswordEncoder.encode("12345678"));
-        u.setNivelAcesso(new AccessLevel(NivelAcessoEnum.ROLE_ADMIN));
+        u.setAccessLevel(new AccessLevel(NivelAcessoEnum.ROLE_ADMIN));
 
         Professional prof = new Professional();
         prof.setUser(u);

@@ -37,8 +37,8 @@ public class CustomerService {
         return list;
     }
 
-    public CustomerDTO insert(CustomerRecord obj) {
-        return new CustomerDTO(repository.save(converteEmEntidade(obj)));
+    public Customer insert(CustomerRecord obj) {
+        return repository.save(new Customer(obj));
     }
 
     public void delete(Long id) {
@@ -56,34 +56,10 @@ public class CustomerService {
         try {
             Customer entity = repository.getReferenceById(id);
             updateData(obj, entity);
-            return new CustomerDTO(converteEmEntidade(obj));
+            return new CustomerDTO(new Customer(obj));
         } catch (EntityNotFoundException e) {
             throw new ResourceNotFoundException(id);
         }
-    }
-
-    private Customer converteEmEntidade(CustomerRecord record) {
-
-        Customer entity = new Customer();
-
-        entity.getUser().setName(record.user().name());
-        entity.getUser().setEmail(record.user().email());
-        entity.getUser().setPassword(bCryptPasswordEncoder.encode(record.user().password()));
-        entity.getUser().setPhoneNumber(record.user().phoneNumber());
-        entity.getUser().setCpf(record.user().cpf());
-        entity.getUser().setRg(record.user().rg());
-        entity.getUser().setIsActive(record.user().isActive());
-
-        entity.getUser().getAddress().setZipCode(record.user().address().zipCode());
-        entity.getUser().getAddress().setPublicPlace(record.user().address().publicPlace());
-        entity.getUser().getAddress().setNeighborhood(record.user().address().neighborhood());
-        entity.getUser().getAddress().setComplement(record.user().address().complement());
-        entity.getUser().getAddress().setCity(record.user().address().city());
-        entity.getUser().getAddress().setState(record.user().address().state());
-
-        entity.getUser().getNivelAcesso().setAuthority(NivelAcessoEnum.ROLE_ADMIN);
-
-        return entity;
     }
 
     private Customer updateData(CustomerRecord record, Customer entity) {
@@ -95,7 +71,8 @@ public class CustomerService {
         }
         entity.getUser().setPassword(bCryptPasswordEncoder.encode(record.user().password()));
         entity.getUser().setPhoneNumber(record.user().phoneNumber());
-        entity.getUser().setCpf(record.user().cpf());
+        entity.getUser().setTypePerson(record.user().typePerson());
+        entity.getUser().setDocument(record.user().document());
         entity.getUser().setRg(record.user().rg());
         entity.getUser().setIsActive(record.user().isActive());
 
@@ -106,7 +83,7 @@ public class CustomerService {
         entity.getUser().getAddress().setCity(record.user().address().city());
         entity.getUser().getAddress().setState(record.user().address().state());
 
-        entity.getUser().getNivelAcesso().setAuthority(NivelAcessoEnum.ROLE_ADMIN);
+        entity.getUser().getAccessLevel().setAuthority(NivelAcessoEnum.ROLE_ADMIN);
         return entity;
     }
 

@@ -11,7 +11,8 @@ public record UserRecord(
         @Email @Length(min = 2, max = 60) String email,
         @NotBlank(message = "Senha é obrigatório") @Length(min = 2, max = 10) String password,
         @Length(min = 11, max = 12) String phoneNumber,
-        @Length(max = 15) String cpf,
+        @Length(max = 16) String typePerson,
+        @Length(max = 15) String document,
         @Length(max = 11) String rg,
         @Valid AddresRecord address,
         @NotNull Boolean isActive

@@ -119,82 +119,10 @@
                 {{ v$.form.user.phoneNumber.$errors[0].$message }}
               </div>
             </div>
-            <div id="getAddres">
-              <div class="row">
-                <CFormLabel for="cep">CEP</CFormLabel>
-              </div>
-              <div class="row g-4 mb-3">
-                <div class="col-md-2">
-                  <input
-                    name="cep"
-                    type="text"
-                    class="form-control"
-                    v-mask="'#####-###'"
-                    v-model="form.user.address.zipCode"
-                  />
-                </div>
-                <div class="col">
-                  <button
-                    type="button"
-                    class="btn btn-primary"
-                    @click="getAddressByCep"
-                  >
-                    Consultar CEP
-                  </button>
-                </div>
-              </div>
-            </div>
-            <div id="addres" v-if="this.consultedZipCode == true">
-              <div class="row g-4 mb-3">
-                <div class="col">
-                  <CFormLabel for="descricao">Logradouro</CFormLabel>
-                  <CFormInput
-                    name="quantidade"
-                    type="logradouro"
-                    placeholder="Rua..."
-                    v-model="form.user.address.publicPlace"
-                  />
-                </div>
-              </div>
-              <div class="row g-4 mb-3">
-                <div class="col">
-                  <CFormLabel for="cep">Bairro</CFormLabel>
-                  <CFormInput
-                    name="bairro"
-                    type="text"
-                    placeholder="Centro"
-                    v-model="form.user.address.neighborhood"
-                  />
-                </div>
-                <div class="col">
-                  <CFormLabel for="complemento">Complemento</CFormLabel>
-                  <CFormInput
-                    name="complemento"
-                    type="complemento"
-                    placeholder=""
-                    v-model="form.user.address.complement"
-                  />
-                </div>
-                <div class="col">
-                  <CFormLabel for="cidade">Cidade</CFormLabel>
-                  <CFormInput
-                    name="cidade"
-                    v-model="form.user.address.city"
-                    disabled
-                  />
-                </div>
-                <div class="col-md-2">
-                  <CFormLabel for="uf">UF</CFormLabel>
-                  <input
-                    name="uf"
-                    class="form-control"
-                    v-model="form.user.address.state"
-                    max="2"
-                    disabled
-                  />
-                </div>
-              </div>
-            </div>
+            <AddressForUser
+              ref="addressForUser"
+              :addressProps="this.form.user.address"
+            />
             <div class="mb-3">
               <br />
               <CFormSwitch
@@ -221,11 +149,11 @@
 import { useVuelidate } from "@vuelidate/core";
 import ValidationsMessage from "@/util/ValidationsMessage.js";
 import Service from "@/Services/clienteService.js";
-import AddressService from "@/Services/addressService.js";
 import Toast from "@/components/Toast.vue";
 import DocumentForUser from "@/components/DocumentForUser.vue";
+import AddressForUser from "@/components/AddressForUser.vue";
 export default {
-  components: { Toast, DocumentForUser },
+  components: { Toast, DocumentForUser, AddressForUser },
   name: "Cliente",
   data() {
     return {
@@ -233,7 +161,6 @@ export default {
       validationsMessage: new ValidationsMessage(),
       id: this.$route.params.id,
       service: new Service(),
-      addressService: new AddressService(),
       mostraSenha: false,
       messagePassword: "",
       btnChangePassword: false,
@@ -311,6 +238,7 @@ export default {
       this.form.user.document = this.$refs.documentForUser.document;
       this.form.user.rg = this.$refs.documentForUser.rg;
       this.form.user.typePerson = this.$refs.documentForUser.typePerson;
+      this.form.user.address = this.$refs.addressForUser.address;
       if (this.id == undefined) {
         res = await this.service.cadastrar(this.form);
       } else {
@@ -338,6 +266,7 @@ export default {
         this.$refs.documentForUser.document = this.form.user.document;
         this.$refs.documentForUser.rg = this.form.user.rg;
         this.$refs.documentForUser.typePerson = this.form.user.typePerson;
+        this.$refs.addressForUser.address = this.form.user.address;
       }
     },
     mostrarSenha() {
@@ -357,14 +286,6 @@ export default {
         return false;
       }
     },
-    async getAddressByCep() {
-      this.form.user.address = await this.addressService.getAddressByCep(
-        this.form.user.address.zipCode
-      );
-      if (this.form.user.address.zipCode != undefined) {
-        this.consultedZipCode = true;
-      }
-    },    
   },
   mounted() {
     if (this.id != undefined) {

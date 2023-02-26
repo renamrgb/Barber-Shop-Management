@@ -1,5 +1,7 @@
 package com.rpx.bsm.entities;
 
+import com.rpx.bsm.enums.NivelAcessoEnum;
+import com.rpx.bsm.records.CustomerRecord;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -28,6 +30,11 @@ public class Customer implements Serializable {
 
     public Customer(User user) {
         this.user = user;
+    }
+
+    public Customer(CustomerRecord record) {
+        this.user = new User(record.user());
+        this.user.getAccessLevel().setAuthority(NivelAcessoEnum.ROLE_USER);
     }
 
     @Override
