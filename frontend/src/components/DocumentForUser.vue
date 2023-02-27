@@ -6,18 +6,18 @@
       <option value="LEGAL_PERSON">Pessoa Jurícida</option>
     </select>
   </div>
-  <div class="col" v-if="this.typePerson == 'PHYSICAL_PERSON'">
-    <CFormLabel for="rg">RG</CFormLabel>
-    <CFormInput name="rg" type="text" v-model="rg" />
+  <div class="col" v-if="typePerson != undefined">
+    <CFormLabel for="rg">{{ setTextRg }}</CFormLabel>
+    <input name="rg" class="form-control" type="text" v-model="rg" v-mask="setMaskRgInscricao" />
   </div>
   <div class="col" v-if="typePerson != undefined">
-    <CFormLabel for="document">{{ setTextLabel }}</CFormLabel>
+    <CFormLabel for="document">{{ setTextDocument }}</CFormLabel>
     <input
       name="document"
       type="text"
       class="form-control"
       v-model="document"
-      v-mask="setMask"
+      v-mask="setMaskDocument"
       @input="validationDocument()"
     />
     <div v-if="resValidation != undefined" class="warning-input-form">
@@ -37,24 +37,31 @@ export default {
   },
   data() {
     return {
-      typePerson: "",
+      typePerson: undefined,
       rg: "",
       txtLabel: "",
       document: "",
-      maskDocument: "###.###.###-##",
       validationTypePerson: new ValidationTypePerson(),
       resValidation: undefined,
       flagUpdate: false,
     };
   },
   computed: {
-    setTextLabel() {
+    setTextRg() {
+      if (this.typePerson == "PHYSICAL_PERSON") return "RG";
+      else return "Inscrição Estadual";
+    },
+    setTextDocument() {
       if (this.typePerson == "PHYSICAL_PERSON") return "CPF";
       else return "CNPJ";
     },
-    setMask() {
+    setMaskDocument() {
       if (this.typePerson == "PHYSICAL_PERSON") return "###.###.###-##";
       else return "##.###.###/####-##";
+    },
+    setMaskRgInscricao() {
+      if (this.typePerson == "PHYSICAL_PERSON") return "";
+      else return "###.###.###.###";
     },
   },
   methods: {
@@ -73,6 +80,9 @@ export default {
           this.document
         );
       }
+      if(this.document == ""){
+        this.resValidation = ""
+      }      
     },
   },
 };
