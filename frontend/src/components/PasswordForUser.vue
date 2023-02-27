@@ -60,7 +60,9 @@ import { useVuelidate } from "@vuelidate/core";
 import ValidationsMessage from "@/util/ValidationsMessage.js";
 export default {
   name: "PasswordForUser",
-  props: {},
+  props: {
+    passwordProps: String,
+  },
   data() {
     return {
       v$: useVuelidate(),

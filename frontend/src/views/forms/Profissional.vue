@@ -37,7 +37,10 @@
                 {{ v$.form.user.email.$errors[0].$message }}
               </div>
             </div>
-            <PasswordForUserVue ref="passwordForUser" />
+            <PasswordForUserVue
+              :passwordProps="this.form.user.password"
+              ref="passwordForUser"
+            />
             <div class="row mb-3">
               <div class="row mb-3">
                 <DocumentForUser

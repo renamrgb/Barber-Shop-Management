@@ -66,7 +66,7 @@ public class ProfessionalService {
 
         entidade.getUser().setName(record.user().name());
         entidade.getUser().setEmail(record.user().email());
- 
+
         if (record.user().password() != null && !record.user().password().equals("*******")) {
             entidade.getUser().setPassword(bCryptPasswordEncoder.encode(record.user().password()));
         }
