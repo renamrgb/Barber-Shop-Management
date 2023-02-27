@@ -13,7 +13,7 @@
           v-model="address.zipCode"
           @input="getAddressByCep()"
         />
-      </div>      
+      </div>
     </div>
   </div>
   <div id="addres" v-if="this.consultedZipCode == true">
@@ -69,12 +69,10 @@
 import AddressService from "@/Services/addressService.js";
 export default {
   name: "AddressForUser",
-  props: {
-    addressProps: Object,
-  },
   data() {
     return {
       addressService: new AddressService(),
+      change: false,
       address: {
         zipCode: "",
         publicPlace: "",
@@ -86,18 +84,19 @@ export default {
     };
   },
   methods: {
-    async getAddressByCep() {      
-      if (this.address.zipCode.length == 9) {
+    async getAddressByCep() {
+      if (this.address.zipCode.length == 9 && !this.change) {
         this.address = await this.addressService.getAddressByCep(
           this.address.zipCode
         );
-        if (this.address.zipCode != undefined) {
-          this.consultedZipCode = true;
-        }
+        this.consultedZipCode = true;
+      } else if (this.address.zipCode.length == 0) {
+        this.change = false;
+      } else if (this.change) {
+        this.consultedZipCode = true;
       }
     },
   },
-  mounted() {},
 };
 </script>
 

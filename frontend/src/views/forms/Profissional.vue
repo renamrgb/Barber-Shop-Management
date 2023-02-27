@@ -37,64 +37,7 @@
                 {{ v$.form.user.email.$errors[0].$message }}
               </div>
             </div>
-            <div class="row mb-3">
-              <div v-if="btnChangePassword != true">
-                <div class="col">
-                  <CFormLabel for="senha">* Senha</CFormLabel>
-                  <CFormInput
-                    id="senha"
-                    name="senha"
-                    type="password"
-                    placeholder="*******"
-                    v-model="form.user.password"
-                  />
-                  <div
-                    v-if="v$.form.user.password.$errors.length > 0"
-                    class="invalid-input-form"
-                  >
-                    {{ v$.form.user.password.$errors[0].$message }}
-                  </div>
-                </div>
-                <div class="col">
-                  <CFormLabel for="confirmaSenha">* Confirmar senha</CFormLabel>
-                  <CFormInput
-                    id="confirmaSenha"
-                    name="confirmaSenha"
-                    type="password"
-                    placeholder="*******"
-                    v-model="form.user.confirmPassword"
-                  />
-                  <div
-                    v-if="v$.form.user.confirmPassword.$errors.length > 0"
-                    class="invalid-input-form"
-                  >
-                    {{ v$.form.user.confirmPassword.$errors[0].$message }}
-                  </div>
-                </div>
-                <div class="invalid-input-form">
-                  {{ messagePassword }}
-                </div>
-                <CFormSwitch
-                  name="mostraSenha"
-                  label="Mostrar Senha"
-                  v-model="mostraSenha"
-                  @change="mostrarSenha()"
-                />
-              </div>
-              <div v-else>
-                <button
-                  type="button"
-                  class="btn btn-light"
-                  @click="
-                    () => {
-                      btnChangePassword = false;
-                    }
-                  "
-                >
-                  Alterar senha
-                </button>
-              </div>
-            </div>
+            <PasswordForUserVue ref="passwordForUser" />
             <div class="row mb-3">
               <div class="row mb-3">
                 <DocumentForUser
@@ -135,85 +78,10 @@
               >
               </Multiselect>
             </div>
-            <div id="getAddres">
-              <div class="row">
-                <CFormLabel for="cep">CEP</CFormLabel>
-              </div>
-              <div class="row g-4 mb-3">
-                <div class="col-md-2">
-                  <input
-                    name="cep"
-                    type="text"
-                    class="form-control"
-                    v-mask="'#####-###'"
-                    v-model="form.user.address.zipCode"
-                  />
-                </div>
-                <div class="col">
-                  <button
-                    type="button"
-                    class="btn btn-primary"
-                    @click="getAddressByCep"
-                  >
-                    Consultar CEP
-                  </button>
-                </div>
-              </div>
-            </div>
-            <div id="addres" v-if="this.consultedZipCode == true">
-              <div class="row g-4 mb-3">
-                <div class="col">
-                  <CFormLabel for="descricao">Logradouro</CFormLabel>
-                  <CFormInput
-                    name="quantidade"
-                    type="logradouro"
-                    placeholder="Rua..."
-                    v-model="form.user.address.publicPlace"
-                  />
-                </div>
-              </div>
-              <div class="row g-4 mb-3">
-                <div class="col">
-                  <CFormLabel for="cep">Bairro</CFormLabel>
-                  <CFormInput
-                    name="bairro"
-                    type="text"
-                    placeholder="Centro"
-                    v-model="form.user.address.neighborhood"
-                  />
-                </div>
-                <div class="col">
-                  <CFormLabel for="complemento">Complemento</CFormLabel>
-                  <CFormInput
-                    name="complemento"
-                    type="complemento"
-                    placeholder=""
-                    v-model="form.user.address.complement"
-                  />
-                </div>
-                <div class="col">
-                  <CFormLabel for="cidade">Cidade</CFormLabel>
-                  <CFormInput
-                    name="cidade"
-                    type="cidade"
-                    placeholder="Tarabai"
-                    v-model="form.user.address.city"
-                    disabled
-                  />
-                </div>
-                <div class="col-md-2">
-                  <CFormLabel for="uf">UF</CFormLabel>
-                  <input
-                    name="uf"
-                    placeholder="SP"
-                    class="form-control"
-                    v-model="form.user.address.state"
-                    max="2"
-                    disabled
-                  />
-                </div>
-              </div>
-            </div>
+            <AddressForUser
+              ref="addressForUser"
+              :addressProps="this.form.user.address"
+            />
             <div class="mb-3">
               <br />
               <CFormSwitch
@@ -247,9 +115,16 @@ import AddressService from "@/Services/addressService.js";
 import Toast from "@/components/Toast.vue";
 import Multiselect from "@vueform/multiselect/src/Multiselect";
 import DocumentForUser from "@/components/DocumentForUser.vue";
-
+import AddressForUser from "@/components/AddressForUser.vue";
+import PasswordForUserVue from "@/components/PasswordForUser.vue";
 export default {
-  components: { Toast, Multiselect, DocumentForUser },
+  components: {
+    Toast,
+    Multiselect,
+    DocumentForUser,
+    AddressForUser,
+    PasswordForUserVue,
+  },
   name: "Profissional",
   data() {
     return {
@@ -259,16 +134,11 @@ export default {
       service: new Service(),
       procedimentoService: new ProcedimentoService(),
       addressService: new AddressService(),
-      mostraSenha: false,
-      messagePassword: "",
-      btnChangePassword: false,
-      consultedZipCode: false,
       form: {
         user: {
           name: "",
           email: "",
           password: "",
-          confirmPassword: "",
           phoneNumber: "",
           typePerson: "",
           document: "",
@@ -284,9 +154,9 @@ export default {
           nivelAcesso: {
             authority: "ROLE_ADMIN",
           },
-          procedures: [],
           isActive: false,
         },
+        procedures: [],
       },
       value: [],
       options: [],
@@ -305,14 +175,6 @@ export default {
             maxLength: this.validationsMessage.maxLengthMenssage(100),
             email: this.validationsMessage.emailMessage,
           },
-          password: {
-            required: this.validationsMessage.requiredMessage,
-            maxLength: this.validationsMessage.maxLengthMenssage(10),
-          },
-          confirmPassword: {
-            required: this.validationsMessage.requiredMessage,
-            maxLength: this.validationsMessage.maxLengthMenssage(10),
-          },
           phoneNumber: {
             required: this.validationsMessage.requiredMessage,
             maxLength: this.validationsMessage.maxLengthMenssage(15),
@@ -323,29 +185,38 @@ export default {
   },
   methods: {
     submitForm() {
-      if (this.form.user.password == undefined) {
-        this.form.user.password = "*******";
-        this.form.user.confirmPassword = "*******";
-      }
       this.v$.$validate();
-      // console.log(this.v$.$errors);
-      if (!this.v$.$error && !this.btnChangePassword && this.compararSenhas()) {
+      if (
+        !this.v$.$error &&
+        !this.$refs.passwordForUser.btnChangePassword &&
+        this.$refs.passwordForUser.isValid()
+      ) {
         this.salvar();
-      } else if (!this.v$.$error && this.btnChangePassword) {
+      } else if (
+        !this.v$.$error &&
+        this.$refs.passwordForUser.btnChangePassword
+      ) {
         this.salvar();
       }
     },
     async salvar() {
+      this.form.user.address = this.$refs.addressForUser.address;
+      this.form.user.document = this.$refs.documentForUser.document;
+      this.form.user.rg = this.$refs.documentForUser.rg;
+      this.form.user.typePerson = this.$refs.documentForUser.typePerson;
+      this.form.user.address = this.$refs.addressForUser.address;
+      this.form.user.password = this.$refs.passwordForUser.password;
+
       this.value.forEach((element) => {
-        this.form.user.procedures.push({ id: element });
+        this.form.procedures.push({ id: element });
       });
+
       let res = undefined;
-      let dados = this.form;
       if (this.id == undefined) {
-        res = await this.service.cadastrar(dados);
+        res = await this.service.cadastrar(this.form);
       } else {
         this.form.password = "";
-        res = await this.service.alterar(this.id, dados);
+        res = await this.service.alterar(this.id, this.form);
       }
       if (res.status == 201) {
         this.$refs.toast.createToast("Cadastrado com sucesso!");
@@ -364,35 +235,22 @@ export default {
     async consultarUm() {
       if (this.id != undefined) {
         this.form.user = await this.service.buscarUm(this.id);
-        console.log(this.form.user.procedures);
         this.form.user.procedures.forEach((element) => {
           this.value.push(element.id);
         });
+
         this.$refs.documentForUser.document = this.form.user.document;
         this.$refs.documentForUser.rg = this.form.user.rg;
         this.$refs.documentForUser.typePerson = this.form.user.typePerson;
-      }
-    },
-    mostrarSenha() {
-      if (this.mostraSenha == false) {
-        document.getElementById("senha").type = "text";
-        document.getElementById("confirmaSenha").type = "text";
-      } else {
-        document.getElementById("senha").type = "password";
-        document.getElementById("confirmaSenha").type = "password";
-      }
-    },
-    compararSenhas() {
-      if (this.form.user.password == this.form.user.confirmPassword) {
-        return true;
-      } else {
-        this.messagePassword = "As senhas não são iguais.";
-        return false;
+
+        this.$refs.addressForUser.address = this.form.user.address;
+        this.$refs.addressForUser.change = true;
+
+        this.$refs.passwordForUser.password = this.form.user.password;
       }
     },
     async carregarSelectProcedimentos() {
       let res = await this.procedimentoService.consultarTodos();
-      // console.log(res)
       res.forEach((element) => {
         this.options.push({
           value: element.id,
@@ -405,23 +263,12 @@ export default {
         this.value.push(element.id);
       });
     },
-    async getAddressByCep() {
-      this.form.user.address = await this.addressService.getAddressByCep(
-        this.form.user.address.zipCode
-      );
-      if (this.form.user.address.zipCode != undefined) {
-        this.consultedZipCode = true;
-      }
-    },    
   },
   mounted() {
     this.carregarSelectProcedimentos();
     if (this.id != undefined) {
       this.consultarUm();
-      this.btnChangePassword = true;
-      if (this.form.user.address.zipCode != undefined) {
-        this.consultedZipCode = true;
-      }
+      this.$refs.passwordForUser.btnChangePassword = true;
     }
   },
 };

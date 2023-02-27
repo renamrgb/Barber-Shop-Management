@@ -1,11 +1,7 @@
 <template>
   <div class="col">
     <CFormLabel for="typePerson">Tipo De Pessoa</CFormLabel>
-    <select
-      class="form-select"
-      v-model="typePerson"
-      @change="updatePlaceholderAndLabel()"
-    >
+    <select class="form-select" v-model="typePerson">
       <option value="PHYSICAL_PERSON" selected>Pessoa Física</option>
       <option value="LEGAL_PERSON">Pessoa Jurícida</option>
     </select>
@@ -15,13 +11,13 @@
     <CFormInput name="rg" type="text" v-model="rg" />
   </div>
   <div class="col" v-if="typePerson != undefined">
-    <CFormLabel for="document">{{ txtLabel }}</CFormLabel>
+    <CFormLabel for="document">{{ setTextLabel }}</CFormLabel>
     <input
       name="document"
       type="text"
       class="form-control"
       v-model="document"
-      v-mask="maskDocument"
+      v-mask="setMask"
       @input="validationDocument()"
     />
     <div v-if="resValidation != undefined" class="warning-input-form">
@@ -41,18 +37,28 @@ export default {
   },
   data() {
     return {
-      typePerson: "PHYSICAL_PERSON",
+      typePerson: "",
       rg: "",
       txtLabel: "",
       document: "",
       maskDocument: "###.###.###-##",
       validationTypePerson: new ValidationTypePerson(),
       resValidation: undefined,
+      flagUpdate: false,
     };
+  },
+  computed: {
+    setTextLabel() {
+      if (this.typePerson == "PHYSICAL_PERSON") return "CPF";
+      else return "CNPJ";
+    },
+    setMask() {
+      if (this.typePerson == "PHYSICAL_PERSON") return "###.###.###-##";
+      else return "##.###.###/####-##";
+    },
   },
   methods: {
     validationDocument() {
-      // console.log(`TypePerson ${this.typePerson} | Lenght ${this.document.length}`);
       if (this.typePerson == "PHYSICAL_PERSON" && this.document.length == 14) {
         this.resValidation = this.validationTypePerson.validation(
           this.typePerson,
@@ -68,25 +74,6 @@ export default {
         );
       }
     },
-    updatePlaceholderAndLabel() {
-      this.resValidation = "";
-      this.document = "";
-      if (this.typePerson == "PHYSICAL_PERSON") {
-        this.txtLabel = "CPF";
-        this.maskDocument = "###.###.###-##";
-      } else {
-        this.txtLabel = "CNPJ";
-        this.maskDocument = "##.###.###/####-##";        
-      }
-    },
-  },
-  mounted() {
-    if (this.$props.typePerson != 0) {
-      this.typePerson = this.$props.typePersonProps;
-      this.document = this.$props.documentProps;
-      this.rg = this.$props.rgProps;
-    }
-    this.updatePlaceholderAndLabel();
   },
 };
 </script>

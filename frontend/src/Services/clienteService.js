@@ -12,7 +12,7 @@ export default class ClienteService {
     }
   }
   async cadastrar(item) {
-    try {
+    try {      
       const res = await api.post(this.url, this.replaceItem(item));
       return res;
     } catch (error) {

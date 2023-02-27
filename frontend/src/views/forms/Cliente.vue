@@ -119,10 +119,7 @@
                 {{ v$.form.user.phoneNumber.$errors[0].$message }}
               </div>
             </div>
-            <AddressForUser
-              ref="addressForUser"
-              :addressProps="this.form.user.address"
-            />
+            <AddressForUser ref="addressForUser" />
             <div class="mb-3">
               <br />
               <CFormSwitch
@@ -244,8 +241,7 @@ export default {
       } else {
         this.form.password = "";
         res = await this.service.alterar(this.id, this.form);
-      }
-      console.log(res);
+      }      
       if (res.status == 201) {
         this.$refs.toast.createToast("Cadastrado com sucesso!");
         this.$router.push("/forms/cliente");
@@ -263,10 +259,13 @@ export default {
     async consultarUm() {
       if (this.id != undefined) {
         this.form.user = await this.service.buscarUm(this.id);
+
         this.$refs.documentForUser.document = this.form.user.document;
         this.$refs.documentForUser.rg = this.form.user.rg;
         this.$refs.documentForUser.typePerson = this.form.user.typePerson;
+
         this.$refs.addressForUser.address = this.form.user.address;
+        this.$refs.addressForUser.change = true;
       }
     },
     mostrarSenha() {

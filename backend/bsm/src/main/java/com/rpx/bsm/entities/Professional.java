@@ -37,8 +37,11 @@ public class Professional implements Serializable {
     public Professional(ProfessionalRecord record){
         this.user = new User(record.user());
         this.user.getAccessLevel().setAuthority(NivelAcessoEnum.ROLE_ADMIN);
-        for (ProcedimentoIdRecord p : record.procedures()) {
-            this.getProcedures().add(new Procedure(p.id()));
+        if(record.procedures() != null){
+            this.procedures = new HashSet<>();
+            for (ProcedimentoIdRecord p : record.procedures()) {
+                this.getProcedures().add(new Procedure(p.id()));
+            }
         }
     }
     @Override

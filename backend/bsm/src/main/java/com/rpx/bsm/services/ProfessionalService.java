@@ -26,10 +26,10 @@ public class ProfessionalService {
     @Autowired
     private BCryptPasswordEncoder bCryptPasswordEncoder;
 
-    public List<Professional> find(String name){
-        List<Professional> list= null;
+    public List<Professional> find(String name) {
+        List<Professional> list = null;
 
-        if(name.isEmpty())
+        if (name.isEmpty())
             list = repository.findAll();
         else
             list = repository.findByName(name);
@@ -66,9 +66,11 @@ public class ProfessionalService {
 
         entidade.getUser().setName(record.user().name());
         entidade.getUser().setEmail(record.user().email());
-        if (!record.user().password().equals("*******")) {
+ 
+        if (record.user().password() != null && !record.user().password().equals("*******")) {
             entidade.getUser().setPassword(bCryptPasswordEncoder.encode(record.user().password()));
         }
+
         entidade.getUser().setPhoneNumber(record.user().phoneNumber());
         entidade.getUser().setTypePerson(record.user().typePerson());
         entidade.getUser().setDocument(record.user().document());
