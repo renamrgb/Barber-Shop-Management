@@ -188,6 +188,7 @@ export default {
   },
   methods: {
     submitForm() {
+      this.$refs.passwordForUser.setPasswordNotUpdate();
       this.v$.$validate();
       if (
         !this.v$.$error &&
@@ -242,9 +243,9 @@ export default {
           this.value.push(element.id);
         });
 
+        this.$refs.documentForUser.typePerson = this.form.user.typePerson;
         this.$refs.documentForUser.document = this.form.user.document;
         this.$refs.documentForUser.rg = this.form.user.rg;
-        this.$refs.documentForUser.typePerson = this.form.user.typePerson;
 
         this.$refs.addressForUser.address = this.form.user.address;
         this.$refs.addressForUser.change = true;

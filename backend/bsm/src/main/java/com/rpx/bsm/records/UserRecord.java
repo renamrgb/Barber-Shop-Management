@@ -13,7 +13,7 @@ public record UserRecord(
         @Length(min = 11, max = 12) String phoneNumber,
         @Length(max = 16) String typePerson,
         @Length(max = 15) String document,
-        @Length(max = 11) String rg,
+        @Length(max = 12) String rg,
         @Valid AddresRecord address,
         @NotNull Boolean isActive
 ) {

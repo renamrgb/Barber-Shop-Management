@@ -8,7 +8,13 @@
   </div>
   <div class="col" v-if="typePerson != undefined">
     <CFormLabel for="rg">{{ setTextRg }}</CFormLabel>
-    <input name="rg" class="form-control" type="text" v-model="rg" v-mask="setMaskRgInscricao" />
+    <input
+      name="rg"
+      class="form-control"
+      type="text"
+      v-model="rg"
+      v-mask="setMaskRgInscricao"
+    />
   </div>
   <div class="col" v-if="typePerson != undefined">
     <CFormLabel for="document">{{ setTextDocument }}</CFormLabel>
@@ -37,7 +43,7 @@ export default {
   },
   data() {
     return {
-      typePerson: undefined,
+      typePerson: "",
       rg: "",
       txtLabel: "",
       document: "",
@@ -59,8 +65,8 @@ export default {
       if (this.typePerson == "PHYSICAL_PERSON") return "###.###.###-##";
       else return "##.###.###/####-##";
     },
-    setMaskRgInscricao() {
-      if (this.typePerson == "PHYSICAL_PERSON") return "";
+    setMaskRgInscricao() {      
+      if (this.typePerson == "PHYSICAL_PERSON") return "#########";
       else return "###.###.###.###";
     },
   },
@@ -80,9 +86,9 @@ export default {
           this.document
         );
       }
-      if(this.document == ""){
-        this.resValidation = ""
-      }      
+      if (this.document == "") {
+        this.resValidation = "";
+      }
     },
   },
 };

@@ -27,7 +27,6 @@
         type="password"
         placeholder="*******"
         v-model="confirmPassword"
-        @input="comparePasswords()"
       />
       <div
         v-if="v$.confirmPassword.$errors.length > 0"
@@ -109,14 +108,15 @@ export default {
         document.getElementById("confirmaSenha").type = "password";
       }
     },
-    isValid() {
-      if (this.password == undefined) {
+    setPasswordNotUpdate() {
+      if (this.btnChangePassword) {
         this.password = "*******";
         this.confirmPassword = "*******";
-      }
-
+      }      
+    },
+    isValid() {
       this.v$.$validate();
-      if (!this.v$.$error && this.comparePasswords == "") return true;
+      if (this.v$.$error && this.comparePasswords == "") return true;
       return false;
     },
   },
