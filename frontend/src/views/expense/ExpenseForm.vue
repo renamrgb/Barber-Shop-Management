@@ -37,11 +37,11 @@
                         this.optionsSelect[this.form.expenseType.id]
                           .generateInstallments == true
                       ) {
-                        this.minQtyInstallments = 1
-                        this.minDaysBInstallments = 1
+                        this.minQtyInstallments = 1;
+                        this.minDaysBInstallments = 1;
                       } else {
-                        this.minQtyInstallments = 0
-                        this.minDaysBInstallments = 0
+                        this.minQtyInstallments = 0;
+                        this.minDaysBInstallments = 0;
                       }
                     }
                   "
@@ -219,15 +219,15 @@
 </template>
 
 <script>
-import { useVuelidate } from '@vuelidate/core'
-import ValidationsMessage from '@/util/ValidationsMessage.js'
-import { decimal } from '@vuelidate/validators'
-import Service from '@/Services/expenseService.js'
-import Toast from '@/components/Toast.vue'
-import TipoDespesaService from '@/Services/tipoDespesaService'
+import { useVuelidate } from "@vuelidate/core";
+import ValidationsMessage from "@/util/ValidationsMessage.js";
+import { decimal } from "@vuelidate/validators";
+import Service from "@/Services/expenseService.js";
+import Toast from "@/components/Toast.vue";
+import TipoDespesaService from "@/Services/tipoDespesaService";
 export default {
   components: { Toast },
-  name: 'Produtos',
+  name: "Produtos",
   data() {
     return {
       v$: useVuelidate(),
@@ -238,22 +238,23 @@ export default {
       alreadyGeneratedInstallments: false,
       generateInstallment: false,
       form: {
-        description: '',
+        description: "",
         expenseType: {
           id: undefined,
+          generateInstallments: undefined,
         },
-        total: '00.00',
+        total: "00.00",
         daysBeetwenInstallments: 0,
         quantityOfInstallments: 0,
         releaseDate: this.currentDate(),
         dueDate: this.currentDate(),
         installments: [],
       },
-      optionsSelect: ['Abra este menu de seleção'],
+      optionsSelect: ["Abra este menu de seleção"],
       installments: [],
       minQtyInstallments: 0,
       minDaysBInstallments: 0,
-    }
+    };
   },
   validations() {
     return {
@@ -273,89 +274,81 @@ export default {
         daysBeetwenInstallments: {
           required: this.validationsMessage.requiredMessage,
           minValue: this.validationsMessage.minMenssage(
-            this.minDaysBInstallments,
+            this.minDaysBInstallments
           ),
         },
         quantityOfInstallments: {
           required: this.validationsMessage.requiredMessage,
           minValue: this.validationsMessage.minMenssage(
-            this.minQtyInstallments,
+            this.minQtyInstallments
           ),
         },
       },
-    }
+    };
   },
   methods: {
     submitForm() {
-      this.v$.$validate()
+      this.v$.$validate();
       if (!this.v$.$error) {
-        this.salvar()
+        this.salvar();
       }
     },
     currentDate() {
-      const timeElapsed = Date.now()
-      const today = new Date(timeElapsed)
-      let date = today.toISOString().split('T')
-      return date[0]
+      const timeElapsed = Date.now();
+      const today = new Date(timeElapsed);
+      let date = today.toISOString().split("T");
+      return date[0];
     },
     async salvar() {
-      let res = undefined
-      if (this.id == undefined) {
-        if (this.installments != undefined) {
-          this.installments.forEach((element) => {
-            this.form.installments.push({
-              installmentValue: element.installmentValue,
-              dueDate: element.dueDate,
-            })
-          })
-        }
-        this.total = this.form.total.replace(',', '.')
-        res = await this.service.cadastrar(this.form)
-      } else {
-        this.form.installments = this.installments
-        res = await this.service.alterar(this.form, this.id)
-      }
+      this.form.expenseType.generateInstallments =
+        this.optionsSelect[this.form.expenseType.id].generateInstallments;
+
+      let res = await this.service.saveOrUpdate(
+        this.id,
+        this.installments,
+        this.form
+      );
       if (res.status == 201) {
-        this.$refs.toast.createToast('Cadastrado com sucesso!')
-        this.$router.push('/expense')
+        this.$refs.toast.createToast("Cadastrado com sucesso!");
+        this.$router.push("/expense");
       } else if (res.status == 200) {
-        this.$refs.toast.createToast('Alterado com sucesso!')
+        this.$refs.toast.createToast("Alterado com sucesso!");
       } else {
-        let vetErros = res.response.data.fieldErrors
+        let vetErros = res.response.data.fieldErrors;
         vetErros.forEach((element) => {
-          this.$refs.toast.createToast(`${element.message} `)
-        })
+          this.$refs.toast.createToast(`${element.message} `);
+        });
       }
     },
     async carregarOptionsSelect() {
-      let res = await this.tipoDeDespesaService.consultarTodos()
+      let res = await this.tipoDeDespesaService.consultarTodos();
       res.forEach((element) => {
         this.optionsSelect.push({
           value: element.id,
           label: element.description,
           generateInstallments: element.generateInstallments,
-        })
-      })
+        });
+      });
     },
     async generateInstallments() {
-      this.v$.$validate()
+      this.v$.$validate();
       if (!this.v$.$error) {
-        this.installments = await this.service.generateInstallments(this.form)
-        this.generateInstallment = true
+        this.installments = await this.service.generateInstallments(this.form);
+        this.generateInstallment = true;
       }
     },
     async getOneExpense(id) {
-      this.form = await this.service.getOneExpense(id)
-      this.installments = this.form.installments
+      this.form = await this.service.getOneExpense(id);
+      this.installments = this.form.installments;
     },
   },
   mounted() {
-    this.carregarOptionsSelect()
+    this.carregarOptionsSelect();
     if (this.id != undefined) {
-      this.getOneExpense(this.id)
+      this.getOneExpense(this.id);
     }
   },
-}
+};
 </script>
 <style scoped>
 .div-center {

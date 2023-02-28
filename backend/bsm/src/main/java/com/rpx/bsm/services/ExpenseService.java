@@ -33,12 +33,7 @@ public class ExpenseService {
     public Expense insert(ExpenseRecord r) {
         Expense obj = null;
         ExpenseType expenseType = expenseTypeService.findById(r.expenseType().getId());
-
-        if (expenseType.getGenerateInstallments() == false && r.installments().size() > 0) {
-            throw new ValidateInstallments("O tipo de despesa não permite que a despesa tenha parcelas");
-        } else {
-            obj = repository.save(convertToEntity(r));
-        }
+        obj = repository.save(convertToEntity(r));
         return obj;
     }
 
@@ -116,7 +111,7 @@ public class ExpenseService {
         obj.setDueDate(r.dueDate());
         obj.setReleaseDate(r.releaseDate());
 
-        for(int i=0; i<obj.getInstallments().size(); i++){
+        for (int i = 0; i < obj.getInstallments().size(); i++) {
             obj.getInstallments().get(i).setDueDate(r.installments().get(i).getDueDate());
             obj.getInstallments().get(i).setInstallmentValue(r.installments().get(i).getInstallmentValue());
         }

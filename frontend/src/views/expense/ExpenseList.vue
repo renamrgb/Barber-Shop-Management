@@ -110,11 +110,11 @@ export default {
   methods: {
     async delete() {
       let res = await this.service.delete(this.id)
-      console.log(res);
       if (res.status == 400) {
         this.$refs.toast.createToast(res.message);
       }
       this.modalExcluir = false
+      this.getExpenses()
     },
     async getByDescription() {
       this.itens = await this.service.consultarTodos()
