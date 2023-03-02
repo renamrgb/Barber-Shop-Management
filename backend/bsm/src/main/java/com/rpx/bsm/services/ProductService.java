@@ -1,5 +1,6 @@
 package com.rpx.bsm.services;
 
+import com.rpx.bsm.dto.ProductDTO;
 import com.rpx.bsm.entities.*;
 import com.rpx.bsm.records.ProductRecord;
 import com.rpx.bsm.repositories.ProductRepository;
@@ -8,10 +9,15 @@ import com.rpx.bsm.resources.exceptions.ResourceNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityNotFoundException;
 import javax.transaction.Transactional;
+import org.springframework.data.domain.Pageable;
+
 import java.util.List;
 import java.util.Optional;
 
@@ -20,7 +26,16 @@ public class ProductService {
 
     @Autowired
     private ProductRepository repository;
+    @Transactional
+    public Page<Product> findPaged(String title, Pageable pageable){
+        Page<Product> list;
+        if(title.isEmpty()) {
+            list = repository.findAll(pageable);
+        } else
+            list = repository.findByTitleContaining(title, pageable);
 
+        return list;
+    }
     public List<Product> find(String title){
         List<Product> list;
 

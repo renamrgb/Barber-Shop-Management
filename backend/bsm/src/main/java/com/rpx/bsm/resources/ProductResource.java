@@ -5,11 +5,13 @@ import com.rpx.bsm.entities.Product;
 import com.rpx.bsm.records.ProductRecord;
 import com.rpx.bsm.services.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import javax.validation.Valid;
+import org.springframework.data.domain.Pageable;
 import java.net.URI;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -20,11 +22,17 @@ public class ProductResource {
 
     @Autowired
     private ProductService service;
-
     @GetMapping
     public ResponseEntity<List<ProductDTO>> find(@RequestParam(defaultValue = "", name = "title") String title) {
         List<Product> list = service.find(title);
         List<ProductDTO> listDto = list.stream().map(x -> new ProductDTO(x)).collect(Collectors.toList());
+        return ResponseEntity.ok().body(listDto);
+    }
+
+    @GetMapping(value = "/productsPaged")
+    public ResponseEntity<Page<ProductDTO>> find(@RequestParam(defaultValue = "", name = "title") String title, Pageable pageable) {
+        Page<Product> list = service.findPaged(title, pageable);
+        Page<ProductDTO> listDto = list.map(x -> new ProductDTO(x));
         return ResponseEntity.ok().body(listDto);
     }
 
