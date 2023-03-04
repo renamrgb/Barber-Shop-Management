@@ -39,6 +39,15 @@ public class Product implements Serializable {
         this.isActive = isActive;
     }
 
+    public Product(String title, Double price, String brand, Integer quantity, ProductProcedureType productProcedureType, Boolean isActive) {
+        this.title = title;
+        this.price = price;
+        this.brand = brand;
+        this.quantity = quantity;
+        this.productProcedureType = productProcedureType;
+        this.isActive = isActive;
+    }
+
     public Product(ProductRecord record){
         setTitle(record.title());
         setPrice(record.price());

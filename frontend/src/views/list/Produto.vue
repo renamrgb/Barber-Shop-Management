@@ -35,6 +35,16 @@
               </div>
             </div>
           </div>
+          <div class="row">
+            <div class="col-md-12 mx-auto">
+              <br>
+              <CFormSwitch
+                id="formSwitchCheckDefault"
+                label="Apenas ativos"
+                v-model="findAssets"              
+              />
+            </div>
+          </div>
           <div class="bdr">
             <CTable responsive="xl">
               <CTableHead color="dark">
@@ -81,7 +91,7 @@
               </CTableBody>
             </CTable>
             <NextPageTable
-              ref="nextPageTable"              
+              ref="nextPageTable"
               :page-id="pageId"
               @update-pageId="updatePageId"
             />
@@ -142,15 +152,19 @@ export default {
       idItem: "",
       searchText: "",
       pageId: 0,
+      findAssets: false
     };
   },
   methods: {
-    async getByTile() {
-      this.fps = await this.fp.getByTile(this.searchText);
-      console.log(this.fps);
+    async getByTile() {      
+      let itensPaged = await this.service.getByTitlePaged(this.searchText, this.pageId, this.findAssets);
+      this.itens = itensPaged.content;      
+      this.$refs.nextPageTable.totalPages = itensPaged.totalPages;
+      this.$refs.nextPageTable.totalElements = itensPaged.totalElements;
+      this.$refs.nextPageTable.pageable.pageNumber = itensPaged.pageable.pageNumber;
     },
-    async consultaTodos() {      
-      let itensPaged = await this.service.getAllPaged(this.pageId);
+    async consultaTodos() {
+      let itensPaged = await this.service.getAllPaged(this.pageId, this.findAssets);
       this.itens = itensPaged.content;
       this.$refs.nextPageTable.totalPages = itensPaged.totalPages;
       this.$refs.nextPageTable.totalElements = itensPaged.totalElements;
@@ -172,14 +186,11 @@ export default {
     },
     alterar(id) {
       this.$router.push({ path: `/forms/produto/cadastro/${id}` });
+    },    
+    updatePageId(newValue) {
+      this.pageId = newValue;
+      this.consultaTodos();
     },
-    async getByTile() {
-      this.itens = await this.service.getByTitle(this.searchText);
-    },
-    updatePageId(newValue){
-      this.pageId = newValue;      
-      this.consultaTodos()
-    }
   },
   computed: {},
   mounted() {

@@ -36,19 +36,16 @@ public class TestConfig implements CommandLineRunner {
     @Override
     public void run(String... args) throws Exception {
 
+        ProductProcedureType productProcedureTypes = new ProductProcedureType("Padrão", true);
+        productProcedureTypesRepository.save(productProcedureTypes);
 
-//        Product prod1 = new Product();
-//        prod1.setTitle("Produto teste 1");
-//        prod1.setPrice(100.00);
-//        prod1.setQuantity(1);
-//        prod1.setBrand("Marca Teste 1");
-//        prod1.setIsActive(true);
-//        produtoRepository.save(prod1);
-
-        for (int i=0; i < 50; i++){
-            produtoRepository.save(new Product("PRODUTO"+i, 100.00, "MARCA DE TESTE", 100, true));
+        for (int i=0; i < 25; i++){
+            produtoRepository.save(new Product("PRODUTO"+i, 100.00, "MARCA DE TESTE", 100, new ProductProcedureType(1L),true));
         }
 
+        for (int i=25; i < 50; i++){
+            produtoRepository.save(new Product("PRODUTO"+i, 100.00, "MARCA DE TESTE", 100, new ProductProcedureType(1L), false));
+        }
 
         /*============================================================================================================*/
         Procedure proc1 = new Procedure("Corte de Cabelo", 100.00, true);
@@ -80,8 +77,6 @@ public class TestConfig implements CommandLineRunner {
         expenseType = new ExpenseType("Sem parcelas", false, true);
         expenseTypeRepository.save(expenseType);
         /*============================================================================================================*/
-        ProductProcedureType productProcedureTypes = new ProductProcedureType("Padrão", true);
-        productProcedureTypesRepository.save(productProcedureTypes);
 
     }
 

@@ -6,12 +6,12 @@ import com.rpx.bsm.records.ProductRecord;
 import com.rpx.bsm.services.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import javax.validation.Valid;
-import org.springframework.data.domain.Pageable;
 import java.net.URI;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -22,6 +22,7 @@ public class ProductResource {
 
     @Autowired
     private ProductService service;
+
     @GetMapping
     public ResponseEntity<List<ProductDTO>> find(@RequestParam(defaultValue = "", name = "title") String title) {
         List<Product> list = service.find(title);
@@ -30,14 +31,18 @@ public class ProductResource {
     }
 
     @GetMapping(value = "/productsPaged")
-    public ResponseEntity<Page<ProductDTO>> find(@RequestParam(defaultValue = "", name = "title") String title, Pageable pageable) {
-        Page<Product> list = service.findPaged(title, pageable);
+    public ResponseEntity<Page<ProductDTO>> find(
+            @RequestParam(defaultValue = "", name = "title") String title,
+            @RequestParam(defaultValue = "", name = "isActive") Boolean isActive,
+            Pageable pageable
+    ) {
+        Page<Product> list = service.findPaged(title, isActive, pageable);
         Page<ProductDTO> listDto = list.map(x -> new ProductDTO(x));
         return ResponseEntity.ok().body(listDto);
     }
 
     @GetMapping(value = "/{id}")
-    public ResponseEntity<ProductDTO> findById(@PathVariable Long id){
+    public ResponseEntity<ProductDTO> findById(@PathVariable Long id) {
         Product obj = service.findById(id);
         return ResponseEntity.ok().body(new ProductDTO(obj));
     }
@@ -63,6 +68,7 @@ public class ProductResource {
 
     public static class ResourceNotFoundException extends RuntimeException {
         private static final long serialVersionUID = 1L;
+
         public ResourceNotFoundException(Object id) {
             super("Resouce not found. Id " + id);
         }

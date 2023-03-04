@@ -61,7 +61,6 @@
                     required
                   />
                 </CInputGroup>
-                <!-- v-mask="'###.###.###.###,##'" -->
                 <div
                   v-if="v$.form.price.$errors.length > 0"
                   class="invalid-input-form"

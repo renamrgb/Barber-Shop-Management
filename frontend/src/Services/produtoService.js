@@ -4,7 +4,7 @@ export default class ProdutoService {
   url = "/products";
 
   async updateOrInsert(id, data) {
-    if (id == undefined) {      
+    if (id == undefined) {
       return await this.cadastrar(data);
     } else {
       return await this.alterar(id, data);
@@ -20,9 +20,11 @@ export default class ProdutoService {
     }
   }
 
-  async getAllPaged(pageId) {
+  async getAllPaged(pageId, findAssets) {
+    let filteAssets = `?page=${pageId}`;
+    if (findAssets) filteAssets = `?isActive=true&page=${pageId}`;
     try {
-      const res = await api.get(`${this.url}/productsPaged?page=${pageId}`);
+      const res = await api.get(`${this.url}/productsPaged${filteAssets}`);
       return res.data;
     } catch (error) {
       return error;
@@ -55,7 +57,7 @@ export default class ProdutoService {
   }
   async buscarUm(id) {
     try {
-      const res = await api.get(`${this.url}/${id}`);      
+      const res = await api.get(`${this.url}/${id}`);
       return res.data;
     } catch (error) {
       return error;
@@ -64,6 +66,18 @@ export default class ProdutoService {
   async getByTitle(tile) {
     try {
       const res = await api.get(`${this.url}?title=${tile}`);
+      return res.data;
+    } catch (error) {
+      return error;
+    }
+  }
+  async getByTitlePaged(title, pageId, findAssets) {
+    let filteAssets = "";
+    if (findAssets) filteAssets = `&isActive=true`;
+    try {
+      const res = await api.get(
+        `${this.url}/productsPaged?title=${title}${filteAssets}&page=${pageId}`
+      );
       return res.data;
     } catch (error) {
       return error;

@@ -1,7 +1,6 @@
 package com.rpx.bsm.services;
 
-import com.rpx.bsm.dto.ProductDTO;
-import com.rpx.bsm.entities.*;
+import com.rpx.bsm.entities.Product;
 import com.rpx.bsm.records.ProductRecord;
 import com.rpx.bsm.repositories.ProductRepository;
 import com.rpx.bsm.resources.exceptions.DatabaseException;
@@ -10,14 +9,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityNotFoundException;
 import javax.transaction.Transactional;
-import org.springframework.data.domain.Pageable;
-
 import java.util.List;
 import java.util.Optional;
 
@@ -26,20 +22,27 @@ public class ProductService {
 
     @Autowired
     private ProductRepository repository;
-    @Transactional
-    public Page<Product> findPaged(String title, Pageable pageable){
-        Page<Product> list;
-        if(title.isEmpty()) {
-            list = repository.findAll(pageable);
-        } else
-            list = repository.findByTitleContaining(title, pageable);
 
+    @Transactional
+    public Page<Product> findPaged(String title, Boolean isActive, Pageable pageable) {
+        Page<Product> list = null;
+
+        if(title.isEmpty() && (isActive == null || isActive == false))
+            list = repository.findAll(pageable);
+        else if(!title.isEmpty() && (isActive == null || isActive == false))
+            list = repository.findByTitleContaining(title, pageable);
+        else if (!title.isEmpty() && isActive == true)
+            list =  repository.findAssetsByTitle(title, pageable);
+        else if (title.isEmpty() && isActive == true){
+            list = repository.findAssets(pageable);
+        }
         return list;
     }
-    public List<Product> find(String title){
+
+    public List<Product> find(String title) {
         List<Product> list;
 
-        if(title.isEmpty())
+        if (title.isEmpty())
             list = repository.findAll();
         else
             list = repository.findByTitleContaining(title);
@@ -60,6 +63,7 @@ public class ProductService {
             throw new DatabaseException(e.getMessage());
         }
     }
+
     @Transactional
     public Product update(Long id, ProductRecord record) {
         try {
@@ -79,6 +83,7 @@ public class ProductService {
         entity.setIsActive(obj.getIsActive());
         entity.setProductProcedureType(obj.getProductProcedureType());
     }
+
     public Product findById(Long id) {
         Optional<Product> obj = repository.findById(id);
         return obj.get();
