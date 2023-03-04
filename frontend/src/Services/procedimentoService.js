@@ -19,6 +19,24 @@ export default class ProcedimentoService {
       return error;
     }
   }
+  async getAllPaged(pageId) {    
+    try {
+      const res = await api.get(`${this.url}/paged?page=${pageId}`);
+      return res.data;
+    } catch (error) {
+      return error;
+    }
+  }
+  async getByDescriptionPaged(description, pageId) {    
+    try {
+      const res = await api.get(
+        `${this.url}/paged?description=${description}&page=${pageId}`
+      );
+      return res.data;
+    } catch (error) {
+      return error;
+    }
+  }
   async cadastrar(item) {
     try {
       const res = await api.post(this.url, item);

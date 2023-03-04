@@ -78,6 +78,11 @@
                 </CTableRow>
               </CTableBody>
             </CTable>
+            <NextPageTable
+              ref="nextPageTable"
+              :page-id="pageId"
+              @update-pageId="updatePageId"
+            />
           </div>
         </CCardBody>
       </CCard>
@@ -124,8 +129,9 @@
 import FormaPagamentoService from '@/Services/formaPagamentoService'
 import Toast from '@/components/Toast.vue'
 import { CForm } from '@coreui/vue'
+import NextPageTable from "@/components/NextPageTable.vue";
 export default {
-  components: { Toast, CForm },
+  components: { Toast, CForm, NextPageTable },
   name: 'FormaPagamento',
   data() {
     return {
@@ -134,15 +140,25 @@ export default {
       modalExcluir: false,
       idFp: '',
       searchText: '',
+      pageId: 0,
     }
   },
   methods: {
     async getByDescription() {
-      this.fps = await this.fp.getByDescription(this.searchText)
-      console.log(this.fps)
+      let itensPaged = await this.fp.getByDescriptionPaged(this.searchText, this.pageId);
+      this.fps = itensPaged.content;
+      this.$refs.nextPageTable.totalPages = itensPaged.totalPages;
+      this.$refs.nextPageTable.totalElements = itensPaged.totalElements;
+      this.$refs.nextPageTable.pageable.pageNumber =
+        itensPaged.pageable.pageNumber;
     },
     async getFormasPagamento() {
-      this.fps = await this.fp.consultarFormasPagamento()
+      let itensPaged = await this.fp.getAllPaged(this.pageId);
+      this.fps = itensPaged.content;
+      this.$refs.nextPageTable.totalPages = itensPaged.totalPages;
+      this.$refs.nextPageTable.totalElements = itensPaged.totalElements;
+      this.$refs.nextPageTable.pageable.pageNumber =
+        itensPaged.pageable.pageNumber;
     },
     async excluir() {
       this.modalExcluir = false
@@ -163,6 +179,10 @@ export default {
     },
     alterar(id) {
       this.$router.push({ path: `/forms/forma-pagamento/cadastro/${id}` })
+    },
+    updatePageId(newValue) {
+      this.pageId = newValue;
+      this.getFormasPagamento();
     },
   },
 

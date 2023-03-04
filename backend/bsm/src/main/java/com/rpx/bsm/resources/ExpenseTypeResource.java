@@ -1,10 +1,13 @@
 package com.rpx.bsm.resources;
 
 import com.rpx.bsm.dto.ExpenseTypeDTO;
+import com.rpx.bsm.dto.ProductDTO;
 import com.rpx.bsm.entities.ExpenseType;
 import com.rpx.bsm.records.ExpenseTypeRecord;
 import com.rpx.bsm.services.ExpenseTypeService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
@@ -27,7 +30,12 @@ public class ExpenseTypeResource {
         List<ExpenseTypeDTO> listDto = list.stream().map(x -> new ExpenseTypeDTO(x)).collect(Collectors.toList());
         return ResponseEntity.ok().body(listDto);
     }
-
+    @GetMapping(value = "/paged")
+    public ResponseEntity<Page<ExpenseTypeDTO>> findPaged(@RequestParam(defaultValue = "",name = "description") String description, Pageable pageable) {
+        Page<ExpenseType> list = service.findPaged(description, pageable);
+        Page<ExpenseTypeDTO> listDto =  list.map(x -> new ExpenseTypeDTO(x));
+        return ResponseEntity.ok().body(listDto);
+    }
     @PostMapping
     public ResponseEntity<ExpenseTypeDTO> insert(@Valid @RequestBody ExpenseTypeRecord obj) {
         ExpenseType fp = service.insert(obj);

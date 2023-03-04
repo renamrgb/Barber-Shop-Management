@@ -78,6 +78,11 @@
                 </CTableRow>
               </CTableBody>
             </CTable>
+            <NextPageTable
+              ref="nextPageTable"
+              :page-id="pageId"
+              @update-pageId="updatePageId"
+            />
           </div>
         </CCardBody>
       </CCard>
@@ -123,9 +128,11 @@
 <script>
 import Service from '@/Services/tipoDespesaService.js'
 import Toast from '@/components/Toast.vue'
+import NextPageTable from "@/components/NextPageTable.vue";
+
 export default {
-  components: { Toast },
-  name: 'Produto',
+  components: { Toast, NextPageTable },
+  name: 'Tipo de Despesa',
   data() {
     return {
       service: new Service(),
@@ -133,11 +140,17 @@ export default {
       modalExcluir: false,
       idItem: '',
       searchText: '',
+      pageId: 0,
     }
   },
   methods: {
     async consultaTodos() {
-      this.itens = await this.service.consultarTodos()
+      let itensPaged = await this.service.getAllPaged(this.pageId);
+      this.itens = itensPaged.content;
+      this.$refs.nextPageTable.totalPages = itensPaged.totalPages;
+      this.$refs.nextPageTable.totalElements = itensPaged.totalElements;
+      this.$refs.nextPageTable.pageable.pageNumber =
+        itensPaged.pageable.pageNumber;
     },
     async excluir() {
       this.modalExcluir = false
@@ -156,8 +169,16 @@ export default {
       this.$router.push({ path: `/forms/tipoDespesas/cadastro/${id}` })
     },
     async getByDescription(){
-      this.itens = await this.service.getByDescription(this.searchText);
-    }
+      let itensPaged = await this.service.getByDescriptionPaged(this.searchText, this.pageId);
+      this.itens = itensPaged.content;      
+      this.$refs.nextPageTable.totalPages = itensPaged.totalPages;
+      this.$refs.nextPageTable.totalElements = itensPaged.totalElements;
+      this.$refs.nextPageTable.pageable.pageNumber = itensPaged.pageable.pageNumber;
+    },
+    updatePageId(newValue) {
+      this.pageId = newValue;
+      this.consultaTodos();
+    },
   },
 
   mounted() {

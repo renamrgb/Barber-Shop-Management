@@ -50,6 +50,8 @@ public class TestConfig implements CommandLineRunner {
         /*============================================================================================================*/
         Procedure proc1 = new Procedure("Corte de Cabelo", 100.00, true);
         procedimentoRepository.save(proc1);
+        for (int i=0; i < 25; i++)
+            procedimentoRepository.save(new Procedure("PROCEDIMENTO"+i, 100.00, true));
         /*============================================================================================================*/
         Customer cli = new Customer();
         User u = new User();
@@ -71,9 +73,15 @@ public class TestConfig implements CommandLineRunner {
 
         PaymentMethod fp = new PaymentMethod("Cartão de Credito", true);
         formaPagamentoRepository.save(fp);
+        for (int i=0; i < 25; i++)
+            formaPagamentoRepository.save(new PaymentMethod("FORMA DE PAGAMENTO"+i, true));
         /*============================================================================================================*/
         ExpenseType expenseType = new ExpenseType("Com parcelas", true, true);
         expenseTypeRepository.save(expenseType);
+
+        for (int i=0; i < 25; i++)
+            expenseTypeRepository.save(new ExpenseType("TIPO DE DESPESA"+i, true, true));
+
         expenseType = new ExpenseType("Sem parcelas", false, true);
         expenseTypeRepository.save(expenseType);
         /*============================================================================================================*/

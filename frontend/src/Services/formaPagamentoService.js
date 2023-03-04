@@ -11,6 +11,14 @@ export default class FormaPagamentoService {
       return error
     }
   }
+  async getAllPaged(pageId) {
+    try {
+      const res = await api.get(`${this.url}/paged?page=${pageId}`)
+      return res.data
+    } catch (error) {
+      return error
+    }
+  }
   async cadastrar(formaPagamento) {
     try {
       const res = await api.post(this.url, formaPagamento)
@@ -47,6 +55,16 @@ export default class FormaPagamentoService {
     try {
       const data = await api.get(
         `${this.url}?description=${description}`,
+      )      
+      return data.data;
+    } catch (error) {
+      return error
+    }
+  }
+  async getByDescriptionPaged(description, pageId) {
+    try {
+      const data = await api.get(
+        `${this.url}/paged?description=${description}&page=${pageId}`,
       )      
       return data.data;
     } catch (error) {

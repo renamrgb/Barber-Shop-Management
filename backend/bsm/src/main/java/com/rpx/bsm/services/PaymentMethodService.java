@@ -8,6 +8,8 @@ import com.rpx.bsm.resources.exceptions.ResourceNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import javax.persistence.EntityNotFoundException;
 import javax.transaction.Transactional;
@@ -27,6 +29,17 @@ public class PaymentMethodService {
             list = repository.findAll();
         else
             list = repository.findByDescriptionContaining(description);
+
+        return list;
+    }
+
+    public Page<PaymentMethod> findPaged(String description, Pageable pageable){
+        Page<PaymentMethod> list;
+
+        if(description.isEmpty())
+            list = repository.findAll(pageable);
+        else
+            list = repository.findByDescriptionContaining(description, pageable);
 
         return list;
     }

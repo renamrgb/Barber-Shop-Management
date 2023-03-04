@@ -8,6 +8,8 @@ import com.rpx.bsm.resources.exceptions.ResourceNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityNotFoundException;
@@ -31,7 +33,17 @@ public class ExpenseTypeService {
 
         return list;
     }
+    @Transactional
+    public Page<ExpenseType> findPaged(String description, Pageable pageable){
+        Page<ExpenseType> list;
 
+        if(description.isEmpty())
+            list = repository.findAll(pageable);
+        else
+            list = repository.findByDescriptionContaining(description, pageable);
+
+        return list;
+    }
     public ExpenseType insert(ExpenseTypeRecord record) {
         return repository.save(this.converterEmentidade(record));
     }

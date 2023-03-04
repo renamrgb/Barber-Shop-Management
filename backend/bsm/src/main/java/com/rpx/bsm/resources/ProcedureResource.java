@@ -1,11 +1,14 @@
 package com.rpx.bsm.resources;
 
+import com.rpx.bsm.dto.ExpenseTypeDTO;
 import com.rpx.bsm.dto.ProcedureDTO;
 import com.rpx.bsm.dto.ProductDTO;
 import com.rpx.bsm.entities.Procedure;
 import com.rpx.bsm.records.ProcedureRecord;
 import com.rpx.bsm.services.ProcedureService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
@@ -25,6 +28,13 @@ public class ProcedureResource {
     public ResponseEntity<List<ProcedureDTO>> find(@RequestParam(defaultValue = "", name = "description") String description) {
         List<Procedure> list = service.find(description);
         List<ProcedureDTO> listDto = list.stream().map(x -> new ProcedureDTO(x)).collect(Collectors.toList());
+        return ResponseEntity.ok().body(listDto);
+    }
+
+    @GetMapping(value = "/paged")
+    public ResponseEntity<Page<ProcedureDTO>> findPaged(@RequestParam(defaultValue = "", name = "description") String description, Pageable pageable) {
+        Page<Procedure> list = service.findPaged(description, pageable);
+        Page<ProcedureDTO> listDto =  list.map(x -> new ProcedureDTO(x));
         return ResponseEntity.ok().body(listDto);
     }
 

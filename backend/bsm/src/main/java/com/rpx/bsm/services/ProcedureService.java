@@ -8,6 +8,8 @@ import com.rpx.bsm.resources.exceptions.ResourceNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -28,6 +30,17 @@ public class ProcedureService {
             list = repository.findAll();
         else
             list = repository.findByDescriptionContaining(description);
+
+        return list;
+    }
+
+    public Page<Procedure> findPaged(String description, Pageable pageable){
+        Page<Procedure> list;
+
+        if(description.isEmpty())
+            list = repository.findAll(pageable);
+        else
+            list = repository.findByDescriptionContaining(description, pageable);
 
         return list;
     }

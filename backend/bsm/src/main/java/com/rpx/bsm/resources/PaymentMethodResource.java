@@ -1,9 +1,12 @@
 package com.rpx.bsm.resources;
 
+import com.rpx.bsm.dto.ProductDTO;
 import com.rpx.bsm.entities.PaymentMethod;
 import com.rpx.bsm.records.PaymentMethodRecord;
 import com.rpx.bsm.services.PaymentMethodService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
@@ -22,6 +25,12 @@ public class PaymentMethodResource {
     @GetMapping
     public ResponseEntity<List<PaymentMethod>> find(@RequestParam(defaultValue = "", name = "description") String description) {
         List<PaymentMethod> list = service.find(description);
+        return ResponseEntity.ok().body(list);
+    }
+
+    @GetMapping(value = "/paged")
+    public ResponseEntity<Page<PaymentMethod>> findPaged(@RequestParam(defaultValue = "", name = "description") String description, Pageable pageable) {
+        Page<PaymentMethod> list = service.findPaged(description, pageable);
         return ResponseEntity.ok().body(list);
     }
 

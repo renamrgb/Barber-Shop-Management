@@ -27,7 +27,7 @@
                   <button
                     class="btn btn-outline-secondary bg-dark border-bottom-0 border rounded-pill ms-n5"
                     type="button"
-                    @click="getByTile"
+                    @click="getByTitle"
                   >
                     <CIcon icon="cil-magnifying-glass" size="x" />
                   </button>
@@ -156,7 +156,7 @@ export default {
     };
   },
   methods: {
-    async getByTile() {      
+    async getByTitle() {      
       let itensPaged = await this.service.getByTitlePaged(this.searchText, this.pageId, this.findAssets);
       this.itens = itensPaged.content;      
       this.$refs.nextPageTable.totalPages = itensPaged.totalPages;
