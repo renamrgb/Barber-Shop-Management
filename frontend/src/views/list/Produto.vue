@@ -64,8 +64,8 @@
                       size="xl"
                       @click="
                         () => {
-                          modalExcluir = true
-                          idItem = item.id
+                          modalExcluir = true;
+                          idItem = item.id;
                         }
                       "
                     />
@@ -80,6 +80,11 @@
                 </CTableRow>
               </CTableBody>
             </CTable>
+            <NextPageTable
+              ref="nextPageTable"              
+              :page-id="pageId"
+              @update-pageId="updatePageId"
+            />
           </div>
         </CCardBody>
       </CCard>
@@ -89,7 +94,7 @@
     :visible="modalExcluir"
     @close="
       () => {
-        modalExcluir = false
+        modalExcluir = false;
       }
     "
   >
@@ -97,7 +102,7 @@
       dismiss
       @close="
         () => {
-          modalExcluir = false
+          modalExcluir = false;
         }
       "
     >
@@ -111,7 +116,7 @@
         color="secondary"
         @click="
           () => {
-            modalExcluir = false
+            modalExcluir = false;
           }
         "
         >Cancelar</CButton
@@ -123,52 +128,64 @@
 </template>
 
 <script>
-import Service from '@/Services/produtoService.js'
-import Toast from '@/components/Toast.vue'
+import Service from "@/Services/produtoService.js";
+import Toast from "@/components/Toast.vue";
+import NextPageTable from "@/components/NextPageTable.vue";
 export default {
-  components: { Toast },
-  name: 'Produto',
+  components: { Toast, NextPageTable },
+  name: "Produto",
   data() {
     return {
       service: new Service(),
-      itens: '',
+      itens: "",
       modalExcluir: false,
-      idItem: '',
-      searchText: '',
-    }
+      idItem: "",
+      searchText: "",
+      pageId: 0,
+    };
   },
   methods: {
     async getByTile() {
-      this.fps = await this.fp.getByTile(this.searchText)
-      console.log(this.fps)
+      this.fps = await this.fp.getByTile(this.searchText);
+      console.log(this.fps);
     },
-    async consultaTodos() {
-      this.itens = await this.service.consultarTodos()
+    async consultaTodos() {      
+      let itensPaged = await this.service.getAllPaged(this.pageId);
+      this.itens = itensPaged.content;
+      this.$refs.nextPageTable.totalPages = itensPaged.totalPages;
+      this.$refs.nextPageTable.totalElements = itensPaged.totalElements;
+      this.$refs.nextPageTable.pageable.pageNumber =
+        itensPaged.pageable.pageNumber;
     },
     async excluir() {
-      this.modalExcluir = false
-      console.log(this.idItem)
+      this.modalExcluir = false;
+      console.log(this.idItem);
       if (this.idItem != undefined) {
-        let res = await this.service.excluir(this.idItem)
+        let res = await this.service.excluir(this.idItem);
         if (res.status == 204) {
-          this.$refs.toast.createToast('Excluído com sucesso!')
-          this.consultaTodos()
+          this.$refs.toast.createToast("Excluído com sucesso!");
+          this.consultaTodos();
         } else {
-          this.$refs.toast.createToast('Ocorreu um erro ao excluir item!')
+          this.$refs.toast.createToast("Ocorreu um erro ao excluir item!");
         }
       }
     },
     alterar(id) {
-      this.$router.push({ path: `/forms/produto/cadastro/${id}` })
+      this.$router.push({ path: `/forms/produto/cadastro/${id}` });
     },
     async getByTile() {
-      this.itens = await this.service.getByTitle(this.searchText)
+      this.itens = await this.service.getByTitle(this.searchText);
     },
+    updatePageId(newValue){
+      this.pageId = newValue;      
+      this.consultaTodos()
+    }
   },
+  computed: {},
   mounted() {
-    this.consultaTodos()
+    this.consultaTodos();
   },
-}
+};
 </script>
 <style scoped>
 #teste-align {

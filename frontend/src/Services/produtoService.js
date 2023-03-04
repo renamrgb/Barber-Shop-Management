@@ -19,6 +19,16 @@ export default class ProdutoService {
       return error;
     }
   }
+
+  async getAllPaged(pageId) {
+    try {
+      const res = await api.get(`${this.url}/productsPaged?page=${pageId}`);
+      return res.data;
+    } catch (error) {
+      return error;
+    }
+  }
+
   async cadastrar(item) {
     try {
       const res = await api.post(this.url, item);

@@ -7,7 +7,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
-import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import java.util.HashSet;
@@ -38,13 +37,18 @@ public class TestConfig implements CommandLineRunner {
     public void run(String... args) throws Exception {
 
 
-        Product prod1 = new Product();
-        prod1.setTitle("Produto teste 1");
-        prod1.setPrice(100.00);
-        prod1.setQuantity(1);
-        prod1.setBrand("Marca Teste 1");
-        prod1.setIsActive(true);
-        produtoRepository.save(prod1);
+//        Product prod1 = new Product();
+//        prod1.setTitle("Produto teste 1");
+//        prod1.setPrice(100.00);
+//        prod1.setQuantity(1);
+//        prod1.setBrand("Marca Teste 1");
+//        prod1.setIsActive(true);
+//        produtoRepository.save(prod1);
+
+        for (int i=0; i < 50; i++){
+            produtoRepository.save(new Product("PRODUTO"+i, 100.00, "MARCA DE TESTE", 100, true));
+        }
+
 
         /*============================================================================================================*/
         Procedure proc1 = new Procedure("Corte de Cabelo", 100.00, true);
