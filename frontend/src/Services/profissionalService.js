@@ -10,6 +10,14 @@ export default class ProfissionalService {
       return error;
     }
   }
+  async getAllPaged(pageId) {    
+    try {
+      const res = await api.get(`${this.url}/paged?page=${pageId}`);
+      return res.data;
+    } catch (error) {
+      return error;
+    }
+  }
   async cadastrar(item) {
     try {      
       const res = await api.post(this.url, this.replaceItem(item));
@@ -45,6 +53,16 @@ export default class ProfissionalService {
   async findByName(name) {
     try {
       const res = await api.get(`${this.url}?name=${name}`);
+      return res.data;
+    } catch (error) {
+      return error;
+    }
+  }
+  async getByNamePaged(name, pageId) {    
+    try {
+      const res = await api.get(
+        `${this.url}/paged?name=${name}&page=${pageId}`
+      );
       return res.data;
     } catch (error) {
       return error;

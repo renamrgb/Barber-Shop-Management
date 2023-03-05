@@ -8,6 +8,8 @@ import com.rpx.bsm.resources.exceptions.ResourceNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityNotFoundException;
@@ -28,6 +30,17 @@ public class MessageTemplateService {
             list = repository.findAll();
         else
             list = repository.findByTitleContaining(title);
+
+        return list;
+    }
+
+    public Page<MessageTemplate> findPaged(String title, Pageable pageable){
+        Page<MessageTemplate> list;
+
+        if(title.isEmpty())
+            list = repository.findAll(pageable);
+        else
+            list = repository.findByTitleContaining(title, pageable);
 
         return list;
     }

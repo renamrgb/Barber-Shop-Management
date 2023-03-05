@@ -5,6 +5,8 @@ import com.rpx.bsm.entities.Professional;
 import com.rpx.bsm.records.ProfessionalRecord;
 import com.rpx.bsm.services.ProfessionalService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
@@ -25,6 +27,13 @@ public class ProfessionalResouce {
     public ResponseEntity<List<ProfessionalDTO>> findAll(@RequestParam(defaultValue = "", name = "name") String name) {
         List<Professional> list = service.find(name);
         List<ProfessionalDTO> listDto = list.stream().map(x -> new ProfessionalDTO(x)).collect(Collectors.toList());
+        return ResponseEntity.ok().body(listDto);
+    }
+
+    @GetMapping(value = "/paged")
+    public ResponseEntity<Page<ProfessionalDTO>> findAllPaged(@RequestParam(defaultValue = "", name = "name") String name, Pageable pageable) {
+        Page<Professional> list = service.findPaged(name, pageable);
+        Page<ProfessionalDTO> listDto = list.map(x -> new ProfessionalDTO(x));
         return ResponseEntity.ok().body(listDto);
     }
 

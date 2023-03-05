@@ -11,6 +11,14 @@ export default class ModeloMensagemService {
       return error
     }
   }
+  async getAllPaged(pageId) {    
+    try {
+      const res = await api.get(`${this.url}/paged?page=${pageId}`);
+      return res.data;
+    } catch (error) {
+      return error;
+    }
+  }
   async cadastrar(item) {
     try {
       const res = await api.post(this.url, item)
@@ -49,6 +57,16 @@ export default class ModeloMensagemService {
       return res.data
     } catch (error) {
       return error
+    }
+  }
+  async getByTitlePaged(title, pageId) {    
+    try {
+      const res = await api.get(
+        `${this.url}/paged?title=${title}&page=${pageId}`
+      );
+      return res.data;
+    } catch (error) {
+      return error;
     }
   }
 }

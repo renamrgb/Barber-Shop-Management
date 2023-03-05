@@ -1,6 +1,8 @@
 package com.rpx.bsm.repositories;
 
 import com.rpx.bsm.entities.Customer;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
@@ -11,4 +13,7 @@ public interface CustomerRepository extends JpaRepository<Customer, Long> {
             +" JOIN FETCH c.user u"
             +" WHERE u.name like %:name%")
     List<Customer> findByName(String name);
+
+    Page<Customer> findByUserNameContaining(String name, Pageable pageable);
+
 }

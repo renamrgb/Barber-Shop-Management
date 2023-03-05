@@ -4,6 +4,8 @@ import com.rpx.bsm.entities.MessageTemplate;
 import com.rpx.bsm.records.MessageTemplateRecord;
 import com.rpx.bsm.services.MessageTemplateService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
@@ -22,6 +24,11 @@ public class MessageTemplateResource {
     @GetMapping
     public ResponseEntity<List<MessageTemplate>> find(@RequestParam(defaultValue = "",name = "title") String title) {
         List<MessageTemplate> list = service.find(title);
+        return ResponseEntity.ok().body(list);
+    }
+    @GetMapping(value = "/paged")
+    public ResponseEntity<Page<MessageTemplate>> findPaged(@RequestParam(defaultValue = "",name = "title") String title, Pageable pageable) {
+        Page<MessageTemplate> list = service.findPaged(title, pageable);
         return ResponseEntity.ok().body(list);
     }
 

@@ -2,14 +2,18 @@ package com.rpx.bsm.services;
 
 import com.rpx.bsm.entities.Procedure;
 import com.rpx.bsm.entities.Professional;
+import com.rpx.bsm.entities.User;
 import com.rpx.bsm.records.ProcedimentoIdRecord;
 import com.rpx.bsm.records.ProfessionalRecord;
 import com.rpx.bsm.repositories.ProfessionalRepository;
+import com.rpx.bsm.repositories.UsuarioRepository;
 import com.rpx.bsm.resources.exceptions.DatabaseException;
 import com.rpx.bsm.resources.exceptions.ResourceNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -23,6 +27,10 @@ public class ProfessionalService {
 
     @Autowired
     private ProfessionalRepository repository;
+
+    @Autowired
+    private UsuarioRepository usuarioRepository;
+
     @Autowired
     private BCryptPasswordEncoder bCryptPasswordEncoder;
 
@@ -33,6 +41,17 @@ public class ProfessionalService {
             list = repository.findAll();
         else
             list = repository.findByName(name);
+
+        return list;
+    }
+
+    public Page<Professional> findPaged(String name, Pageable pageable) {
+        Page<Professional> list = null;
+
+        if (name.isEmpty())
+            list = repository.findAll(pageable);
+        else
+            list = repository.findByUserNameContaining(name, pageable);
 
         return list;
     }

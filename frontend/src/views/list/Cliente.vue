@@ -78,6 +78,11 @@
                 </CTableRow>
               </CTableBody>
             </CTable>
+            <NextPageTable
+              ref="nextPageTable"
+              :page-id="pageId"
+              @update-pageId="updatePageId"
+            />
           </div>
         </CCardBody>
       </CCard>
@@ -123,8 +128,9 @@
 <script>
 import Service from '@/Services/clienteService.js'
 import Toast from '@/components/Toast.vue'
+import NextPageTable from "@/components/NextPageTable.vue";
 export default {
-  components: { Toast },
+  components: { Toast, NextPageTable },
   name: 'Cliente',
   data() {
     return {
@@ -133,11 +139,17 @@ export default {
       modalExcluir: false,
       idItem: '',
       searchText: '',
+      pageId: 0,
     }
   },
   methods: {
     async consultaTodos() {
-      this.itens = await this.service.consultarTodos()
+      let itensPaged = await this.service.getAllPaged(this.pageId);
+      this.itens = itensPaged.content;
+      this.$refs.nextPageTable.totalPages = itensPaged.totalPages;
+      this.$refs.nextPageTable.totalElements = itensPaged.totalElements;
+      this.$refs.nextPageTable.pageable.pageNumber =
+        itensPaged.pageable.pageNumber;
     },
     async excluir() {
       this.modalExcluir = false
@@ -156,8 +168,19 @@ export default {
       this.$router.push({ path: `/forms/cliente/cadastro/${id}` })
     },
     async getByName() {
-      this.itens = await this.service.findByName(this.searchText)
-      // console.log(this.itens)
+      let itensPaged = await this.service.getByNamePaged(
+        this.searchText,
+        this.pageId
+      );
+      this.itens = itensPaged.content;
+      this.$refs.nextPageTable.totalPages = itensPaged.totalPages;
+      this.$refs.nextPageTable.totalElements = itensPaged.totalElements;
+      this.$refs.nextPageTable.pageable.pageNumber =
+        itensPaged.pageable.pageNumber;
+    },
+    updatePageId(newValue) {
+      this.pageId = newValue;
+      this.consultaTodos();
     },
   },
 

@@ -147,10 +147,7 @@ export default {
   },
   methods: {
     async consultaTodos() {
-      let itensPaged = await this.service.getAllPaged(
-        this.pageId,
-        this.findAssets
-      );
+      let itensPaged = await this.service.getAllPaged(this.pageId);
       this.itens = itensPaged.content;
       this.$refs.nextPageTable.totalPages = itensPaged.totalPages;
       this.$refs.nextPageTable.totalElements = itensPaged.totalElements;
@@ -175,8 +172,8 @@ export default {
     },
     async getByDescription() {
       let itensPaged = await this.service.getByDescriptionPaged(
-        this.pageId,
-        this.findAssets
+        this.searchText,
+        this.pageId
       );
       this.itens = itensPaged.content;
       this.$refs.nextPageTable.totalPages = itensPaged.totalPages;

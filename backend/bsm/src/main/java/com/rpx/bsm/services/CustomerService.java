@@ -10,6 +10,8 @@ import com.rpx.bsm.resources.exceptions.ResourceNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -33,6 +35,16 @@ public class CustomerService {
             list = repository.findAll();
         else
             list = repository.findByName(name);
+
+        return list;
+    }
+    public Page<Customer> findPaged(String name, Pageable pageable){
+        Page<Customer> list= null;
+
+        if(name.isEmpty())
+            list = repository.findAll(pageable);
+        else
+            list = repository.findByUserNameContaining(name, pageable);
 
         return list;
     }

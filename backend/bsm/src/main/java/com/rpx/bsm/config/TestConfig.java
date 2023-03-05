@@ -33,26 +33,37 @@ public class TestConfig implements CommandLineRunner {
     @Autowired
     private ProductProcedureTypesRepository productProcedureTypesRepository;
 
+    @Autowired
+    private MessageTemplateRepository messageTemplateRepository;
+
+    @Autowired
+    private ProfessionalRepository professionalRepository;
+    @Autowired
+    private CustomerRepository customerRepository;
+
     @Override
     public void run(String... args) throws Exception {
 
         ProductProcedureType productProcedureTypes = new ProductProcedureType("Padrão", true);
         productProcedureTypesRepository.save(productProcedureTypes);
-        for (int i=0; i < 25; i++)
-            productProcedureTypesRepository.save(new ProductProcedureType("TIPO"+i, true));
-        for (int i=0; i < 25; i++){
-            produtoRepository.save(new Product("PRODUTO"+i, 100.00, "MARCA DE TESTE", 100, new ProductProcedureType(1L),true));
+        for (int i = 0; i < 25; i++)
+            productProcedureTypesRepository.save(new ProductProcedureType("TIPO" + i, true));
+        for (int i = 0; i < 25; i++) {
+            produtoRepository.save(new Product("PRODUTO" + i, 100.00, "MARCA DE TESTE", 100, new ProductProcedureType(1L), true));
         }
-
-        for (int i=25; i < 50; i++){
-            produtoRepository.save(new Product("PRODUTO"+i, 100.00, "MARCA DE TESTE", 100, new ProductProcedureType(1L), false));
+        for (int i = 25; i < 50; i++) {
+            produtoRepository.save(new Product("PRODUTO" + i, 100.00, "MARCA DE TESTE", 100, new ProductProcedureType(1L), false));
         }
-
+        for (int i = 0; i < 25; i++) {
+            Customer customer = new Customer();
+            customer.setUser(new User("CLIENTE " + i, "customer" + i + "@teste.com.br", "12345678", "18997101710", "50349034826", "102345879", new Address(), new AccessLevel(NivelAcessoEnum.ROLE_ADMIN), true));
+            customerRepository.save(customer);
+        }
         /*============================================================================================================*/
         Procedure proc1 = new Procedure("Corte de Cabelo", 100.00, true);
         procedimentoRepository.save(proc1);
-        for (int i=0; i < 25; i++)
-            procedimentoRepository.save(new Procedure("PROCEDIMENTO"+i, 100.00, true));
+        for (int i = 0; i < 25; i++)
+            procedimentoRepository.save(new Procedure("PROCEDIMENTO" + i, 100.00, true));
         /*============================================================================================================*/
         Customer cli = new Customer();
         User u = new User();
@@ -70,23 +81,33 @@ public class TestConfig implements CommandLineRunner {
         procedimentos.add(new Procedure(1L));
         prof.setProcedures(procedimentos);
         usuarioRepository.save(u);
+        for (int i = 0; i < 25; i++) {
+            Professional p = new Professional();
+            p.setUser(new User(
+                    "PROFISSIONAL " + i, "user" + i + "@teste.com.br", "12345678", "18997101710", "50349034826", "102345879", new Address(), new AccessLevel(NivelAcessoEnum.ROLE_ADMIN), true
+            ));
+            p.setProcedures(new HashSet<>());
+            professionalRepository.save(p);
+        }
+
         /*============================================================================================================*/
 
         PaymentMethod fp = new PaymentMethod("Cartão de Credito", true);
         formaPagamentoRepository.save(fp);
-        for (int i=0; i < 25; i++)
-            formaPagamentoRepository.save(new PaymentMethod("FORMA DE PAGAMENTO"+i, true));
+        for (int i = 0; i < 25; i++)
+            formaPagamentoRepository.save(new PaymentMethod("FORMA DE PAGAMENTO" + i, true));
         /*============================================================================================================*/
         ExpenseType expenseType = new ExpenseType("Com parcelas", true, true);
         expenseTypeRepository.save(expenseType);
 
-        for (int i=0; i < 25; i++)
-            expenseTypeRepository.save(new ExpenseType("TIPO DE DESPESA"+i, true, true));
+        for (int i = 0; i < 25; i++)
+            expenseTypeRepository.save(new ExpenseType("TIPO DE DESPESA" + i, true, true));
 
         expenseType = new ExpenseType("Sem parcelas", false, true);
         expenseTypeRepository.save(expenseType);
         /*============================================================================================================*/
-
+        for (int i = 0; i < 25; i++)
+            messageTemplateRepository.save(new MessageTemplate("MODELO" + i, "MENSAGEM DE TESTE", true));
     }
 
 }

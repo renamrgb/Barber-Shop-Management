@@ -51,6 +51,24 @@ export default class ClienteService {
       return error;
     }
   }
+  async getAllPaged(pageId) {    
+    try {
+      const res = await api.get(`${this.url}/paged?page=${pageId}`);
+      return res.data;
+    } catch (error) {
+      return error;
+    }
+  }
+  async getByNamePaged(name, pageId) {    
+    try {
+      const res = await api.get(
+        `${this.url}/paged?name=${name}&page=${pageId}`
+      );
+      return res.data;
+    } catch (error) {
+      return error;
+    }
+  }
   replaceItem(item) {
     item.user.phoneNumber = item.user.phoneNumber.replace(/[^\d]+/g, "");
     item.user.document = item.user.document.replace(/[^\d]+/g, "");

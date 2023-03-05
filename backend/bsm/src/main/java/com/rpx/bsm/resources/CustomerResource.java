@@ -1,10 +1,13 @@
 package com.rpx.bsm.resources;
 
 import com.rpx.bsm.dto.CustomerDTO;
+import com.rpx.bsm.dto.ProductDTO;
 import com.rpx.bsm.entities.Customer;
 import com.rpx.bsm.records.CustomerRecord;
 import com.rpx.bsm.services.CustomerService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
@@ -25,6 +28,13 @@ public class CustomerResource {
     public ResponseEntity<List<CustomerDTO>> findAll(@RequestParam(defaultValue = "", name = "name") String name) {
         List<Customer> list = service.find(name);
         List<CustomerDTO> listDto = list.stream().map(x -> new CustomerDTO(x)).collect(Collectors.toList());
+        return ResponseEntity.ok().body(listDto);
+    }
+
+    @GetMapping(value = "/paged")
+    public ResponseEntity<Page<CustomerDTO>> findPage(@RequestParam(defaultValue = "", name = "name") String name, Pageable pageable) {
+        Page<Customer> list = service.findPaged(name, pageable);
+        Page<CustomerDTO> listDto = list.map(x -> new CustomerDTO(x));
         return ResponseEntity.ok().body(listDto);
     }
 
