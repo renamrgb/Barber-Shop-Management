@@ -38,7 +38,8 @@ public class TestConfig implements CommandLineRunner {
 
         ProductProcedureType productProcedureTypes = new ProductProcedureType("Padrão", true);
         productProcedureTypesRepository.save(productProcedureTypes);
-
+        for (int i=0; i < 25; i++)
+            productProcedureTypesRepository.save(new ProductProcedureType("TIPO"+i, true));
         for (int i=0; i < 25; i++){
             produtoRepository.save(new Product("PRODUTO"+i, 100.00, "MARCA DE TESTE", 100, new ProductProcedureType(1L),true));
         }

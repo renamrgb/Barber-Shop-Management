@@ -4,6 +4,8 @@ import com.rpx.bsm.entities.ProductProcedureType;
 import com.rpx.bsm.records.ProductProcedureTypesRecord;
 import com.rpx.bsm.services.ProductProcedureTypesService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
@@ -22,6 +24,12 @@ public class ProductProcedureTypesResource {
     @GetMapping
     public ResponseEntity<List<ProductProcedureType>> find(@RequestParam(defaultValue = "",name = "description") String description) {
         List<ProductProcedureType> list = service.find(description);
+        return ResponseEntity.ok().body(list);
+    }
+
+    @GetMapping(value = "/paged")
+    public ResponseEntity<Page<ProductProcedureType>> findPaged(@RequestParam(defaultValue = "",name = "description") String description, Pageable pageable) {
+        Page<ProductProcedureType> list = service.findPaged(description, pageable);
         return ResponseEntity.ok().body(list);
     }
 
