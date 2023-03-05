@@ -166,9 +166,16 @@
                       <CTableDataCell>{{
                         this.form.description
                       }}</CTableDataCell>
-                      <CTableDataCell
-                        >R$ {{ e.installmentValue.toFixed(2) }}</CTableDataCell
-                      >
+                      <CTableDataCell>
+                        <CInputGroup>
+                          <CInputGroupText>R$</CInputGroupText>
+                          <CFormInput
+                            name="price"
+                            v-model="e.installmentValue"
+                            required
+                          />
+                        </CInputGroup>
+                      </CTableDataCell>
                       <CTableDataCell>
                         <input
                           type="date"
@@ -178,6 +185,14 @@
                         />
                       </CTableDataCell>
                     </CTableRow>
+                    <tr style="font-weight: bold">
+                      <CTableDataCell colspan="3">
+                        Valor Total:
+                      </CTableDataCell>
+                      <CTableDataCell style="text-align: right">
+                        R$ {{ amount }}
+                      </CTableDataCell>
+                    </tr>
                   </CTableBody>
                 </CTable>
               </div>
@@ -255,6 +270,15 @@ export default {
       minQtyInstallments: 0,
       minDaysBInstallments: 0,
     };
+  },
+  computed: {
+    amount() {
+      let amount = 0;
+      this.installments.forEach((element) => {
+        amount += element.installmentValue;
+      });
+      return amount;
+    },
   },
   validations() {
     return {

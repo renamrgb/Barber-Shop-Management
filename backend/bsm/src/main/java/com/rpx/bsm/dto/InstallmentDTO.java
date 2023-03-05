@@ -8,6 +8,7 @@ import lombok.Setter;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import java.math.BigDecimal;
 import java.time.LocalDate;
 
 @Getter
@@ -16,10 +17,10 @@ import java.time.LocalDate;
 public class InstallmentDTO {
 
     private Long id;
-    private Double installmentValue;
+    private BigDecimal installmentValue;
     private LocalDate dueDate;
 
-    public InstallmentDTO(Long id, Double installmentValue, LocalDate dueDate) {
+    public InstallmentDTO(Long id, BigDecimal installmentValue, LocalDate dueDate) {
         this.id = id;
         this.installmentValue = installmentValue;
         this.dueDate = dueDate;

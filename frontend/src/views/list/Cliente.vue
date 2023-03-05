@@ -183,7 +183,6 @@ export default {
       this.consultaTodos();
     },
   },
-
   mounted() {
     this.consultaTodos()
   },

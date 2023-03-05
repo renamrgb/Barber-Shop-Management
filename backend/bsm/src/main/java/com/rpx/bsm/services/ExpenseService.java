@@ -16,6 +16,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityNotFoundException;
+import java.math.BigDecimal;
+import java.math.BigInteger;
+import java.math.RoundingMode;
 import java.time.LocalDate;
 import java.util.*;
 
@@ -38,16 +41,27 @@ public class ExpenseService {
     }
 
     public List<Installment> GenerateInstallments(ExpenseRecord r) {
-        Double installmentsValue = r.total() / r.quantityOfInstallments();
+
+        BigDecimal dividendo = BigDecimal.valueOf(r.total());
+        BigDecimal divisor = BigDecimal.valueOf(r.quantityOfInstallments());
+        BigDecimal installmentsValue = dividendo.divide(divisor, 2, RoundingMode.HALF_UP);
 
         LocalDate dtStart = r.releaseDate();
-
         List<Installment> installments = new ArrayList<>();
+
         for (Long i = 0L; i < r.quantityOfInstallments(); i++) {
             dtStart = dtStart.plusDays(r.daysBeetwenInstallments());
             installments.add(new Installment(i + 1, installmentsValue, dtStart));
         }
-
+        BigDecimal amount = installmentsValue.multiply(BigDecimal.valueOf(r.quantityOfInstallments()));
+        if (amount != BigDecimal.valueOf(r.total())){
+            BigDecimal difference = amount.subtract(BigDecimal.valueOf(r.total()));
+            if(amount.compareTo(BigDecimal.valueOf(r.total())) > 0){
+                installments.get(0).setInstallmentValue(installments.get(0).getInstallmentValue().subtract(difference));
+            }else{
+                installments.get(0).setInstallmentValue(installments.get(0).getInstallmentValue().add(difference.abs()));
+            }
+        }
         return installments;
     }
 

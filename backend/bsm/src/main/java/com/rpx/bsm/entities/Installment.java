@@ -6,6 +6,7 @@ import lombok.Setter;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.time.LocalDate;
 
 @Getter
@@ -17,16 +18,16 @@ public class Installment implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY) //Auto incremento
     private Long id;
-    private Double installmentValue;
+    private BigDecimal installmentValue;
     private LocalDate dueDate;
     @ManyToOne
     private Expense expense;
-    public Installment(Double installmentValue, LocalDate dueDate) {
+    public Installment(BigDecimal installmentValue, LocalDate dueDate) {
         this.installmentValue = installmentValue;
         this.dueDate = dueDate;
     }
 
-    public Installment(Long id, Double installmentValue, LocalDate dueDate) {
+    public Installment(Long id, BigDecimal installmentValue, LocalDate dueDate) {
         this.id = id;
         this.installmentValue = installmentValue;
         this.dueDate = dueDate;
