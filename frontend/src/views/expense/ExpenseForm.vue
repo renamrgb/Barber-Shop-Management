@@ -274,10 +274,12 @@ export default {
   computed: {
     amount() {
       let amount = 0;
-      this.installments.forEach((element) => {
-        amount += element.installmentValue;
-      });
-      return amount;
+      for (let i = 0; i < this.installments.length; i++) {
+        if (this.installments[i].installmentValue != "") {
+          amount = parseFloat(amount) + parseFloat(this.installments[i].installmentValue);          
+        }
+      }      
+      return amount.toFixed(2);
     },
   },
   validations() {
