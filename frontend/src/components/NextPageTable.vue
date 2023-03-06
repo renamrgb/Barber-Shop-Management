@@ -1,5 +1,5 @@
 <template>
-  <nav>
+  <nav v-if="totalPages > 0">
     <ul class="pagination">
       <li class="page-item">
         <a class="page-link" @click="previous()" aria-label="Previous">

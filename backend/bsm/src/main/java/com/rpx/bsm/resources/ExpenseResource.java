@@ -11,6 +11,8 @@ import com.rpx.bsm.records.ExpenseRecord;
 import com.rpx.bsm.resources.exceptions.ResourceExceptionHandler;
 import com.rpx.bsm.services.ExpenseService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
@@ -33,6 +35,13 @@ public class ExpenseResource {
     public ResponseEntity<List<ExpenseDTO>> findAll() {
         List<Expense> list = service.findAll();
         List<ExpenseDTO> listDto = list.stream().map(x -> new ExpenseDTO(x)).collect(Collectors.toList());
+        return ResponseEntity.ok().body(listDto);
+    }
+    @GetMapping(value = "/paged")
+    @Transactional
+    public ResponseEntity<Page<ExpenseDTO>> findPaged(@RequestParam(name = "description", defaultValue = "") String description, Pageable pageable) {
+        Page<Expense> list = service.find(description, pageable);
+        Page<ExpenseDTO> listDto = list.map(x -> new ExpenseDTO(x));
         return ResponseEntity.ok().body(listDto);
     }
     @PostMapping(value = "/generateInstallments")

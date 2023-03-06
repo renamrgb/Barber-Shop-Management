@@ -32,6 +32,10 @@ public class ExpenseType implements Serializable {
         this.isActive = isActive;
     }
 
+    public ExpenseType(Long id) {
+        Id = id;
+    }
+
     public ExpenseType(String description, Boolean generateInstallments, Boolean isActive) {
         this.description = description;
         this.generateInstallments = generateInstallments;

@@ -12,6 +12,8 @@ import com.rpx.bsm.resources.exceptions.ValidateInstallments;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -33,11 +35,19 @@ public class ExpenseService {
         return repository.findAll();
     }
 
+    public Page<Expense> find(String description, Pageable pageable) {
+        Page<Expense> list = null;
+
+        if(description.isEmpty())
+            list = repository.findAll(pageable);
+        else
+            list = repository.findByDescriptionContaining(description, pageable);
+
+        return list;
+    }
+
     public Expense insert(ExpenseRecord r) {
-        Expense obj = null;
-        ExpenseType expenseType = expenseTypeService.findById(r.expenseType().getId());
-        obj = repository.save(convertToEntity(r));
-        return obj;
+        return repository.save(convertToEntity(r));
     }
 
     public List<Installment> GenerateInstallments(ExpenseRecord r) {

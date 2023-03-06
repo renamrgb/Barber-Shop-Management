@@ -41,40 +41,21 @@
                 <CTableRow>
                   <CTableHeaderCell scope="col">#</CTableHeaderCell>
                   <CTableHeaderCell scope="col">Nome</CTableHeaderCell>
-                  <CTableHeaderCell scope="col">Ativo</CTableHeaderCell>
-                  <CTableHeaderCell scope="col">Excluir?</CTableHeaderCell>
-                  <CTableHeaderCell scope="col">Alterar?</CTableHeaderCell>
+                  <CTableHeaderCell scope="col">Ativo?</CTableHeaderCell>
+                  <CTableHeaderCell scope="col"></CTableHeaderCell>
                 </CTableRow>
               </CTableHead>
               <CTableBody>
                 <CTableRow v-for="item in this.itens" :key="item.id">
                   <CTableHeaderCell scope="row">{{ item.id }}</CTableHeaderCell>
                   <CTableDataCell>{{ item.name }}</CTableDataCell>
-                  <CTableDataCell v-if="item.isActive == true">
-                    <CIcon icon="cil-check" size="xl" />
-                  </CTableDataCell>
-                  <CTableDataCell v-else-if="item.isActive == false">
-                    <CIcon icon="cil-x-circle" size="xl" />
-                  </CTableDataCell>
-                  <CTableDataCell>
-                    <CIcon
-                      icon="cil-trash"
-                      size="xl"
-                      @click="
-                        () => {
-                          modalExcluir = true
-                          idItem = item.id
-                        }
-                      "
-                    />
-                  </CTableDataCell>
-                  <CTableDataCell>
-                    <CIcon
-                      icon="cil-pencil"
-                      size="xl"
-                      @click="this.alterar(item.id)"
-                    />
-                  </CTableDataCell>
+                  <IconsTdTable
+                    :isActiveProps="item.isActive"
+                    :id-item-props="item.id"
+                    :serviceProps="service"
+                    @get-all="consultaTodos"
+                    @alterar-item="alterar"
+                  />
                 </CTableRow>
               </CTableBody>
             </CTable>
@@ -88,59 +69,26 @@
       </CCard>
     </CCol>
   </CRow>
-  <CModal
-    :visible="modalExcluir"
-    @close="
-      () => {
-        modalExcluir = false
-      }
-    "
-  >
-    <CModalHeader
-      dismiss
-      @close="
-        () => {
-          modalExcluir = false
-        }
-      "
-    >
-      <CModalTitle>Deseja excluir esse item?</CModalTitle>
-    </CModalHeader>
-    <CModalBody
-      >O item será excluído permanentemente do banco de dados.</CModalBody
-    >
-    <CModalFooter>
-      <CButton
-        color="secondary"
-        @click="
-          () => {
-            modalExcluir = false
-          }
-        "
-        >Cancelar</CButton
-      >
-      <CButton color="primary" @click="this.excluir">Confirmar</CButton>
-    </CModalFooter>
-  </CModal>
   <toast ref="toast" />
 </template>
 
 <script>
-import Service from '@/Services/clienteService.js'
-import Toast from '@/components/Toast.vue'
+import Service from "@/Services/clienteService.js";
+import Toast from "@/components/Toast.vue";
 import NextPageTable from "@/components/NextPageTable.vue";
+import IconsTdTable from "@/components/IconsTdTable.vue";
 export default {
-  components: { Toast, NextPageTable },
-  name: 'Cliente',
+  components: { Toast, NextPageTable, IconsTdTable },
+  name: "Cliente",
   data() {
     return {
       service: new Service(),
-      itens: '',
+      itens: "",
       modalExcluir: false,
-      idItem: '',
-      searchText: '',
+      idItem: "",
+      searchText: "",
       pageId: 0,
-    }
+    };
   },
   methods: {
     async consultaTodos() {
@@ -151,21 +99,8 @@ export default {
       this.$refs.nextPageTable.pageable.pageNumber =
         itensPaged.pageable.pageNumber;
     },
-    async excluir() {
-      this.modalExcluir = false
-      console.log(this.idItem)
-      if (this.idItem != undefined) {
-        let res = await this.service.excluir(this.idItem)
-        if (res.status == 204) {
-          this.$refs.toast.createToast('Excluído com sucesso!')
-          this.consultaTodos()
-        } else {
-          this.$refs.toast.createToast('Ocorreu um erro ao excluir item!')
-        }
-      }
-    },
-    alterar(id) {
-      this.$router.push({ path: `/forms/cliente/cadastro/${id}` })
+    alterar(id) {      
+      this.$router.push({ path: `/forms/cliente/cadastro/${id}` });
     },
     async getByName() {
       let itensPaged = await this.service.getByNamePaged(
@@ -184,9 +119,9 @@ export default {
     },
   },
   mounted() {
-    this.consultaTodos()
+    this.consultaTodos();
   },
-}
+};
 </script>
 <style scoped>
 #teste-align {

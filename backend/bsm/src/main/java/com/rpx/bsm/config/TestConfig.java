@@ -9,6 +9,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
+import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -108,6 +109,10 @@ public class TestConfig implements CommandLineRunner {
         /*============================================================================================================*/
         for (int i = 0; i < 25; i++)
             messageTemplateRepository.save(new MessageTemplate("MODELO" + i, "MENSAGEM DE TESTE", true));
+
+        for (int i = 0; i < 25; i++)
+            expenseRepository.save(new Expense("DESPESA "+i, 100.00, 30, LocalDate.parse("2023-03-04"), 0,  new ExpenseType(1L)));
+
     }
 
 }
