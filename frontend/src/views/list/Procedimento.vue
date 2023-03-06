@@ -43,40 +43,21 @@
                   <CTableHeaderCell scope="col">Descrição</CTableHeaderCell>
                   <CTableHeaderCell scope="col">Valor</CTableHeaderCell>
                   <CTableHeaderCell scope="col">Ativo</CTableHeaderCell>
-                  <CTableHeaderCell scope="col">Excluir?</CTableHeaderCell>
-                  <CTableHeaderCell scope="col">Alterar?</CTableHeaderCell>
+                  <CTableHeaderCell scope="col"></CTableHeaderCell>                  
                 </CTableRow>
               </CTableHead>
               <CTableBody>
                 <CTableRow v-for="item in this.itens" :key="item.id">
                   <CTableHeaderCell scope="row">{{ item.id }}</CTableHeaderCell>
                   <CTableDataCell>{{ item.description }}</CTableDataCell>
-                  <CTableDataCell>R$ {{ item.price }}</CTableDataCell>
-                  <CTableDataCell v-if="item.isActive == true">
-                    <CIcon icon="cil-check" size="xl" />
-                  </CTableDataCell>
-                  <CTableDataCell v-else-if="item.isActive == false">
-                    <CIcon icon="cil-x-circle" size="xl" />
-                  </CTableDataCell>
-                  <CTableDataCell>
-                    <CIcon
-                      icon="cil-trash"
-                      size="xl"
-                      @click="
-                        () => {
-                          modalExcluir = true;
-                          idItem = item.id;
-                        }
-                      "
-                    />
-                  </CTableDataCell>
-                  <CTableDataCell>
-                    <CIcon
-                      icon="cil-pencil"
-                      size="xl"
-                      @click="this.alterar(item.id)"
-                    />
-                  </CTableDataCell>
+                  <CTableDataCell>R$ {{ item.price.toFixed(2) }}</CTableDataCell>
+                  <IconsTdTable
+                    :isActiveProps="item.isActive"
+                    :id-item-props="item.id"
+                    :serviceProps="service"
+                    @get-all="consultaTodos"
+                    @alterar-item="alterar"
+                  />
                 </CTableRow>
               </CTableBody>
             </CTable>
@@ -89,41 +70,7 @@
         </CCardBody>
       </CCard>
     </CCol>
-  </CRow>
-  <CModal
-    :visible="modalExcluir"
-    @close="
-      () => {
-        modalExcluir = false;
-      }
-    "
-  >
-    <CModalHeader
-      dismiss
-      @close="
-        () => {
-          modalExcluir = false;
-        }
-      "
-    >
-      <CModalTitle>Deseja excluir esse item?</CModalTitle>
-    </CModalHeader>
-    <CModalBody
-      >O item será excluído permanentemente do banco de dados.</CModalBody
-    >
-    <CModalFooter>
-      <CButton
-        color="secondary"
-        @click="
-          () => {
-            modalExcluir = false;
-          }
-        "
-        >Cancelar</CButton
-      >
-      <CButton color="primary" @click="this.excluir">Confirmar</CButton>
-    </CModalFooter>
-  </CModal>
+  </CRow> 
   <toast ref="toast" />
 </template>
 
@@ -131,9 +78,9 @@
 import Service from "@/Services/procedimentoService";
 import Toast from "@/components/Toast.vue";
 import NextPageTable from "@/components/NextPageTable.vue";
-
+import IconsTdTable from "@/components/IconsTdTable.vue";
 export default {
-  components: { Toast, NextPageTable },
+  components: { Toast, NextPageTable, IconsTdTable },
   name: "Procedimento",
   data() {
     return {
@@ -186,7 +133,6 @@ export default {
       this.consultaTodos();
     },
   },
-
   mounted() {
     this.consultaTodos();
   },

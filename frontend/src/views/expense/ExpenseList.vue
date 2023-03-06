@@ -41,14 +41,19 @@
                 <CTableRow>
                   <CTableHeaderCell scope="col">#</CTableHeaderCell>
                   <CTableHeaderCell scope="col">Descrição</CTableHeaderCell>
-                  <CTableHeaderCell scope="col">Excluir?</CTableHeaderCell>
-                  <CTableHeaderCell scope="col">Alterar?</CTableHeaderCell>
+                  <CTableHeaderCell scope="col">Valor</CTableHeaderCell>
+                  <CTableHeaderCell scope="col">Tipo De Despesa</CTableHeaderCell>
+                  <CTableHeaderCell scope="col">Qtde Parcelas</CTableHeaderCell>                  
+                  <CTableHeaderCell scope="col"></CTableHeaderCell>
                 </CTableRow>
               </CTableHead>
               <CTableBody>
-                <CTableRow v-for="fp in this.itens" :key="fp.id">
-                  <CTableHeaderCell scope="row">{{ fp.id }}</CTableHeaderCell>
-                  <CTableDataCell>{{ fp.description }}</CTableDataCell>
+                <CTableRow v-for="item in this.itens" :key="item.id">
+                  <CTableHeaderCell scope="row">{{ item.id }}</CTableHeaderCell>
+                  <CTableDataCell>{{ item.description }}</CTableDataCell>
+                  <CTableDataCell>R$ {{  item.total.toFixed(2) }}</CTableDataCell> 
+                  <CTableDataCell>{{ item.expenseType.description }}</CTableDataCell>                
+                  <CTableDataCell>{{  item.quantityOfInstallments }}</CTableDataCell> 
                   <CTableDataCell>
                     <CIcon
                       icon="cil-trash"
@@ -56,16 +61,14 @@
                       @click="
                         () => {
                           modalExcluir = true;
-                          id = fp.id;
+                          id = item.id;
                         }
                       "
                     />
-                  </CTableDataCell>
-                  <CTableDataCell>
                     <CIcon
                       icon="cil-pencil"
                       size="xl"
-                      @click="this.alterar(fp.id)"
+                      @click="this.alterar(item.id)"
                     />
                   </CTableDataCell>
                 </CTableRow>
@@ -121,11 +124,11 @@
 <script>
 import ExpenseService from "@/Services/expenseService";
 import Toast from "@/components/Toast.vue";
-import { CForm } from "@coreui/vue";
+import { CForm, CTableDataCell } from "@coreui/vue";
 import NextPageTable from "@/components/NextPageTable.vue";
 
 export default {
-  components: { Toast, CForm, NextPageTable },
+  components: { Toast, CForm, NextPageTable, CTableDataCell },
   name: "FormaPagamento",
   data() {
     return {
