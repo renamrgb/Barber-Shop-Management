@@ -56,6 +56,11 @@
                   <CTableDataCell>{{  item.quantityOfInstallments }}</CTableDataCell> 
                   <CTableDataCell>
                     <CIcon
+                      icon="cil-check-circle"
+                      size="xl"
+                      @click="payOffExpense(item)"                
+                    />
+                    <CIcon
                       icon="cil-trash"
                       size="xl"
                       @click="
@@ -64,12 +69,12 @@
                           id = item.id;
                         }
                       "
-                    />
+                    />                    
                     <CIcon
                       icon="cil-pencil"
                       size="xl"
                       @click="this.alterar(item.id)"
-                    />
+                    />                    
                   </CTableDataCell>
                 </CTableRow>
               </CTableBody>
@@ -119,6 +124,7 @@
     </CModalFooter>
   </CModal>
   <toast ref="toast" />
+  <QuitarDespesa ref="quitarDespesa" />
 </template>
 
 <script>
@@ -126,9 +132,9 @@ import ExpenseService from "@/Services/expenseService";
 import Toast from "@/components/Toast.vue";
 import { CForm, CTableDataCell } from "@coreui/vue";
 import NextPageTable from "@/components/NextPageTable.vue";
-
+import QuitarDespesa from '@/components/expense/QuitarDespesa.vue';
 export default {
-  components: { Toast, CForm, NextPageTable, CTableDataCell },
+  components: { Toast, CForm, NextPageTable, CTableDataCell, QuitarDespesa },
   name: "FormaPagamento",
   data() {
     return {
@@ -176,6 +182,10 @@ export default {
       this.pageId = newValue;
       this.getExpenses();
     },
+    payOffExpense(item){
+      this.$refs.quitarDespesa.visibleLiveDemo = true
+      this.$refs.quitarDespesa.expense = item
+    }
   },
   mounted() {
     this.getExpenses();
