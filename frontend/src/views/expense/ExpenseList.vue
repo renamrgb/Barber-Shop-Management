@@ -58,7 +58,7 @@
                     <CIcon
                       icon="cil-check-circle"
                       size="xl"
-                      @click="payOffExpense(item)"                
+                      @click="payOffExpense(item)"                                   
                     />
                     <CIcon
                       icon="cil-trash"

@@ -22,7 +22,7 @@ public class Installment implements Serializable {
     private LocalDate dueDate;
     private LocalDate paymentDate;
     private Double amountPaid;
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne
     private PaymentMethod paymentMethod;
 
     @ManyToOne

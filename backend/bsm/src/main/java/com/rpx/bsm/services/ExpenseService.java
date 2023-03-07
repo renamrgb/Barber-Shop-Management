@@ -2,7 +2,6 @@ package com.rpx.bsm.services;
 
 import com.rpx.bsm.dto.ExpenseDTO;
 import com.rpx.bsm.entities.Expense;
-import com.rpx.bsm.entities.ExpenseType;
 import com.rpx.bsm.entities.Installment;
 import com.rpx.bsm.records.ExpenseRecord;
 import com.rpx.bsm.repositories.ExpenseRepository;
@@ -19,7 +18,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityNotFoundException;
 import java.math.BigDecimal;
-import java.math.BigInteger;
 import java.math.RoundingMode;
 import java.time.LocalDate;
 import java.util.*;
@@ -106,7 +104,7 @@ public class ExpenseService {
 
         return obj;
     }
-
+    @Transactional
     public Expense findById(Long id) {
         Optional<Expense> obj = repository.findById(id);
         Expense entity = obj.orElseThrow(() -> new ResourceNotFoundException(id));
@@ -124,13 +122,15 @@ public class ExpenseService {
     }
     @Transactional
     public Expense payOffExpense(ExpenseRecord record, Long id){
+        LocalDate dataAtual = LocalDate.now();
         Expense expense = findById(id);
         List<Installment> installments = record.installments();
         List<Installment> installmentAt = expense.getInstallments();
+
         for (int i=0; i < installments.size(); i++) {
             installmentAt.get(i).setAmountPaid(installments.get(i).getAmountPaid());
             installmentAt.get(i).setPaymentMethod(installments.get(i).getPaymentMethod());
-            installmentAt.get(i).setPaymentDate(installments.get(i).getPaymentDate());
+            installmentAt.get(i).setPaymentDate(dataAtual);
             installmentAt.get(i).setExpense(expense);
         }
         expense.setInstallments(installmentAt);

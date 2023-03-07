@@ -47,7 +47,7 @@
                 <CTableHeaderCell scope="col">Vencimento</CTableHeaderCell>
                 <CTableHeaderCell scope="col">Valor Pago</CTableHeaderCell>
                 <CTableHeaderCell scope="col"
-                  >Forma de Pagamento</CTableHeaderCell
+                  >Forma De Pagamento</CTableHeaderCell
                 >
               </CTableRow>
             </CTableHead>
@@ -57,9 +57,9 @@
                 :key="item.id"
               >
                 <CTableHeaderCell scope="row">{{ item.id }}</CTableHeaderCell>
-                <CTableHeaderCell scope="row">R$ {{
-                  item.installmentValue.toFixed(2)
-                }}</CTableHeaderCell>
+                <CTableHeaderCell scope="row"
+                  >R$ {{ item.installmentValue.toFixed(2) }}</CTableHeaderCell
+                >
                 <CTableHeaderCell scope="row">{{
                   this.formatDateBr.toDateBr(item.dueDate)
                 }}</CTableHeaderCell>
@@ -68,13 +68,30 @@
                     <CInputGroupText>R$</CInputGroupText>
                     <CFormInput
                       name="price"
-                      v-model="expense.amountPaid"
+                      v-model="expense.amountPaid"                      
                       required
-                    /> </CInputGroup
-                ></CTableHeaderCell>
+                    />
+                  </CInputGroup>
+                  <div
+                    v-if="v$.expense.amountPaid.$errors.length > 0"
+                    class="invalid-input-form"
+                  >
+                    {{ v$.expense.amountPaid.$errors[0].$message }}
+                  </div></CTableHeaderCell
+                >
                 <CTableHeaderCell scope="row">
-                  <CFormSelect :options="optionsSelect" :searchable="true">
+                  <CFormSelect
+                    :options="optionsSelect"
+                    :searchable="true"
+                    v-model="paymentMethod.id"
+                  >
                   </CFormSelect>
+                  <div
+                    v-if="v$.paymentMethod.id.$errors.length > 0"
+                    class="invalid-input-form"
+                  >
+                    {{ v$.paymentMethod.id.$errors[0].$message }}
+                  </div>
                 </CTableHeaderCell>
               </CTableRow>
             </CTableBody>
@@ -93,31 +110,53 @@
       >
         Fechar
       </CButton>
-      <CButton color="primary">Confirmar</CButton>
+      <CButton color="primary" @click="submitForm()">Confirmar</CButton>
     </CModalFooter>
-  </CModal>
+  </CModal>  
 </template>
 
 <script>
+import { useVuelidate } from "@vuelidate/core";
+import ValidationsMessage from "@/util/ValidationsMessage.js";
+import { decimal } from "@vuelidate/validators";
 import FormaPagamentoService from "@/Services/formaPagamentoService";
 import FormatDateBr from "@/util/formatDateBr";
+import ExpenseService from "@/Services/expenseService";
 export default {
   name: "QuitarDepesa",
   data() {
     return {
+      v$: useVuelidate(),
+      validationsMessage: new ValidationsMessage(),
       formatDateBr: new FormatDateBr(),
       formaPagamentoService: new FormaPagamentoService(),
+      service: new ExpenseService(),
       visibleLiveDemo: false,
+      visibleLiveDemo2: false,
+      paymentMethod: { id: "" },
       expense: {
         description: "",
         releaseDate: "",
-        paymentMethod: {
-          id: "",
-        },
         amountPaid: "",
         paymentDate: "",
       },
       optionsSelect: [],
+    };
+  },
+  validations() {
+    return {
+      expense: {
+        amountPaid: {
+          required: this.validationsMessage.requiredMessage,
+          decimal,
+          minValue: this.validationsMessage.minMenssage(0.1),
+        },
+      },
+      paymentMethod: {
+        id: {
+          required: this.validationsMessage.requiredMessage,
+        }
+      }
     };
   },
   methods: {
@@ -129,6 +168,19 @@ export default {
           label: element.description,
         });
       });
+    },
+    submitForm() {
+      this.v$.$validate();      
+      if(this.expense.amountPaid != this.expense.installments[0].installmentValue){
+        this.v$.expense.amountPaid.$errors.push({$message: "O Valor Pago deve ser igual ao valor da parcela"});        
+      }      
+      if (!this.v$.$error) {
+        this.confirm();
+      }
+      
+    },
+    async confirm() {
+      let res = await this.service.payOffExpense(this.expense, this.paymentMethod);
     },
   },
   mounted() {

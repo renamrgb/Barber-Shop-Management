@@ -22,7 +22,6 @@ public class PaymentMethod implements Serializable {
     private Long Id;
     private String description;
     private Boolean isActive;
-    @JsonIgnore
     @OneToMany(mappedBy = "paymentMethod")
     private List<Installment> installmentList;
 

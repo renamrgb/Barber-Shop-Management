@@ -23,7 +23,7 @@ public class InstallmentDTO {
     private LocalDate dueDate;
     private LocalDate PaymentDate;
     private Double amountPaid;
-    private PaymentMethod paymentMethod;
+    private PaymentMethodDTO paymentMethod;
 
     public InstallmentDTO(Long id, BigDecimal installmentValue, LocalDate dueDate) {
         this.id = id;
@@ -37,6 +37,6 @@ public class InstallmentDTO {
         setDueDate(obj.getDueDate());
         setPaymentDate(obj.getPaymentDate());
         setAmountPaid(obj.getAmountPaid());
-        setPaymentMethod(obj.getPaymentMethod());
+        setPaymentMethod(new PaymentMethodDTO(obj.getPaymentMethod()));
     }
 }

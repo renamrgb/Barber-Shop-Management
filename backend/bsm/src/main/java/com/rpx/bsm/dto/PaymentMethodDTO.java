@@ -22,9 +22,11 @@ public class PaymentMethodDTO implements Serializable {
     private Boolean isActive;
 
     public PaymentMethodDTO(PaymentMethod obj){
-        setId(obj.getId());
-        setDescription(obj.getDescription());
-        setIsActive(obj.getIsActive());
+        if(obj!=null){
+            setId(obj.getId());
+            setDescription(obj.getDescription());
+            setIsActive(obj.getIsActive());
+        }
     }
 
 }

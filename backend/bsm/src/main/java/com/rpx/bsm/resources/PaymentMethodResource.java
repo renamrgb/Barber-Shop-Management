@@ -1,5 +1,6 @@
 package com.rpx.bsm.resources;
 
+import com.rpx.bsm.dto.CustomerDTO;
 import com.rpx.bsm.dto.PaymentMethodDTO;
 import com.rpx.bsm.dto.ProcedureDTO;
 import com.rpx.bsm.dto.ProductDTO;
@@ -16,6 +17,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import javax.validation.Valid;
 import java.net.URI;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping(value = "/paymentMethod")
@@ -25,9 +27,10 @@ public class PaymentMethodResource {
     private PaymentMethodService service;
 
     @GetMapping
-    public ResponseEntity<List<PaymentMethod>> find(@RequestParam(defaultValue = "", name = "description") String description) {
+    public ResponseEntity<List<PaymentMethodDTO>> find(@RequestParam(defaultValue = "", name = "description") String description) {
         List<PaymentMethod> list = service.find(description);
-        return ResponseEntity.ok().body(list);
+        List<PaymentMethodDTO> listDto = list.stream().map(x -> new PaymentMethodDTO(x)).collect(Collectors.toList());
+        return ResponseEntity.ok().body(listDto);
     }
 
     @GetMapping(value = "/paged")
