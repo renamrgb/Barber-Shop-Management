@@ -1,5 +1,7 @@
 package com.rpx.bsm.resources;
 
+import com.rpx.bsm.dto.PaymentMethodDTO;
+import com.rpx.bsm.dto.ProcedureDTO;
 import com.rpx.bsm.dto.ProductDTO;
 import com.rpx.bsm.entities.PaymentMethod;
 import com.rpx.bsm.records.PaymentMethodRecord;
@@ -29,16 +31,17 @@ public class PaymentMethodResource {
     }
 
     @GetMapping(value = "/paged")
-    public ResponseEntity<Page<PaymentMethod>> findPaged(@RequestParam(defaultValue = "", name = "description") String description, Pageable pageable) {
+    public ResponseEntity<Page<PaymentMethodDTO>> findPaged(@RequestParam(defaultValue = "", name = "description") String description, Pageable pageable) {
         Page<PaymentMethod> list = service.findPaged(description, pageable);
-        return ResponseEntity.ok().body(list);
+        Page<PaymentMethodDTO> listDto = list.map(x -> new PaymentMethodDTO(x));
+        return ResponseEntity.ok().body(listDto);
     }
 
     @PostMapping
-    public ResponseEntity<PaymentMethod> insert(@Valid @RequestBody PaymentMethodRecord obj) {
+    public ResponseEntity<PaymentMethodDTO> insert(@Valid @RequestBody PaymentMethodRecord obj) {
         PaymentMethod fp = service.insert(obj);
         URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(fp.getId()).toUri();
-        return ResponseEntity.created(uri).body(fp);
+        return ResponseEntity.created(uri).body(new PaymentMethodDTO(fp));
     }
 
     @GetMapping(value = "/{id}")
@@ -54,9 +57,9 @@ public class PaymentMethodResource {
     }
 
     @PutMapping(value = "/{id}")
-    public ResponseEntity<PaymentMethod> update(@PathVariable Long id, @RequestBody PaymentMethodRecord obj) {
+    public ResponseEntity<PaymentMethodDTO> update(@PathVariable Long id, @RequestBody PaymentMethodRecord obj) {
         PaymentMethod entidade = service.update(id, obj);
-        return ResponseEntity.ok().body(entidade);
+        return ResponseEntity.ok().body(new PaymentMethodDTO(entidade));
     }
 
 }

@@ -20,13 +20,22 @@ public class Installment implements Serializable {
     private Long id;
     private BigDecimal installmentValue;
     private LocalDate dueDate;
+    private LocalDate paymentDate;
+    private Double amountPaid;
+    @ManyToOne(fetch = FetchType.EAGER)
+    private PaymentMethod paymentMethod;
+
     @ManyToOne
     private Expense expense;
     public Installment(BigDecimal installmentValue, LocalDate dueDate) {
         this.installmentValue = installmentValue;
         this.dueDate = dueDate;
     }
-
+    public Installment(LocalDate paymentDate, Double amountPaid, PaymentMethod paymentMethod) {
+        this.paymentDate = paymentDate;
+        this.amountPaid = amountPaid;
+        this.paymentMethod = paymentMethod;
+    }
     public Installment(Long id, BigDecimal installmentValue, LocalDate dueDate) {
         this.id = id;
         this.installmentValue = installmentValue;

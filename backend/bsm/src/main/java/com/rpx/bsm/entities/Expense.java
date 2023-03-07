@@ -24,7 +24,6 @@ public class Expense implements Serializable {
     private Integer daysBeetwenInstallments;
     private LocalDate releaseDate;
     private Integer quantityOfInstallments;
-    private LocalDate dueDate;
     @ManyToOne
     private ExpenseType expenseType;
     @OneToMany(mappedBy = "expense", cascade = CascadeType.ALL)
@@ -41,6 +40,7 @@ public class Expense implements Serializable {
         this.releaseDate = releaseDate;
         this.quantityOfInstallments = quantityOfInstallments;
         this.expenseType = expenseType;
+        this.setInstallments(new ArrayList<>());
     }
 
     public Expense(ExpenseRecord record) {
@@ -49,7 +49,6 @@ public class Expense implements Serializable {
         this.daysBeetwenInstallments = record.daysBeetwenInstallments();
         this.releaseDate = record.releaseDate();
         this.quantityOfInstallments = record.quantityOfInstallments();
-        this.dueDate = record.dueDate();
         this.expenseType = record.expenseType();
         this.installments = record.installments();
     }

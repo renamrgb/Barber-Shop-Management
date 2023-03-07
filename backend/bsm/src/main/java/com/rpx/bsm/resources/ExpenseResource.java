@@ -59,8 +59,14 @@ public class ExpenseResource {
     @Transactional
     @PutMapping(value = "/{id}")
     public ResponseEntity<ExpenseDTO> update(@PathVariable Long id, @RequestBody ExpenseRecord obj) {
-        ExpenseDTO objDto = service.update(id, obj);
-        return ResponseEntity.ok().body(objDto);
+        Expense objDto = service.update(id, obj);
+        return ResponseEntity.ok().body(new ExpenseDTO(objDto));
+    }
+    @Transactional
+    @PutMapping(value = "/payOffExpense/{id}")
+    public ResponseEntity<ExpenseDTO> payOffExpens(@PathVariable Long id, @RequestBody ExpenseRecord obj) {
+        Expense objDto = service.payOffExpense(obj, id);
+        return ResponseEntity.ok().body(new ExpenseDTO(objDto));
     }
     @PostMapping
     public ResponseEntity<ExpenseDTO> insert(@Valid @RequestBody ExpenseRecord r) {

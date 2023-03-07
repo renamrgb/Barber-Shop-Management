@@ -99,7 +99,6 @@ public class ExpenseService {
         obj.setDaysBeetwenInstallments(r.daysBeetwenInstallments());
         obj.setQuantityOfInstallments(r.quantityOfInstallments());
         obj.setExpenseType(r.expenseType());
-        obj.setDueDate(r.dueDate());
         for (Installment e : r.installments()) {
             e.setExpense(obj);
             obj.getInstallments().add(e);
@@ -115,14 +114,27 @@ public class ExpenseService {
     }
 
     @Transactional
-    public ExpenseDTO update(Long id, ExpenseRecord obj) {
+    public Expense update(Long id, ExpenseRecord obj) {
         try {
             Expense entity = repository.getReferenceById(id);
-            updateData(obj, entity);
-            return new ExpenseDTO(new Expense(obj));
+            return repository.save(updateData(obj, entity));
         } catch (EntityNotFoundException e) {
             throw new ResourceNotFoundException(id);
         }
+    }
+    @Transactional
+    public Expense payOffExpense(ExpenseRecord record, Long id){
+        Expense expense = findById(id);
+        List<Installment> installments = record.installments();
+        List<Installment> installmentAt = expense.getInstallments();
+        for (int i=0; i < installments.size(); i++) {
+            installmentAt.get(i).setAmountPaid(installments.get(i).getAmountPaid());
+            installmentAt.get(i).setPaymentMethod(installments.get(i).getPaymentMethod());
+            installmentAt.get(i).setPaymentDate(installments.get(i).getPaymentDate());
+            installmentAt.get(i).setExpense(expense);
+        }
+        expense.setInstallments(installmentAt);
+        return repository.save(expense);
     }
 
     private Expense updateData(ExpenseRecord r, Expense obj) {
@@ -132,7 +144,6 @@ public class ExpenseService {
         obj.setExpenseType(r.expenseType());
         obj.setDaysBeetwenInstallments(r.daysBeetwenInstallments());
         obj.setQuantityOfInstallments(r.quantityOfInstallments());
-        obj.setDueDate(r.dueDate());
         obj.setReleaseDate(r.releaseDate());
 
         for (int i = 0; i < obj.getInstallments().size(); i++) {

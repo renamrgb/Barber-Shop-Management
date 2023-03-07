@@ -4,12 +4,15 @@ export default class ExpenseService {
   url = "/expenses";
 
   replaceItem(item) {
+    if (typeof item.total != "string") item.total = item.total.toString();
+
     item.total = item.total.replace(",", ".");
+    item.total = parseFloat(item.total);
     return item;
   }
 
   async saveOrUpdate(id, installments, item) {
-    if (installments != undefined) {
+    if (installments != undefined && id == undefined) {
       installments.forEach((element) => {
         item.installments.push({
           installmentValue: element.installmentValue,
@@ -76,7 +79,7 @@ export default class ExpenseService {
       return error.response.data;
     }
   }
-  async getAllPaged(pageId) {    
+  async getAllPaged(pageId) {
     try {
       const res = await api.get(`${this.url}/paged?page=${pageId}`);
       return res.data;
@@ -84,7 +87,7 @@ export default class ExpenseService {
       return error;
     }
   }
-  async getByDescriptionPaged(description, pageId) {    
+  async getByDescriptionPaged(description, pageId) {
     try {
       const res = await api.get(
         `${this.url}/paged?description=${description}&page=${pageId}`

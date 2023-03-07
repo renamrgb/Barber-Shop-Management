@@ -82,7 +82,7 @@
             <div
               class="row"
               v-if="
-                this.form.expenseType.id != undefined &&
+                this.id == undefined && this.form.expenseType.id != undefined &&
                 this.optionsSelect[this.form.expenseType.id]
                   .generateInstallments == false
               "

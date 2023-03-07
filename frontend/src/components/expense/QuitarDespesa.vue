@@ -35,27 +35,50 @@
           />
         </div>
       </div>
-      <div class="row mb-3">
-        <div class="col">
-          <CFormLabel for="price">* Valor Pago</CFormLabel>
-          <CInputGroup>
-            <CInputGroupText>R$</CInputGroupText>
-            <CFormInput name="price" v-model="expense.amountPaid" required />
-          </CInputGroup>
-        </div>
-        <div class="col">
-          <CFormLabel for="typeExpense">* Forma De Pagamento</CFormLabel>
-          <CFormSelect :options="optionsSelect" :searchable="true">
-          </CFormSelect>
-        </div>
-        <div class="col-md-3">
-          <CFormLabel for="releaseDate">* Data de Pagamento</CFormLabel>
-          <input
-            type="date"
-            name="releaseDate"
-            v-model="expense.paymentDate"
-            class="form-control"            
-          />
+      <div class="row">
+        <div class="bdr">
+          <CTable responsive="xl">
+            <CTableHead class="table-dark">
+              <CTableRow>
+                <CTableHeaderCell scope="col">#</CTableHeaderCell>
+                <CTableHeaderCell scope="col"
+                  >Valor Da Parcela</CTableHeaderCell
+                >
+                <CTableHeaderCell scope="col">Vencimento</CTableHeaderCell>
+                <CTableHeaderCell scope="col">Valor Pago</CTableHeaderCell>
+                <CTableHeaderCell scope="col"
+                  >Forma de Pagamento</CTableHeaderCell
+                >
+              </CTableRow>
+            </CTableHead>
+            <CTableBody>
+              <CTableRow
+                v-for="item in this.expense.installments"
+                :key="item.id"
+              >
+                <CTableHeaderCell scope="row">{{ item.id }}</CTableHeaderCell>
+                <CTableHeaderCell scope="row">R$ {{
+                  item.installmentValue.toFixed(2)
+                }}</CTableHeaderCell>
+                <CTableHeaderCell scope="row">{{
+                  this.formatDateBr.toDateBr(item.dueDate)
+                }}</CTableHeaderCell>
+                <CTableHeaderCell scope="row">
+                  <CInputGroup>
+                    <CInputGroupText>R$</CInputGroupText>
+                    <CFormInput
+                      name="price"
+                      v-model="expense.amountPaid"
+                      required
+                    /> </CInputGroup
+                ></CTableHeaderCell>
+                <CTableHeaderCell scope="row">
+                  <CFormSelect :options="optionsSelect" :searchable="true">
+                  </CFormSelect>
+                </CTableHeaderCell>
+              </CTableRow>
+            </CTableBody>
+          </CTable>
         </div>
       </div>
     </CModalBody>
@@ -77,10 +100,12 @@
 
 <script>
 import FormaPagamentoService from "@/Services/formaPagamentoService";
+import FormatDateBr from "@/util/formatDateBr";
 export default {
   name: "QuitarDepesa",
   data() {
     return {
+      formatDateBr: new FormatDateBr(),
       formaPagamentoService: new FormaPagamentoService(),
       visibleLiveDemo: false,
       expense: {
@@ -90,7 +115,7 @@ export default {
           id: "",
         },
         amountPaid: "",
-        paymentDate: ""
+        paymentDate: "",
       },
       optionsSelect: [],
     };
