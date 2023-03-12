@@ -7,8 +7,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDate;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 
 @Getter
@@ -22,7 +21,7 @@ public class ExpenseDTO {
     private Integer daysBeetwenInstallments;
     private LocalDate releaseDate;
     private Integer quantityOfInstallments;
-    private Set<InstallmentDTO> installments;
+    private List<InstallmentDTO> installments;
     public ExpenseDTO(Expense obj){
         setId(obj.getId());
         setDescription(obj.getDescription());
@@ -31,11 +30,11 @@ public class ExpenseDTO {
         setDaysBeetwenInstallments(obj.getDaysBeetwenInstallments());
         setReleaseDate(obj.getReleaseDate());
         setQuantityOfInstallments(obj.getQuantityOfInstallments());
-        installments = new HashSet<>();
+        installments = new ArrayList<>();
         for (Installment e : obj.getInstallments()){
             installments.add(new InstallmentDTO(e));
         }
-
+        Collections.sort(installments);
     }
 
 }

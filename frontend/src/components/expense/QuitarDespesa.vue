@@ -49,6 +49,9 @@
                 <CTableHeaderCell scope="col"
                   >Forma De Pagamento</CTableHeaderCell
                 >
+                <CTableHeaderCell scope="col"
+                  ></CTableHeaderCell
+                >
               </CTableRow>
             </CTableHead>
             <CTableBody>
@@ -70,6 +73,7 @@
                       name="price"
                       v-model="expense.amountPaid"                      
                       required
+                      :disabled="true"
                     />
                   </CInputGroup>
                   <div
@@ -84,6 +88,7 @@
                     :options="optionsSelect"
                     :searchable="true"
                     v-model="paymentMethod.id"
+                    :disabled="true"
                   >
                   </CFormSelect>
                   <div
@@ -92,6 +97,9 @@
                   >
                     {{ v$.paymentMethod.id.$errors[0].$message }}
                   </div>
+                </CTableHeaderCell>
+                <CTableHeaderCell scope="row">
+                  <CButton color="primary" variant="outline">Baixar</CButton>
                 </CTableHeaderCell>
               </CTableRow>
             </CTableBody>

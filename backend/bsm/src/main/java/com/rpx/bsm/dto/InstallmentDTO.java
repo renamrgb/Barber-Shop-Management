@@ -16,7 +16,7 @@ import java.time.LocalDate;
 @Getter
 @Setter
 @NoArgsConstructor
-public class InstallmentDTO {
+public class InstallmentDTO implements Comparable<InstallmentDTO> {
 
     private Long id;
     private BigDecimal installmentValue;
@@ -38,5 +38,9 @@ public class InstallmentDTO {
         setPaymentDate(obj.getPaymentDate());
         setAmountPaid(obj.getAmountPaid());
         setPaymentMethod(new PaymentMethodDTO(obj.getPaymentMethod()));
+    }
+    @Override
+    public int compareTo(InstallmentDTO otherInstallment) {
+        return this.id.compareTo(otherInstallment.getId());
     }
 }

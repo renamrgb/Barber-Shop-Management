@@ -61,6 +61,7 @@ import {
   cilLocationPin,
   cilLockLocked,
   cilMagnifyingGlass,
+  cilCog,
   cilMediaPlay,
   cilMenu,
   cilMoon,
@@ -173,6 +174,7 @@ export const iconsSet = Object.assign(
     cilTrash,
     cilPlus,
     cilPlaylistAdd,
-    cilMagnifyingGlass
+    cilMagnifyingGlass,
+    cilCog
   },
 )

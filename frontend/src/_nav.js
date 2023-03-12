@@ -59,5 +59,17 @@ export default [
         to: '/expense',
       },          
     ],
+  },
+  {
+    component: 'CNavGroup',
+    name: 'Configuração',
+    icon: 'cil-cog',
+    items: [  
+      {
+        component: 'CNavItem',
+        name: 'Parâmetros',
+        to: '/settings/parameters',
+      },          
+    ],
   }
 ]

@@ -82,7 +82,8 @@
             <div
               class="row"
               v-if="
-                this.id == undefined && this.form.expenseType.id != undefined &&
+                this.id == undefined &&
+                this.form.expenseType.id != undefined &&
                 this.optionsSelect[this.form.expenseType.id]
                   .generateInstallments == false
               "
@@ -276,9 +277,11 @@ export default {
       let amount = 0;
       for (let i = 0; i < this.installments.length; i++) {
         if (this.installments[i].installmentValue != "") {
-          amount = parseFloat(amount) + parseFloat(this.installments[i].installmentValue);          
+          amount =
+            parseFloat(amount) +
+            parseFloat(this.installments[i].installmentValue);
         }
-      }      
+      }
       return amount.toFixed(2);
     },
   },
@@ -316,7 +319,11 @@ export default {
     submitForm() {
       this.v$.$validate();
       if (!this.v$.$error) {
-        this.salvar();
+        if (this.amount == this.form.total) {
+          this.salvar();
+        }else{
+          this.$refs.toast.createToastDanger("Os valor total das parcelas não é igual ao valor total da despesa");
+        }
       }
     },
     currentDate() {
