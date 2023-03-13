@@ -1,5 +1,6 @@
 package com.rpx.bsm.entities;
 
+import com.rpx.bsm.repositories.ParameterValueRepository;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -33,6 +34,8 @@ public class ParameterValue implements Serializable {
         this.parameter_key = parameter_key;
         this.parameter_value = parameter_value;
     }
+
+
 
     @Override
     public boolean equals(Object o) {

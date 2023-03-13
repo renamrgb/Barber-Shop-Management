@@ -1,11 +1,10 @@
 package com.rpx.bsm.services;
 
-import com.rpx.bsm.entities.Expense;
-import com.rpx.bsm.entities.Installment;
-import com.rpx.bsm.entities.Parameter;
+import com.rpx.bsm.entities.*;
 import com.rpx.bsm.records.ExpenseRecord;
 import com.rpx.bsm.records.ParameterRecord;
 import com.rpx.bsm.repositories.ExpenseRepository;
+import com.rpx.bsm.repositories.OrganizationRepository;
 import com.rpx.bsm.repositories.ParameterRepository;
 import com.rpx.bsm.resources.exceptions.DatabaseException;
 import com.rpx.bsm.resources.exceptions.ResourceNotFoundException;
@@ -15,6 +14,7 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -30,6 +30,8 @@ import java.util.Optional;
 public class ParameterService {
     @Autowired
     private ParameterRepository repository;
+    @Autowired
+    private OrganizationService organizationService;
 
     public List<Parameter> findAll() {
         return repository.findAll();
@@ -44,7 +46,8 @@ public class ParameterService {
     @Transactional
     public Parameter update(Long id, ParameterRecord obj) {
         try {
-            Parameter entity = repository.getReferenceById(id);
+            Parameter entity = findById(id);
+            organizationService.update(obj.organization().getId(), obj.organization());
             return repository.save(updateData(obj, entity));
         } catch (EntityNotFoundException e) {
             throw new ResourceNotFoundException(id);
@@ -52,6 +55,12 @@ public class ParameterService {
     }
 
     private Parameter updateData(ParameterRecord r, Parameter obj) {
+        for (int i = 0; i < r.parameterValues().size(); i++) {
+            obj.getParameterValues().get(i).setParameter_key(r.parameterValues().get(i).getParameter_key());
+            obj.getParameterValues().get(i).setParameter_value(r.parameterValues().get(i).getParameter_value());
+            obj.getParameterValues().get(i).setParameter(obj);
+        }
+        obj.setOrganization(r.organization());
         return obj;
     }
 

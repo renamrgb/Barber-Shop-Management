@@ -2,6 +2,7 @@ package com.rpx.bsm.resources;
 
 import com.rpx.bsm.dto.ExpenseDTO;
 import com.rpx.bsm.dto.InstallmentDTO;
+import com.rpx.bsm.dto.ParameterDTO;
 import com.rpx.bsm.dto.ProcedureDTO;
 import com.rpx.bsm.entities.Expense;
 import com.rpx.bsm.entities.Installment;
@@ -32,20 +33,20 @@ public class ParameterResource {
     private ParameterService service;
 
     @GetMapping
-    public ResponseEntity<List<Parameter>> findAll() {
+    public ResponseEntity<List<ParameterDTO>> findAll() {
         List<Parameter> list = service.findAll();
-//        List<ExpenseDTO> listDto = list.stream().map(x -> new ExpenseDTO(x)).collect(Collectors.toList());
-        return ResponseEntity.ok().body(list);
+        List<ParameterDTO> listDto = list.stream().map(x -> new ParameterDTO(x)).collect(Collectors.toList());
+        return ResponseEntity.ok().body(listDto);
     }
     @PutMapping(value = "/{id}")
-    public ResponseEntity<Parameter> update(@PathVariable Long id, @RequestBody ParameterRecord obj) {
+    public ResponseEntity<ParameterDTO> update(@PathVariable Long id, @RequestBody ParameterRecord obj) {
         Parameter objDto = service.update(id, obj);
-        return ResponseEntity.ok().body(objDto);
+        return ResponseEntity.ok().body(new ParameterDTO(objDto));
     }
     @GetMapping(value = "/{id}")
-    public ResponseEntity<Parameter> findById(@PathVariable Long id){
+    public ResponseEntity<ParameterDTO> findById(@PathVariable Long id){
         Parameter obj = service.findById(id);
-        return ResponseEntity.ok().body(obj);
+        return ResponseEntity.ok().body(new ParameterDTO(obj));
     }
 
 }
