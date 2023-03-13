@@ -13,6 +13,7 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 @Configuration
@@ -43,6 +44,11 @@ public class TestConfig implements CommandLineRunner {
     private ProfessionalRepository professionalRepository;
     @Autowired
     private CustomerRepository customerRepository;
+    @Autowired
+    private ParameterRepository parametersRepository;
+
+    @Autowired
+    private OrganizationRepository organizationRepository;
 
     @Override
     public void run(String... args) throws Exception {
@@ -127,6 +133,15 @@ public class TestConfig implements CommandLineRunner {
             expenseRepository.save(e);
         }
 
+        Organization organization = new Organization();
+        organization.setCnpj("92384290348092");
+        organization.setName("Xavvier Barber Shop");
+        organizationRepository.save(organization);
+        Parameter parameter = new Parameter();
+        parameter.setOrganization(organization);
+        parameter.getParameterValues().add(new ParameterValue("END_TIME", "18:00", parameter));
+        parameter.getParameterValues().add(new ParameterValue("START_TIME", "08:00", parameter));
+        parametersRepository.save(parameter);
     }
 
 }

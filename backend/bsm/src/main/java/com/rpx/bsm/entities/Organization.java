@@ -21,6 +21,8 @@ public class Organization implements Serializable {
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "address_id")
     private Address address;
+    @OneToOne(mappedBy = "organization", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Parameter parameter;
     public Organization(String name, String cnpj, Address address) {
         this.name = name;
         this.cnpj = cnpj;
