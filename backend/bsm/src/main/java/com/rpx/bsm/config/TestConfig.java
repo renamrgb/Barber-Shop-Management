@@ -139,8 +139,10 @@ public class TestConfig implements CommandLineRunner {
         organizationRepository.save(organization);
         Parameter parameter = new Parameter();
         parameter.setOrganization(organization);
-        parameter.getParameterValues().add(new ParameterValue("END_TIME", "18:00", parameter));
-        parameter.getParameterValues().add(new ParameterValue("START_TIME", "08:00", parameter));
+        parameter.getParameterValues().add(new ParameterValue("Horário de início","START_TIME", "08:00", parameter));
+        parameter.getParameterValues().add(new ParameterValue("Horário de início do almoço","LUNCH_START_TIME", "12:00", parameter));
+        parameter.getParameterValues().add(new ParameterValue("Horário de termino do almoço","LUNCH_BREAK_TIME", "14:00", parameter));
+        parameter.getParameterValues().add(new ParameterValue("Horário de encerramento","END_TIME", "18:00", parameter));
         parametersRepository.save(parameter);
     }
 

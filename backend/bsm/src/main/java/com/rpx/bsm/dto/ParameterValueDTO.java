@@ -12,11 +12,13 @@ import javax.persistence.*;
 public class ParameterValueDTO {
 
     private Long Id;
+    private String parameter_name;
     private String parameter_key;
     private String parameter_value;
 
     public ParameterValueDTO(ParameterValue obj) {
         setId(obj.getId());
+        setParameter_name(obj.getParameter_name());
         setParameter_value(obj.getParameter_value());
         setParameter_key(obj.getParameter_key());
     }

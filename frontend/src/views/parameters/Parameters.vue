@@ -19,7 +19,7 @@
                       name="nome"
                       type="text"
                       placeholder=""
-                      v-model="organization.name"
+                      v-model="parameter.organization.name"
                     />
                     <!-- <div
                       v-if="v$.organization.name.$errors.length > 0"
@@ -36,7 +36,7 @@
                       name="nome"
                       type="text"
                       class="form-control"
-                      v-model="organization.cnpj"
+                      v-model="parameter.organization.cnpj"
                       v-mask="'##.###.###/####-##'"
                     />
                     <!-- <div
@@ -58,8 +58,26 @@
               </CForm>
             </CCardBody>
           </CCard>
+          <CCard class="mb-4">
+            <CCardHeader>
+              <strong>Parametros</strong>
+            </CCardHeader>
+            <CCardBody>
+              <div class="row mb-3" v-for="e in this.parameter.parameterValues" :key="e.id">
+                <div class="col">
+                  <CFormLabel for="nome">* {{ e.parameter_name }}</CFormLabel>
+                  <input
+                    :name="e.parameter_key"
+                    type="time"
+                    class="form-control"
+                    v-model="e.parameter_value"                    
+                  />
+                </div>
+              </div>
+            </CCardBody>
+          </CCard>
           <div class="d-grid gap-2 d-md-flex justify-content-md-end">
-            <CButton color="primary" class="me-md-2" @click="submitForm"
+            <CButton color="primary" class="me-md-2" @click="save"
               >Confirmar</CButton
             >
           </div>
@@ -73,7 +91,7 @@
 <script>
 import { useVuelidate } from "@vuelidate/core";
 import ValidationsMessage from "@/util/ValidationsMessage.js";
-import Service from "@/Services/clienteService.js";
+import Service from "@/Services/parameterService.js";
 import Toast from "@/components/Toast.vue";
 import AddressForUser from "@/components/AddressForUser.vue";
 export default {
@@ -85,23 +103,39 @@ export default {
       validationsMessage: new ValidationsMessage(),
       id: this.$route.params.id,
       service: new Service(),
-      organization: {
-        name: "",
-        cnpj: "",
+      parameter: {
+        organization: {
+          name: "",
+          cnpj: "",
+        },
       },
     };
   },
   validations() {
     return {
-      organization: {
-        name: {
-          required: this.validationsMessage.requiredMessage,
-          maxLength: this.validationsMessage.maxLengthMenssage(100),
+      parameter: {
+        organization: {
+          name: {
+            required: this.validationsMessage.requiredMessage,
+            maxLength: this.validationsMessage.maxLengthMenssage(100),
+          },
         },
       },
     };
   },
-  methods: {},
-  mounted() {},
+  methods: {
+    submitForm() {},
+    async getParameter() {
+      this.parameter = await this.service.getParamerter();            
+    },
+    async save(){
+      let res = await this.service.save(this.parameter);      
+      console.log(res);
+      debugger
+    }
+  },
+  mounted() {
+    this.getParameter();
+  },
 };
 </script>

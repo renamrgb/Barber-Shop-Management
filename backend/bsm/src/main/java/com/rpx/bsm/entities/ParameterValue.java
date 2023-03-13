@@ -18,6 +18,7 @@ public class ParameterValue implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY) //Auto incremento
     private Long Id;
+    private String parameter_name;
     private String parameter_key;
     private String parameter_value;
     @ManyToOne
@@ -35,7 +36,12 @@ public class ParameterValue implements Serializable {
         this.parameter_value = parameter_value;
     }
 
-
+    public ParameterValue(String parameter_name, String parameter_key, String parameter_value, Parameter parameter) {
+        this.parameter_name = parameter_name;
+        this.parameter_key = parameter_key;
+        this.parameter_value = parameter_value;
+        this.parameter = parameter;
+    }
 
     @Override
     public boolean equals(Object o) {

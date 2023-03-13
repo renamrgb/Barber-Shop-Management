@@ -73,6 +73,7 @@ export default {
     return {
       addressService: new AddressService(),
       change: false,
+      consultedZipCode: "",
       address: {
         zipCode: "",
         publicPlace: "",
