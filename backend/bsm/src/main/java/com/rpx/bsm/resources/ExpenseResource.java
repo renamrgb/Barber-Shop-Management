@@ -6,8 +6,10 @@ import com.rpx.bsm.dto.InstallmentDTO;
 import com.rpx.bsm.entities.Customer;
 import com.rpx.bsm.entities.Expense;
 import com.rpx.bsm.entities.Installment;
+import com.rpx.bsm.entities.ParameterValue;
 import com.rpx.bsm.records.CustomerRecord;
 import com.rpx.bsm.records.ExpenseRecord;
+import com.rpx.bsm.records.PayOffExpenseBody;
 import com.rpx.bsm.resources.exceptions.ResourceExceptionHandler;
 import com.rpx.bsm.services.ExpenseService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -62,10 +64,16 @@ public class ExpenseResource {
         Expense objDto = service.update(id, obj);
         return ResponseEntity.ok().body(new ExpenseDTO(objDto));
     }
+//    @Transactional
+//    @PutMapping(value = "/payOffExpense/{id}")
+//    public ResponseEntity<ExpenseDTO> payOffExpens(@PathVariable Long id, @RequestBody ExpenseRecord obj) {
+//        Expense objDto = service.payOffExpense(obj, id);
+//        return ResponseEntity.ok().body(new ExpenseDTO(objDto));
+//    }
     @Transactional
-    @PutMapping(value = "/payOffExpense/{id}")
-    public ResponseEntity<ExpenseDTO> payOffExpens(@PathVariable Long id, @RequestBody ExpenseRecord obj) {
-        Expense objDto = service.payOffExpense(obj, id);
+    @PostMapping(value = "/payOffExpense/{id}")
+    public ResponseEntity<ExpenseDTO> payOffExpense(@PathVariable Long id,  @RequestParam(name = "installmentId") Integer installmentId,@RequestBody PayOffExpenseBody obj) {
+        Expense objDto = service.payOffExpense(obj, id,  installmentId);
         return ResponseEntity.ok().body(new ExpenseDTO(objDto));
     }
     @PostMapping
@@ -79,6 +87,12 @@ public class ExpenseResource {
     public ResponseEntity<Void> delete(@PathVariable Long id){
         service.delete(id);
         return ResponseEntity.noContent().build();
+    }
+
+    @PostMapping(value = "/reverse")
+    public ResponseEntity<ExpenseDTO> reverse(@RequestParam(name="expenseId") Long expenseId, @RequestParam(name = "installmentId") Integer installmentId) {
+        Expense obj = service.reverse(expenseId, installmentId);
+        return ResponseEntity.ok().body(new ExpenseDTO(obj));
     }
 
 }

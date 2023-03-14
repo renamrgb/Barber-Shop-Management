@@ -42,8 +42,10 @@
                   <CTableHeaderCell scope="col">#</CTableHeaderCell>
                   <CTableHeaderCell scope="col">Descrição</CTableHeaderCell>
                   <CTableHeaderCell scope="col">Valor</CTableHeaderCell>
-                  <CTableHeaderCell scope="col">Tipo De Despesa</CTableHeaderCell>
-                  <CTableHeaderCell scope="col">Qtde Parcelas</CTableHeaderCell>                  
+                  <CTableHeaderCell scope="col"
+                    >Tipo De Despesa</CTableHeaderCell
+                  >
+                  <CTableHeaderCell scope="col">Qtde Parcelas</CTableHeaderCell>
                   <CTableHeaderCell scope="col"></CTableHeaderCell>
                 </CTableRow>
               </CTableHead>
@@ -51,16 +53,37 @@
                 <CTableRow v-for="item in this.itens" :key="item.id">
                   <CTableHeaderCell scope="row">{{ item.id }}</CTableHeaderCell>
                   <CTableDataCell>{{ item.description }}</CTableDataCell>
-                  <CTableDataCell>R$ {{  item.total.toFixed(2) }}</CTableDataCell> 
-                  <CTableDataCell>{{ item.expenseType.description }}</CTableDataCell>                
-                  <CTableDataCell>{{  item.quantityOfInstallments }}</CTableDataCell> 
+                  <CTableDataCell
+                    >R$ {{ item.total.toFixed(2) }}</CTableDataCell
+                  >
+                  <CTableDataCell>{{
+                    item.expenseType.description
+                  }}</CTableDataCell>
+                  <CTableDataCell>{{
+                    item.quantityOfInstallments
+                  }}</CTableDataCell>
                   <CTableDataCell>
-                    <CButton color="light" @click="payOffExpense(item)" style="margin-right: 1%;">Quitar</CButton>                                             
+                    <CButton
+                      color="light"
+                      @click="payOffExpense(item)"
+                      style="margin-right: 1%"
+                      >Quitar</CButton
+                    >
+                    <CIcon
+                      icon="cil-trash"
+                      size="xl"
+                      @click="
+                        () => {
+                          modalExcluir = true;
+                          id = item.id;
+                        }
+                      "
+                    />
                     <CIcon
                       icon="cil-pencil"
                       size="xl"
                       @click="this.alterar(item.id)"
-                    />                    
+                    />
                   </CTableDataCell>
                 </CTableRow>
               </CTableBody>
@@ -106,7 +129,7 @@
         "
         >Cancelar</CButton
       >
-      <CButton color="primary" @click="this.delete">Confirmar</CButton>
+      <CButton color="primary" @click="this.delete()">Confirmar</CButton>
     </CModalFooter>
   </CModal>
   <toast ref="toast" />
@@ -118,12 +141,13 @@ import ExpenseService from "@/Services/expenseService";
 import Toast from "@/components/Toast.vue";
 import { CForm, CTableDataCell } from "@coreui/vue";
 import NextPageTable from "@/components/NextPageTable.vue";
-import QuitarDespesa from '@/components/expense/QuitarDespesa.vue';
+import QuitarDespesa from "@/components/expense/QuitarDespesa.vue";
 export default {
   components: { Toast, CForm, NextPageTable, CTableDataCell, QuitarDespesa },
   name: "FormaPagamento",
   data() {
     return {
+      id: "",
       service: new ExpenseService(),
       itens: "",
       modalExcluir: false,
@@ -137,7 +161,7 @@ export default {
     async delete() {
       let res = await this.service.delete(this.id);
       if (res.status == 400) {
-        this.$refs.toast.createToast(res.message);
+        this.$refs.toast.createToastDanger(res.message);
       }
       this.modalExcluir = false;
       this.getExpenses();
@@ -168,10 +192,10 @@ export default {
       this.pageId = newValue;
       this.getExpenses();
     },
-    payOffExpense(item){
-      this.$refs.quitarDespesa.visibleLiveDemo = true
-      this.$refs.quitarDespesa.expense = item
-    }
+    payOffExpense(item) {
+      this.$refs.quitarDespesa.visibleLiveDemo = true;
+      this.$refs.quitarDespesa.expense = item;
+    },
   },
   mounted() {
     this.getExpenses();

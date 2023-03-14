@@ -96,13 +96,18 @@ export default class ExpenseService {
     } catch (error) {
       return error;
     }
-  }
-  async payOffExpense(expense, paymentMethod, idInstallment) {
-    console.log(paymentMethod);
-    expense.installments[idInstallment].paymentMethod.id = paymentMethod.id;
-    // expense.installments[idInstallment].amountPaid = expense.amountPaid;
+  }  
+  async payOffExpense(expenseId, installmentId, obj) {    
     try {
-      const res = await api.put(`${this.url}/payOffExpense/${expense.id}`, expense);
+      const res = await api.post(`${this.url}/payOffExpense/${expenseId}?installmentId=${installmentId}`, obj);
+      return res;
+    } catch (error) {
+      return error;
+    }
+  }
+  async reverse(expenseId, installmentId){    
+    try {
+      const res = await api.post(`${this.url}/reverse?expenseId=${expenseId}&installmentId=${installmentId}`);
       return res;
     } catch (error) {
       return error;

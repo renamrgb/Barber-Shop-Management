@@ -74,34 +74,30 @@
                       :disabled="disabledInputs[index].disabled"
                     />
                   </CInputGroup>
-                  <!-- <div
-                    v-if="v$.item.amountPaid.$errors.length > 0"
-                    class="invalid-input-form"
-                  >
-                    {{ v$.item.amountPaid.$errors[0].$message }}
-                  </div> -->
                 </CTableHeaderCell>
                 <CTableHeaderCell scope="row">
                   <CFormSelect
                     :options="optionsSelect"
                     :searchable="true"
-                    v-model="paymentMethod.id"
+                    v-model="item.paymentMethod.id"
                     :disabled="disabledInputs[index].disabled"
                   >
                   </CFormSelect>
-                  <!-- <div
-                    v-if="v$.paymentMethod.id.$errors.length > 0"
-                    class="invalid-input-form"
-                  >
-                    {{ v$.paymentMethod.id.$errors[0].$message }}
-                  </div> -->
                 </CTableHeaderCell>
                 <CTableHeaderCell scope="row">
                   <CButton
+                    v-if="item.paymentDate == undefined"
                     color="primary"
                     variant="outline"
                     @click="baixar(index, item)"
                     >Baixar</CButton
+                  >
+                  <CButton
+                    v-if="item.paymentDate != undefined"
+                    color="primary"
+                    variant="outline"
+                    @click="estornar(index, item)"
+                    >Estornar</CButton
                   >
                 </CTableHeaderCell>
               </CTableRow>
@@ -121,20 +117,22 @@
       >
         Fechar
       </CButton>
-      <CButton color="primary" @click="submitForm()">Confirmar</CButton>
+      <!-- <CButton color="primary" @click="submitForm()">Confirmar</CButton> -->
     </CModalFooter>
   </CModal>
+  <toast ref="toast" />
 </template>
 
 <script>
 import { useVuelidate } from "@vuelidate/core";
 import ValidationsMessage from "@/util/ValidationsMessage.js";
-import { decimal } from "@vuelidate/validators";
 import FormaPagamentoService from "@/Services/formaPagamentoService";
 import FormatDateBr from "@/util/formatDateBr";
 import ExpenseService from "@/Services/expenseService";
 import Service from "@/Services/expenseService.js";
+import Toast from "@/components/Toast.vue";
 export default {
+  components: { Toast },
   name: "QuitarDepesa",
   data() {
     return {
@@ -153,26 +151,10 @@ export default {
         amountPaid: "",
         paymentDate: "",
       },
-      optionsSelect: [],
+      optionsSelect: ["Abra este menu de seleção"],
       disabledInputs: [],
     };
   },
-  // validations() {
-  //   return {
-  //     expense: {
-  //       amountPaid: {
-  //         required: this.validationsMessage.requiredMessage,
-  //         decimal,
-  //         minValue: this.validationsMessage.minMenssage(0.1),
-  //       },
-  //     },
-  //     paymentMethod: {
-  //       id: {
-  //         required: this.validationsMessage.requiredMessage,
-  //       },
-  //     },
-  //   };
-  // },
   methods: {
     async carregarOptionsSelect() {
       let res = await this.formaPagamentoService.consultarFormasPagamento();
@@ -188,54 +170,80 @@ export default {
         this.disabledInputs.push({ disabled: true });
       }
     },
-    submitForm() {
-      this.v$.$validate();
-      if (
-        this.expense.amountPaid != this.expense.installments[0].installmentValue
-      ) {
-        this.v$.expense.amountPaid.$errors.push({
-          $message: "O Valor Pago deve ser igual ao valor da parcela",
-        });
-      }
-      if (!this.v$.$error) {
-        this.confirm();
-      }
-    },
     baixar(index) {
       if (this.disabledInputs[index].disabled) {
-        console.log(`${index} ${this.expense.installments[index].paymentDate}`);
         if (index == 0 && this.expense.installments[index].paymentDate == null)
           this.disabledInputs[index].disabled = false;
         else if (
           index > 0 &&
           this.expense.installments[index - 1].paymentDate != null
         ) {
-          console.log(`${this.disabledInputs[index].disabled}`);
           this.disabledInputs[index].disabled = false;
+          this.$refs.toast.createToastDanger(
+            "Você não pode quitar essa parcela, a anterior ainda não está paga!"
+          );
         }
       } else this.save(index);
     },
     async save(index) {
-      let res = await this.service.payOffExpense(
-        this.expense,
-        this.paymentMethod,
-        index
-      );
-      debugger;
+      let obj = {
+        amountPaid: this.expense.installments[index].amountPaid,
+        paymentMethod: {
+          id: this.expense.installments[index].paymentMethod.id,
+        },
+      };
+      if (this.validForm(index)) {
+        let res = await this.service.payOffExpense(this.expense.id, index, obj);
+        if (res.status == 200) {
+          res = res.data;
+          this.$refs.toast.createToast("Quitação feita com sucesso!");
+          this.disabledInputs[index].disabled = true;
+          this.expense.installments[index].paymentDate =
+            res.installments[index].paymentDate;
+        }
+      }
     },
-    async confirm() {
-      let res = await this.service.payOffExpense(
-        this.expense,
-        this.paymentMethod
-      );
+    async estornar(index) {
+      let res = await this.service.reverse(this.expense.id, index);
+      if (res.status == 200) {
+        res = res.data;
+        this.$refs.toast.createToast("Estorno feito com sucesso!");
+        this.expense.installments[index].amountPaid =
+          res.installments[index].amountPaid;
+        this.expense.installments[index].paymentMethod.id = res.installments[
+          index
+        ].paymentMethod.id = 0;
+        this.expense.installments[index].paymentDate =
+          res.installments[index].paymentDate;
+      }
+    },
+    validForm(index) {
+      let valid = true;
+      let amountPaid = parseInt(this.expense.installments[index].amountPaid);
+      let installmentValue = this.expense.installments[index].installmentValue;
+      let paymentMethod = this.expense.installments[index].paymentMethod.id;
+      if (
+        paymentMethod == undefined ||
+        paymentMethod == "Abra este menu de seleção"
+      ) {
+        valid = false;
+        this.$refs.toast.createToastDanger(
+          "Preencha o campo forma de pagamento!"
+        );
+      }
+      if (amountPaid != installmentValue) {
+        valid = false;
+        this.$refs.toast.createToastDanger(
+          "O valor pago deve ser igual ao valor da parcela!"
+        );
+      }
+      return valid;
     },
   },
   mounted() {
     this.carregarOptionsSelect();
-    this.setStateInputInstallment(30);
   },
   beforeUpdate() {
-    console.log(this.expense.installments.length);
     this.setStateInputInstallment(30);
   },
 };

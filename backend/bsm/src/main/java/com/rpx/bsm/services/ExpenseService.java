@@ -4,6 +4,7 @@ import com.rpx.bsm.dto.ExpenseDTO;
 import com.rpx.bsm.entities.Expense;
 import com.rpx.bsm.entities.Installment;
 import com.rpx.bsm.records.ExpenseRecord;
+import com.rpx.bsm.records.PayOffExpenseBody;
 import com.rpx.bsm.repositories.ExpenseRepository;
 import com.rpx.bsm.resources.exceptions.DatabaseException;
 import com.rpx.bsm.resources.exceptions.ResourceNotFoundException;
@@ -36,10 +37,8 @@ public class ExpenseService {
     public Page<Expense> find(String description, Pageable pageable) {
         Page<Expense> list = null;
 
-        if(description.isEmpty())
-            list = repository.findAll(pageable);
-        else
-            list = repository.findByDescriptionContaining(description, pageable);
+        if (description.isEmpty()) list = repository.findAll(pageable);
+        else list = repository.findByDescriptionContaining(description, pageable);
 
         return list;
     }
@@ -62,24 +61,30 @@ public class ExpenseService {
             installments.add(new Installment(i + 1, installmentsValue, dtStart));
         }
         BigDecimal amount = installmentsValue.multiply(BigDecimal.valueOf(r.quantityOfInstallments()));
-        if (amount != BigDecimal.valueOf(r.total())){
+        if (amount != BigDecimal.valueOf(r.total())) {
             BigDecimal difference = amount.subtract(BigDecimal.valueOf(r.total()));
-            if(amount.compareTo(BigDecimal.valueOf(r.total())) > 0){
+            if (amount.compareTo(BigDecimal.valueOf(r.total())) > 0) {
                 installments.get(0).setInstallmentValue(installments.get(0).getInstallmentValue().subtract(difference));
-            }else{
+            } else {
                 installments.get(0).setInstallmentValue(installments.get(0).getInstallmentValue().add(difference.abs()));
             }
         }
         return installments;
     }
-
+    @Transactional
     public void delete(Long id) {
         try {
+            Boolean isPaid = false;
             Expense obj = findById(id);
-            if (obj.getExpenseType().getGenerateInstallments() == false) {
+            for (Installment e : obj.getInstallments()){
+                if(e.getPaymentDate() != null){
+                    isPaid = true;
+                }
+            }
+            if (!isPaid) {
                 repository.deleteById(id);
             } else {
-                throw new ValidateInstallments("A despesa não pode ser excluída, pois existe parcelas pendentes");
+                throw new ValidateInstallments("Despesas com parcelas pagas não podem ser excluídas!");
             }
         } catch (EmptyResultDataAccessException e) {
             throw new ResourceNotFoundException(id);
@@ -104,6 +109,7 @@ public class ExpenseService {
 
         return obj;
     }
+
     @Transactional
     public Expense findById(Long id) {
         Optional<Expense> obj = repository.findById(id);
@@ -120,14 +126,15 @@ public class ExpenseService {
             throw new ResourceNotFoundException(id);
         }
     }
+
     @Transactional
-    public Expense payOffExpense(ExpenseRecord record, Long id){
+    public Expense payOffExpense(ExpenseRecord record, Long id) {
         LocalDate dataAtual = LocalDate.now();
         Expense expense = findById(id);
         List<Installment> installments = record.installments();
         List<Installment> installmentAt = expense.getInstallments();
 
-        for (int i=0; i < installments.size(); i++) {
+        for (int i = 0; i < installments.size(); i++) {
             installmentAt.get(i).setAmountPaid(installments.get(i).getAmountPaid());
             installmentAt.get(i).setPaymentMethod(installments.get(i).getPaymentMethod());
             installmentAt.get(i).setPaymentDate(dataAtual);
@@ -135,6 +142,20 @@ public class ExpenseService {
         }
         expense.setInstallments(installmentAt);
         return repository.save(expense);
+    }
+
+    @Transactional
+    public Expense payOffExpense(PayOffExpenseBody record, Long expenseId, int installmentId) {
+        LocalDate dataAtual = LocalDate.now();
+        try {
+            Expense obj = repository.getReferenceById(expenseId);
+            obj.getInstallments().get(installmentId).setPaymentDate(dataAtual);
+            obj.getInstallments().get(installmentId).setAmountPaid(record.amountPaid());
+            obj.getInstallments().get(installmentId).setPaymentMethod(record.paymentMethod());
+            return repository.save(obj);
+        } catch (EntityNotFoundException e) {
+            throw new ResourceNotFoundException(expenseId);
+        }
     }
 
     private Expense updateData(ExpenseRecord r, Expense obj) {
@@ -152,6 +173,19 @@ public class ExpenseService {
         }
 
         return obj;
+    }
+
+    @Transactional
+    public Expense reverse(Long expenseId, int installmentId) {
+        try {
+            Expense obj = repository.getReferenceById(expenseId);
+            obj.getInstallments().get(installmentId).setPaymentDate(null);
+            obj.getInstallments().get(installmentId).setAmountPaid(0.00);
+            obj.getInstallments().get(installmentId).setPaymentMethod(null);
+            return repository.save(obj);
+        } catch (EntityNotFoundException e) {
+            throw new ResourceNotFoundException(expenseId);
+        }
     }
 
 }
