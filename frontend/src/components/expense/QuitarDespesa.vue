@@ -49,15 +49,13 @@
                 <CTableHeaderCell scope="col"
                   >Forma De Pagamento</CTableHeaderCell
                 >
-                <CTableHeaderCell scope="col"
-                  ></CTableHeaderCell
-                >
+                <CTableHeaderCell scope="col"></CTableHeaderCell>
               </CTableRow>
             </CTableHead>
             <CTableBody>
               <CTableRow
-                v-for="item in this.expense.installments"
-                :key="item.id"
+                v-for="(item, index) in this.expense.installments"
+                :key="index"
               >
                 <CTableHeaderCell scope="row">{{ item.id }}</CTableHeaderCell>
                 <CTableHeaderCell scope="row"
@@ -71,35 +69,40 @@
                     <CInputGroupText>R$</CInputGroupText>
                     <CFormInput
                       name="price"
-                      v-model="expense.amountPaid"                      
+                      v-model="item.amountPaid"
                       required
-                      :disabled="true"
+                      :disabled="disabledInputs[index].disabled"
                     />
                   </CInputGroup>
-                  <div
-                    v-if="v$.expense.amountPaid.$errors.length > 0"
+                  <!-- <div
+                    v-if="v$.item.amountPaid.$errors.length > 0"
                     class="invalid-input-form"
                   >
-                    {{ v$.expense.amountPaid.$errors[0].$message }}
-                  </div></CTableHeaderCell
-                >
+                    {{ v$.item.amountPaid.$errors[0].$message }}
+                  </div> -->
+                </CTableHeaderCell>
                 <CTableHeaderCell scope="row">
                   <CFormSelect
                     :options="optionsSelect"
                     :searchable="true"
                     v-model="paymentMethod.id"
-                    :disabled="true"
+                    :disabled="disabledInputs[index].disabled"
                   >
                   </CFormSelect>
-                  <div
+                  <!-- <div
                     v-if="v$.paymentMethod.id.$errors.length > 0"
                     class="invalid-input-form"
                   >
                     {{ v$.paymentMethod.id.$errors[0].$message }}
-                  </div>
+                  </div> -->
                 </CTableHeaderCell>
                 <CTableHeaderCell scope="row">
-                  <CButton color="primary" variant="outline">Baixar</CButton>
+                  <CButton
+                    color="primary"
+                    variant="outline"
+                    @click="baixar(index, item)"
+                    >Baixar</CButton
+                  >
                 </CTableHeaderCell>
               </CTableRow>
             </CTableBody>
@@ -120,7 +123,7 @@
       </CButton>
       <CButton color="primary" @click="submitForm()">Confirmar</CButton>
     </CModalFooter>
-  </CModal>  
+  </CModal>
 </template>
 
 <script>
@@ -130,6 +133,7 @@ import { decimal } from "@vuelidate/validators";
 import FormaPagamentoService from "@/Services/formaPagamentoService";
 import FormatDateBr from "@/util/formatDateBr";
 import ExpenseService from "@/Services/expenseService";
+import Service from "@/Services/expenseService.js";
 export default {
   name: "QuitarDepesa",
   data() {
@@ -142,6 +146,7 @@ export default {
       visibleLiveDemo: false,
       visibleLiveDemo2: false,
       paymentMethod: { id: "" },
+      service: new Service(),
       expense: {
         description: "",
         releaseDate: "",
@@ -149,24 +154,25 @@ export default {
         paymentDate: "",
       },
       optionsSelect: [],
+      disabledInputs: [],
     };
   },
-  validations() {
-    return {
-      expense: {
-        amountPaid: {
-          required: this.validationsMessage.requiredMessage,
-          decimal,
-          minValue: this.validationsMessage.minMenssage(0.1),
-        },
-      },
-      paymentMethod: {
-        id: {
-          required: this.validationsMessage.requiredMessage,
-        }
-      }
-    };
-  },
+  // validations() {
+  //   return {
+  //     expense: {
+  //       amountPaid: {
+  //         required: this.validationsMessage.requiredMessage,
+  //         decimal,
+  //         minValue: this.validationsMessage.minMenssage(0.1),
+  //       },
+  //     },
+  //     paymentMethod: {
+  //       id: {
+  //         required: this.validationsMessage.requiredMessage,
+  //       },
+  //     },
+  //   };
+  // },
   methods: {
     async carregarOptionsSelect() {
       let res = await this.formaPagamentoService.consultarFormasPagamento();
@@ -177,22 +183,60 @@ export default {
         });
       });
     },
+    setStateInputInstallment(size) {
+      for (let i = 0; i < size; i++) {
+        this.disabledInputs.push({ disabled: true });
+      }
+    },
     submitForm() {
-      this.v$.$validate();      
-      if(this.expense.amountPaid != this.expense.installments[0].installmentValue){
-        this.v$.expense.amountPaid.$errors.push({$message: "O Valor Pago deve ser igual ao valor da parcela"});        
-      }      
+      this.v$.$validate();
+      if (
+        this.expense.amountPaid != this.expense.installments[0].installmentValue
+      ) {
+        this.v$.expense.amountPaid.$errors.push({
+          $message: "O Valor Pago deve ser igual ao valor da parcela",
+        });
+      }
       if (!this.v$.$error) {
         this.confirm();
       }
-      
+    },
+    baixar(index) {
+      if (this.disabledInputs[index].disabled) {
+        console.log(`${index} ${this.expense.installments[index].paymentDate}`);
+        if (index == 0 && this.expense.installments[index].paymentDate == null)
+          this.disabledInputs[index].disabled = false;
+        else if (
+          index > 0 &&
+          this.expense.installments[index - 1].paymentDate != null
+        ) {
+          console.log(`${this.disabledInputs[index].disabled}`);
+          this.disabledInputs[index].disabled = false;
+        }
+      } else this.save(index);
+    },
+    async save(index) {
+      let res = await this.service.payOffExpense(
+        this.expense,
+        this.paymentMethod,
+        index
+      );
+      debugger;
     },
     async confirm() {
-      let res = await this.service.payOffExpense(this.expense, this.paymentMethod);
+      let res = await this.service.payOffExpense(
+        this.expense,
+        this.paymentMethod
+      );
     },
   },
   mounted() {
     this.carregarOptionsSelect();
+    this.setStateInputInstallment(30);
+  },
+  beforeUpdate() {
+    console.log(this.expense.installments.length);
+    this.setStateInputInstallment(30);
   },
 };
 </script>

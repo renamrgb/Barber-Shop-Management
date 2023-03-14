@@ -118,7 +118,7 @@ public class TestConfig implements CommandLineRunner {
         for (int i = 0; i < 25; i++)
             messageTemplateRepository.save(new MessageTemplate("MODELO" + i, "MENSAGEM DE TESTE", true));
 
-        Expense e2 = new Expense("DESPESA 26", 100.00, 30, LocalDate.parse("2023-03-04"), 3,  new ExpenseType(27L));
+        Expense e2 = new Expense("DESPESA 26", 100.00, 30, LocalDate.parse("2023-03-04"), 3,  new ExpenseType(1L));
         for (int i = 0; i < 3; i++){
             Installment installment = new Installment(BigDecimal.valueOf(100.00), LocalDate.parse("2023-03-04"));
             installment.setExpense(e2);
@@ -126,7 +126,7 @@ public class TestConfig implements CommandLineRunner {
         }
         expenseRepository.save(e2);
         for (int i = 0; i < 25; i++){
-            Expense e = new Expense("DESPESA "+i, 100.00, 30, LocalDate.parse("2023-03-04"), 0,  new ExpenseType(2L));
+            Expense e = new Expense("DESPESA "+i, 100.00, 30, LocalDate.parse("2023-03-04"), 0,  new ExpenseType(27L));
             Installment installment = new Installment(BigDecimal.valueOf(100.00), LocalDate.parse("2023-03-04"));
             installment.setExpense(e);
             e.getInstallments().add(installment);

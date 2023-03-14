@@ -97,9 +97,10 @@ export default class ExpenseService {
       return error;
     }
   }
-  async payOffExpense(expense, paymentMethod) {
-    expense.installments[0].paymentMethod.id = paymentMethod.id;
-    expense.installments[0].amountPaid = expense.amountPaid;
+  async payOffExpense(expense, paymentMethod, idInstallment) {
+    console.log(paymentMethod);
+    expense.installments[idInstallment].paymentMethod.id = paymentMethod.id;
+    // expense.installments[idInstallment].amountPaid = expense.amountPaid;
     try {
       const res = await api.put(`${this.url}/payOffExpense/${expense.id}`, expense);
       return res;

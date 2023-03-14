@@ -21,7 +21,7 @@ public class InstallmentDTO implements Comparable<InstallmentDTO> {
     private Long id;
     private BigDecimal installmentValue;
     private LocalDate dueDate;
-    private LocalDate PaymentDate;
+    private LocalDate paymentDate;
     private Double amountPaid;
     private PaymentMethodDTO paymentMethod;
 

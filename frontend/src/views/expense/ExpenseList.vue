@@ -55,21 +55,7 @@
                   <CTableDataCell>{{ item.expenseType.description }}</CTableDataCell>                
                   <CTableDataCell>{{  item.quantityOfInstallments }}</CTableDataCell> 
                   <CTableDataCell>
-                    <CIcon
-                      icon="cil-check-circle"
-                      size="xl"
-                      @click="payOffExpense(item)"                                   
-                    />
-                    <CIcon
-                      icon="cil-trash"
-                      size="xl"
-                      @click="
-                        () => {
-                          modalExcluir = true;
-                          id = item.id;
-                        }
-                      "
-                    />                    
+                    <CButton color="light" @click="payOffExpense(item)" style="margin-right: 1%;">Quitar</CButton>                                             
                     <CIcon
                       icon="cil-pencil"
                       size="xl"
