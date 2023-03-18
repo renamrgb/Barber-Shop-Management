@@ -64,12 +64,6 @@ public class ExpenseResource {
         Expense objDto = service.update(id, obj);
         return ResponseEntity.ok().body(new ExpenseDTO(objDto));
     }
-//    @Transactional
-//    @PutMapping(value = "/payOffExpense/{id}")
-//    public ResponseEntity<ExpenseDTO> payOffExpens(@PathVariable Long id, @RequestBody ExpenseRecord obj) {
-//        Expense objDto = service.payOffExpense(obj, id);
-//        return ResponseEntity.ok().body(new ExpenseDTO(objDto));
-//    }
     @Transactional
     @PostMapping(value = "/payOffExpense/{id}")
     public ResponseEntity<ExpenseDTO> payOffExpense(@PathVariable Long id,  @RequestParam(name = "installmentId") Integer installmentId,@RequestBody PayOffExpenseBody obj) {
@@ -82,13 +76,11 @@ public class ExpenseResource {
         URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(obj.getId()).toUri();
         return ResponseEntity.created(uri).body(new ExpenseDTO(obj));
     }
-
     @DeleteMapping(value = "/{id}")
     public ResponseEntity<Void> delete(@PathVariable Long id){
         service.delete(id);
         return ResponseEntity.noContent().build();
     }
-
     @PostMapping(value = "/reverse")
     public ResponseEntity<ExpenseDTO> reverse(@RequestParam(name="expenseId") Long expenseId, @RequestParam(name = "installmentId") Integer installmentId) {
         Expense obj = service.reverse(expenseId, installmentId);

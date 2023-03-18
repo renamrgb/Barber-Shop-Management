@@ -49,6 +49,9 @@
                 <CTableHeaderCell scope="col"
                   >Forma De Pagamento</CTableHeaderCell
                 >
+                <CTableHeaderCell scope="col"
+                  >Data Do Pagamento</CTableHeaderCell
+                >
                 <CTableHeaderCell scope="col"></CTableHeaderCell>
               </CTableRow>
             </CTableHead>
@@ -67,10 +70,10 @@
                 <CTableHeaderCell scope="row">
                   <CInputGroup>
                     <CInputGroupText>R$</CInputGroupText>
-                    <CFormInput
+                    <input
                       name="price"
                       v-model="item.amountPaid"
-                      required
+                      class="form-control"
                       :disabled="disabledInputs[index].disabled"
                     />
                   </CInputGroup>
@@ -84,16 +87,26 @@
                   >
                   </CFormSelect>
                 </CTableHeaderCell>
+                <CTableHeaderCell>
+                  <input
+                    type="date"
+                    class="form-control"
+                    name="paymentDate"
+                    id="paymentDate"
+                    v-model="item.paymentDate"
+                    :disabled="disabledInputs[index].disabled"
+                  />
+                </CTableHeaderCell>
                 <CTableHeaderCell scope="row">
                   <CButton
-                    v-if="item.paymentDate == undefined"
+                    v-if="item.paid == false"
                     color="primary"
                     variant="outline"
                     @click="baixar(index, item)"
                     >Baixar</CButton
                   >
                   <CButton
-                    v-if="item.paymentDate != undefined"
+                    v-else-if="item.paid == true"
                     color="primary"
                     variant="outline"
                     @click="estornar(index, item)"
@@ -117,7 +130,6 @@
       >
         Fechar
       </CButton>
-      <!-- <CButton color="primary" @click="submitForm()">Confirmar</CButton> -->
     </CModalFooter>
   </CModal>
   <toast ref="toast" />
@@ -131,12 +143,14 @@ import FormatDateBr from "@/util/formatDateBr";
 import ExpenseService from "@/Services/expenseService";
 import Service from "@/Services/expenseService.js";
 import Toast from "@/components/Toast.vue";
+import DateNow from "@/util/dateNow.js";
 export default {
   components: { Toast },
   name: "QuitarDepesa",
   data() {
     return {
       v$: useVuelidate(),
+      dateNow: new DateNow(),
       validationsMessage: new ValidationsMessage(),
       formatDateBr: new FormatDateBr(),
       formaPagamentoService: new FormaPagamentoService(),
@@ -171,17 +185,21 @@ export default {
       }
     },
     baixar(index) {
+      console.log(` index ${index} \n paid ${this.expense.installments[index].paid} \n disabled ${this.disabledInputs[index].disabled}`);
+      debugger;
       if (this.disabledInputs[index].disabled) {
-        if (index == 0 && this.expense.installments[index].paymentDate == null)
+        if (index == 0 && this.expense.installments[index].paid == false)
           this.disabledInputs[index].disabled = false;
         else if (
           index > 0 &&
-          this.expense.installments[index - 1].paymentDate != null
+          this.expense.installments[index - 1].paid == false
         ) {
-          this.disabledInputs[index].disabled = false;
+          this.disabledInputs[index].disabled = true;
           this.$refs.toast.createToastDanger(
             "Você não pode quitar essa parcela, a anterior ainda não está paga!"
           );
+        }else{
+          this.disabledInputs[index].disabled = false;
         }
       } else this.save(index);
     },
@@ -191,6 +209,7 @@ export default {
         paymentMethod: {
           id: this.expense.installments[index].paymentMethod.id,
         },
+        paymentDate: this.expense.installments[index].paymentDate,
       };
       if (this.validForm(index)) {
         let res = await this.service.payOffExpense(this.expense.id, index, obj);
@@ -200,6 +219,7 @@ export default {
           this.disabledInputs[index].disabled = true;
           this.expense.installments[index].paymentDate =
             res.installments[index].paymentDate;
+          this.expense.installments[index].paid = res.installments[index].paid;
         }
       }
     },
@@ -215,6 +235,7 @@ export default {
         ].paymentMethod.id = 0;
         this.expense.installments[index].paymentDate =
           res.installments[index].paymentDate;
+        this.expense.installments[index].paid = res.installments[index].paid;
       }
     },
     validForm(index) {
@@ -222,6 +243,7 @@ export default {
       let amountPaid = parseInt(this.expense.installments[index].amountPaid);
       let installmentValue = this.expense.installments[index].installmentValue;
       let paymentMethod = this.expense.installments[index].paymentMethod.id;
+      let paymentDate = this.expense.installments[index].paymentDate;
       if (
         paymentMethod == undefined ||
         paymentMethod == "Abra este menu de seleção"
@@ -235,6 +257,12 @@ export default {
         valid = false;
         this.$refs.toast.createToastDanger(
           "O valor pago deve ser igual ao valor da parcela!"
+        );
+      }
+      if (paymentDate == undefined || paymentDate > this.dateNow.dateNowISO()) {
+        valid = false;
+        this.$refs.toast.createToastDanger(
+          "A data de pagamento não pode ser maior que a data atual ou vazia!"
         );
       }
       return valid;

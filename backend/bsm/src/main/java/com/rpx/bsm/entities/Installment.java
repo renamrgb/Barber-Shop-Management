@@ -22,14 +22,15 @@ public class Installment implements Serializable {
     private LocalDate dueDate;
     private LocalDate paymentDate;
     private Double amountPaid;
+    private Boolean paid;
     @ManyToOne
     private PaymentMethod paymentMethod;
-
     @ManyToOne
     private Expense expense;
     public Installment(BigDecimal installmentValue, LocalDate dueDate) {
         this.installmentValue = installmentValue;
         this.dueDate = dueDate;
+        this.paid = false;
     }
     public Installment(LocalDate paymentDate, Double amountPaid, PaymentMethod paymentMethod) {
         this.paymentDate = paymentDate;
@@ -40,5 +41,6 @@ public class Installment implements Serializable {
         this.id = id;
         this.installmentValue = installmentValue;
         this.dueDate = dueDate;
+        this.paid = false;
     }
 }

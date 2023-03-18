@@ -96,18 +96,24 @@ export default class ExpenseService {
     } catch (error) {
       return error;
     }
-  }  
+  }
   async payOffExpense(expenseId, installmentId, obj) {    
     try {
-      const res = await api.post(`${this.url}/payOffExpense/${expenseId}?installmentId=${installmentId}`, obj);
+      obj.amountPaid = obj.amountPaid.replace(",", ".");
+      const res = await api.post(
+        `${this.url}/payOffExpense/${expenseId}?installmentId=${installmentId}`,
+        obj
+      );
       return res;
     } catch (error) {
       return error;
     }
   }
-  async reverse(expenseId, installmentId){    
+  async reverse(expenseId, installmentId) {
     try {
-      const res = await api.post(`${this.url}/reverse?expenseId=${expenseId}&installmentId=${installmentId}`);
+      const res = await api.post(
+        `${this.url}/reverse?expenseId=${expenseId}&installmentId=${installmentId}`
+      );
       return res;
     } catch (error) {
       return error;

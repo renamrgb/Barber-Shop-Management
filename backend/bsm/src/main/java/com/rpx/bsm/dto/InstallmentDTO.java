@@ -24,6 +24,7 @@ public class InstallmentDTO implements Comparable<InstallmentDTO> {
     private LocalDate paymentDate;
     private Double amountPaid;
     private PaymentMethodDTO paymentMethod;
+    private Boolean paid;
 
     public InstallmentDTO(Long id, BigDecimal installmentValue, LocalDate dueDate) {
         this.id = id;
@@ -38,6 +39,7 @@ public class InstallmentDTO implements Comparable<InstallmentDTO> {
         setPaymentDate(obj.getPaymentDate());
         setAmountPaid(obj.getAmountPaid());
         setPaymentMethod(new PaymentMethodDTO(obj.getPaymentMethod()));
+        setPaid(obj.getPaid());
     }
     @Override
     public int compareTo(InstallmentDTO otherInstallment) {

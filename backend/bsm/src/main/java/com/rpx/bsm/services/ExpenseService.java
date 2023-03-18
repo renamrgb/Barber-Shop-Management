@@ -146,12 +146,12 @@ public class ExpenseService {
 
     @Transactional
     public Expense payOffExpense(PayOffExpenseBody record, Long expenseId, int installmentId) {
-        LocalDate dataAtual = LocalDate.now();
         try {
             Expense obj = repository.getReferenceById(expenseId);
-            obj.getInstallments().get(installmentId).setPaymentDate(dataAtual);
+            obj.getInstallments().get(installmentId).setPaymentDate(record.paymentDate());
             obj.getInstallments().get(installmentId).setAmountPaid(record.amountPaid());
             obj.getInstallments().get(installmentId).setPaymentMethod(record.paymentMethod());
+            obj.getInstallments().get(installmentId).setPaid(true);
             return repository.save(obj);
         } catch (EntityNotFoundException e) {
             throw new ResourceNotFoundException(expenseId);
@@ -182,6 +182,7 @@ public class ExpenseService {
             obj.getInstallments().get(installmentId).setPaymentDate(null);
             obj.getInstallments().get(installmentId).setAmountPaid(0.00);
             obj.getInstallments().get(installmentId).setPaymentMethod(null);
+            obj.getInstallments().get(installmentId).setPaid(false);
             return repository.save(obj);
         } catch (EntityNotFoundException e) {
             throw new ResourceNotFoundException(expenseId);

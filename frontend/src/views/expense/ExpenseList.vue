@@ -35,6 +35,30 @@
               </div>
             </div>
           </div>
+          <CCard>
+            <CCardBody>
+              <div class="row">
+                <div class="col-2">
+                  <input
+                    type="date"
+                    name=""
+                    id=""
+                    class="form-control"
+                    v-model="filter.dtStart"
+                  />
+                </div>
+                <div class="col-2">
+                  <input
+                    type="date"
+                    name=""
+                    id=""
+                    class="form-control"
+                    v-model="filter.dtEnd"
+                  />
+                </div>
+              </div>
+            </CCardBody>
+          </CCard>
           <div class="bdr">
             <CTable responsive="xl">
               <CTableHead class="table-dark">
@@ -69,21 +93,25 @@
                       style="margin-right: 1%"
                       >Quitar</CButton
                     >
-                    <CIcon
-                      icon="cil-trash"
-                      size="xl"
+                    <CButton
+                      color="light"
+                      style="margin-right: 1%"
                       @click="
                         () => {
                           modalExcluir = true;
                           id = item.id;
                         }
                       "
-                    />
-                    <CIcon
-                      icon="cil-pencil"
-                      size="xl"
+                    >
+                      <CIcon icon="cil-trash" size="x" />
+                    </CButton>
+                    <CButton
+                      color="light"
+                      style="margin-right: 1%"
                       @click="this.alterar(item.id)"
-                    />
+                    >
+                      <CIcon icon="cil-pencil" size="x" />
+                    </CButton>
                   </CTableDataCell>
                 </CTableRow>
               </CTableBody>
@@ -142,12 +170,14 @@ import Toast from "@/components/Toast.vue";
 import { CForm, CTableDataCell } from "@coreui/vue";
 import NextPageTable from "@/components/NextPageTable.vue";
 import QuitarDespesa from "@/components/expense/QuitarDespesa.vue";
+import DateNow from "@/util/dateNow.js";
 export default {
   components: { Toast, CForm, NextPageTable, CTableDataCell, QuitarDespesa },
   name: "FormaPagamento",
   data() {
     return {
       id: "",
+      dateNow: new DateNow(),
       service: new ExpenseService(),
       itens: "",
       modalExcluir: false,
@@ -155,6 +185,10 @@ export default {
       searchText: "",
       pageId: 0,
       searchText: "",
+      filter: {
+        dtStart: "",
+        dtEnd: "",
+      },
     };
   },
   methods: {
@@ -199,6 +233,10 @@ export default {
   },
   mounted() {
     this.getExpenses();
+    this.filter.dtStart = this.dateNow.dateNowISO() - 30;
+    // Date date = new Date(this.dateNow.dateNowISO());
+    // date.setDate(data.getDate() - 5);
+    // console.log(date);
   },
 };
 </script>
