@@ -21,6 +21,7 @@ import javax.persistence.EntityNotFoundException;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 @Service
@@ -187,6 +188,14 @@ public class ExpenseService {
         } catch (EntityNotFoundException e) {
             throw new ResourceNotFoundException(expenseId);
         }
+    }
+
+    @Transactional
+    public List<Expense> findByDate(String dtStartString, String dtEndString){
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        LocalDate dtStart = LocalDate.parse(dtStartString, formatter);
+        LocalDate dtEnd = LocalDate.parse(dtEndString, formatter);
+        return repository.findByReleaseDateBetween(dtStart, dtEnd);
     }
 
 }

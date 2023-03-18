@@ -22,6 +22,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import javax.validation.Valid;
 import java.net.URI;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -85,6 +86,12 @@ public class ExpenseResource {
     public ResponseEntity<ExpenseDTO> reverse(@RequestParam(name="expenseId") Long expenseId, @RequestParam(name = "installmentId") Integer installmentId) {
         Expense obj = service.reverse(expenseId, installmentId);
         return ResponseEntity.ok().body(new ExpenseDTO(obj));
+    }
+    @GetMapping(value = "/findByReleaseDate")
+    public ResponseEntity<List<ExpenseDTO>> findByReleaseDate(@RequestParam(name = "dtStart", defaultValue = "") String dtStart, @RequestParam(name = "dtEnd", defaultValue = "") String dtEnd){
+        List<Expense> list = service.findByDate(dtStart, dtEnd);
+        List<ExpenseDTO> listDto = list.stream().map(x -> new ExpenseDTO(x)).collect(Collectors.toList());
+        return ResponseEntity.ok().body(listDto);
     }
 
 }

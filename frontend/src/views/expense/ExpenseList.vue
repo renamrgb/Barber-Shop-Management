@@ -192,6 +192,10 @@ export default {
     };
   },
   methods: {
+    getDate() {
+      this.filter.dtStart = this.dateNow.dateNowISO();
+      this.filter.dtEnd = this.dateNow.date(new Date(), 30, "+");      
+    },
     async delete() {
       let res = await this.service.delete(this.id);
       if (res.status == 400) {
@@ -233,10 +237,7 @@ export default {
   },
   mounted() {
     this.getExpenses();
-    this.filter.dtStart = this.dateNow.dateNowISO() - 30;
-    // Date date = new Date(this.dateNow.dateNowISO());
-    // date.setDate(data.getDate() - 5);
-    // console.log(date);
+    this.getDate();
   },
 };
 </script>
