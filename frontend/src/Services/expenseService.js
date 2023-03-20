@@ -10,7 +10,6 @@ export default class ExpenseService {
     item.total = parseFloat(item.total);
     return item;
   }
-
   async saveOrUpdate(id, installments, item) {
     if (installments != undefined && id == undefined) {
       installments.forEach((element) => {
@@ -24,7 +23,6 @@ export default class ExpenseService {
       return await this.cadastrar(this.replaceItem(item));
     } else return await this.alterar(this.replaceItem(item), id);
   }
-
   async consultarTodos() {
     try {
       const res = await api.get(this.url);
@@ -79,18 +77,18 @@ export default class ExpenseService {
       return error.response.data;
     }
   }
-  async getAllPaged(pageId) {
+  async getAllPaged(pageId, filter) {
     try {
-      const res = await api.get(`${this.url}/paged?page=${pageId}`);
+      const res = await api.get(`${this.url}/paged?dtStart=${filter.dtStart}&dtEnd=${filter.dtEnd}&bringPaid=${filter.bringPaid}&page=${pageId}`);
       return res.data;
     } catch (error) {
       return error;
     }
   }
-  async getByDescriptionPaged(description, pageId) {
+  async getByDescriptionPaged(description, pageId, filter) {
     try {
       const res = await api.get(
-        `${this.url}/paged?description=${description}&page=${pageId}`
+        `${this.url}/paged?dtStart=${filter.dtStart}&dtEnd=${filter.dtEnd}&description=${description}&bringPaid=${filter.bringPaid}&page=${pageId}`
       );
       return res.data;
     } catch (error) {

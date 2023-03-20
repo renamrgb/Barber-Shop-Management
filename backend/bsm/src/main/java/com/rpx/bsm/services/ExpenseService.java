@@ -35,11 +35,20 @@ public class ExpenseService {
         return repository.findAll();
     }
 
-    public Page<Expense> find(String description, Pageable pageable) {
+    public Page<Expense> find(String description, String dtStartString, String dtEndString,  Boolean bringPaid, Pageable pageable) {
         Page<Expense> list = null;
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        LocalDate dtStart = LocalDate.parse(dtStartString, formatter);
+        LocalDate dtEnd = LocalDate.parse(dtEndString, formatter);
 
-        if (description.isEmpty()) list = repository.findAll(pageable);
-        else list = repository.findByDescriptionContaining(description, pageable);
+        if(bringPaid && description.isEmpty()){
+            list = repository.findByReleaseDateBetweenAndPaid(dtStart, dtEnd, pageable);
+        }else if(bringPaid && !description.isEmpty()){
+            list = repository.findByReleaseDateBetweenAndPaidAndDescription(dtStart, dtEnd, description, pageable);
+        }else if(description.isEmpty() && !bringPaid)
+            list = repository.findAll(dtStart, dtEnd, pageable);
+        else
+            list = repository.findByDescriptionAndBetweenReleaseDate(dtStart, dtEnd, description, pageable);
 
         return list;
     }
@@ -72,13 +81,14 @@ public class ExpenseService {
         }
         return installments;
     }
+
     @Transactional
     public void delete(Long id) {
         try {
             Boolean isPaid = false;
             Expense obj = findById(id);
-            for (Installment e : obj.getInstallments()){
-                if(e.getPaymentDate() != null){
+            for (Installment e : obj.getInstallments()) {
+                if (e.getPaymentDate() != null) {
                     isPaid = true;
                 }
             }
@@ -189,13 +199,4 @@ public class ExpenseService {
             throw new ResourceNotFoundException(expenseId);
         }
     }
-
-    @Transactional
-    public List<Expense> findByDate(String dtStartString, String dtEndString){
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-        LocalDate dtStart = LocalDate.parse(dtStartString, formatter);
-        LocalDate dtEnd = LocalDate.parse(dtEndString, formatter);
-        return repository.findByReleaseDateBetween(dtStart, dtEnd);
-    }
-
 }

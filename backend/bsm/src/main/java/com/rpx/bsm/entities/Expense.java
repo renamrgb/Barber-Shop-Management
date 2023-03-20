@@ -26,7 +26,7 @@ public class Expense implements Serializable {
     private Integer quantityOfInstallments;
     @ManyToOne
     private ExpenseType expenseType;
-    @OneToMany(mappedBy = "expense", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "expense", fetch = FetchType.EAGER,cascade = CascadeType.ALL)
     private List<Installment> installments;
 
     public Expense() {

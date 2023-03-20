@@ -62,6 +62,19 @@ export default [
   },
   {
     component: 'CNavGroup',
+    name: 'Estoque',
+    // to: '/forms',
+    icon: 'cil-casino',
+    items: [  
+      {
+        component: 'CNavItem',
+        name: 'Lançar Produdo',
+        to: '/stock/launchProducts',
+      },          
+    ],
+  },
+  {
+    component: 'CNavGroup',
     name: 'Configuração',
     icon: 'cil-cog',
     items: [  

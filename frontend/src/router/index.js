@@ -197,6 +197,23 @@ const routes = [
           },   
         ],
       },
+      {
+        path: '/stock',
+        name: 'Stock',
+        component: {
+          render() {
+            return h(resolveComponent('router-view'))
+          },
+        },
+        redirect: '/stock',
+        children: [                    
+          {
+            path: '/stock/launchProducts',
+            name: 'Parâmetros',
+            component: () => import('@/views/stock/LançarProdutos.vue'),
+          },           
+        ],
+      },
     ],
   },
   {

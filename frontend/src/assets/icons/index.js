@@ -24,7 +24,8 @@ import {
   cibCcApplePay,
   cibCcAmex,
   cilTrash,
-  cilPlus
+  cilPlus,
+  cilCasino
 } from '@coreui/icons'
 import { cifUs, cifBr, cifIn, cifFr, cifEs, cifPl } from '@coreui/icons'
 import {
@@ -175,6 +176,7 @@ export const iconsSet = Object.assign(
     cilPlus,
     cilPlaylistAdd,
     cilMagnifyingGlass,
-    cilCog
+    cilCog,
+    cilCasino
   },
 )

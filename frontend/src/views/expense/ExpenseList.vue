@@ -13,7 +13,7 @@
           </CRow>
         </CCardHeader>
         <CCardBody>
-          <div class="row">
+          <div class="row mb-3">
             <div class="col-md-12 mx-auto">
               <div class="input-group">
                 <input
@@ -37,14 +37,20 @@
           </div>
           <CCard>
             <CCardBody>
-              <div class="row">
-                <div class="col-2">
+              <div class="row mb-2
+              ">
+                <div class="col">
+                  <CFromLabel>Data de lançamento da despesa:</CFromLabel>
+                </div>
+              </div>  
+              <div class="row mb-3">                
+                <div class="col-2">                  
                   <input
                     type="date"
                     name=""
                     id=""
                     class="form-control"
-                    v-model="filter.dtStart"
+                    v-model="filter.dtStart"                    
                   />
                 </div>
                 <div class="col-2">
@@ -54,6 +60,15 @@
                     id=""
                     class="form-control"
                     v-model="filter.dtEnd"
+                  />
+                </div>
+              </div>
+              <div class="row mb-0">
+                <div class="col">
+                  <CFormSwitch
+                    id="formSwitchCheckDefault"
+                    label="Apenas despesas pagas"
+                    v-model="filter.bringPaid"
                   />
                 </div>
               </div>
@@ -188,13 +203,14 @@ export default {
       filter: {
         dtStart: "",
         dtEnd: "",
+        bringPaid: false
       },
     };
   },
   methods: {
     getDate() {
-      this.filter.dtStart = this.dateNow.dateNowISO();
-      this.filter.dtEnd = this.dateNow.date(new Date(), 30, "+");      
+      this.filter.dtStart = this.dateNow.date(new Date(), 30, "-");
+      this.filter.dtEnd = this.dateNow.dateNowISO();
     },
     async delete() {
       let res = await this.service.delete(this.id);
@@ -207,7 +223,8 @@ export default {
     async getByDescription() {
       let itensPaged = await this.service.getByDescriptionPaged(
         this.searchText,
-        this.pageId
+        this.pageId,
+        this.filter
       );
       this.itens = itensPaged.content;
       this.$refs.nextPageTable.totalPages = itensPaged.totalPages;
@@ -216,7 +233,7 @@ export default {
         itensPaged.pageable.pageNumber;
     },
     async getExpenses() {
-      let itensPaged = await this.service.getAllPaged(this.pageId);
+      let itensPaged = await this.service.getAllPaged(this.pageId, this.filter);
       this.itens = itensPaged.content;
       this.$refs.nextPageTable.totalPages = itensPaged.totalPages;
       this.$refs.nextPageTable.totalElements = itensPaged.totalElements;
@@ -236,8 +253,8 @@ export default {
     },
   },
   mounted() {
-    this.getExpenses();
     this.getDate();
+    this.getExpenses();
   },
 };
 </script>

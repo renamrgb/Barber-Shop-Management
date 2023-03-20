@@ -1,5 +1,7 @@
 package com.rpx.bsm.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.rpx.bsm.records.ProductRecord;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -7,6 +9,7 @@ import lombok.Setter;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.util.List;
 import java.util.Objects;
 
 @Entity
@@ -30,6 +33,8 @@ public class Product implements Serializable {
     private ProductProcedureType productProcedureType;
     @Column(nullable = false)
     private Boolean isActive;
+    @OneToMany(mappedBy = "product")
+    private List<StockEntryProducts> stockEntryProducts;
 
     public Product(String title, Double price, String brand, Integer quantity, Boolean isActive) {
         this.title = title;
@@ -55,6 +60,10 @@ public class Product implements Serializable {
         setQuantity(record.quantity());
         setProductProcedureType(record.productType());
         setIsActive(record.isActive());
+    }
+
+    public Product(Long id) {
+        Id = id;
     }
 
     @Override

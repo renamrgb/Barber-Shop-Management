@@ -40,58 +40,65 @@ public class ExpenseResource {
         List<ExpenseDTO> listDto = list.stream().map(x -> new ExpenseDTO(x)).collect(Collectors.toList());
         return ResponseEntity.ok().body(listDto);
     }
+
     @GetMapping(value = "/paged")
     @Transactional
-    public ResponseEntity<Page<ExpenseDTO>> findPaged(@RequestParam(name = "description", defaultValue = "") String description, Pageable pageable) {
-        Page<Expense> list = service.find(description, pageable);
+    public ResponseEntity<Page<ExpenseDTO>> findPaged(
+            @RequestParam(name = "description", defaultValue = "") String description,
+            @RequestParam(name = "dtStart", defaultValue = "") String dtStart,
+            @RequestParam(name = "dtEnd", defaultValue = "") String dtEnd,
+            @RequestParam(name = "bringPaid", defaultValue = "false") Boolean bringPaid,
+            Pageable pageable) {
+        Page<Expense> list = service.find(description, dtStart, dtEnd, bringPaid, pageable);
         Page<ExpenseDTO> listDto = list.map(x -> new ExpenseDTO(x));
         return ResponseEntity.ok().body(listDto);
     }
+
     @PostMapping(value = "/generateInstallments")
     public ResponseEntity<List<InstallmentDTO>> GenerateInstallments(@Valid @RequestBody ExpenseRecord r) {
         List<Installment> list = service.GenerateInstallments(r);
         List<InstallmentDTO> listDto = list.stream().map(x -> new InstallmentDTO(x)).collect(Collectors.toList());
         return ResponseEntity.ok().body(listDto);
     }
+
     @Transactional
     @GetMapping(value = "/{id}")
-    public ResponseEntity<ExpenseDTO> findById(@PathVariable Long id){
+    public ResponseEntity<ExpenseDTO> findById(@PathVariable Long id) {
         Expense obj = service.findById(id);
         return ResponseEntity.ok().body(new ExpenseDTO(obj));
     }
+
     @Transactional
     @PutMapping(value = "/{id}")
     public ResponseEntity<ExpenseDTO> update(@PathVariable Long id, @RequestBody ExpenseRecord obj) {
         Expense objDto = service.update(id, obj);
         return ResponseEntity.ok().body(new ExpenseDTO(objDto));
     }
+
     @Transactional
     @PostMapping(value = "/payOffExpense/{id}")
-    public ResponseEntity<ExpenseDTO> payOffExpense(@PathVariable Long id,  @RequestParam(name = "installmentId") Integer installmentId,@RequestBody PayOffExpenseBody obj) {
-        Expense objDto = service.payOffExpense(obj, id,  installmentId);
+    public ResponseEntity<ExpenseDTO> payOffExpense(@PathVariable Long id, @RequestParam(name = "installmentId") Integer installmentId, @RequestBody PayOffExpenseBody obj) {
+        Expense objDto = service.payOffExpense(obj, id, installmentId);
         return ResponseEntity.ok().body(new ExpenseDTO(objDto));
     }
+
     @PostMapping
     public ResponseEntity<ExpenseDTO> insert(@Valid @RequestBody ExpenseRecord r) {
         Expense obj = service.insert(r);
         URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(obj.getId()).toUri();
         return ResponseEntity.created(uri).body(new ExpenseDTO(obj));
     }
+
     @DeleteMapping(value = "/{id}")
-    public ResponseEntity<Void> delete(@PathVariable Long id){
+    public ResponseEntity<Void> delete(@PathVariable Long id) {
         service.delete(id);
         return ResponseEntity.noContent().build();
     }
+
     @PostMapping(value = "/reverse")
-    public ResponseEntity<ExpenseDTO> reverse(@RequestParam(name="expenseId") Long expenseId, @RequestParam(name = "installmentId") Integer installmentId) {
+    public ResponseEntity<ExpenseDTO> reverse(@RequestParam(name = "expenseId") Long expenseId, @RequestParam(name = "installmentId") Integer installmentId) {
         Expense obj = service.reverse(expenseId, installmentId);
         return ResponseEntity.ok().body(new ExpenseDTO(obj));
-    }
-    @GetMapping(value = "/findByReleaseDate")
-    public ResponseEntity<List<ExpenseDTO>> findByReleaseDate(@RequestParam(name = "dtStart", defaultValue = "") String dtStart, @RequestParam(name = "dtEnd", defaultValue = "") String dtEnd){
-        List<Expense> list = service.findByDate(dtStart, dtEnd);
-        List<ExpenseDTO> listDto = list.stream().map(x -> new ExpenseDTO(x)).collect(Collectors.toList());
-        return ResponseEntity.ok().body(listDto);
     }
 
 }
