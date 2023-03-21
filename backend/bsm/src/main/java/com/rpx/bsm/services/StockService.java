@@ -28,6 +28,16 @@ public class StockService {
             throw new ResourceNotFoundException(id);
         }
     }
+    @Transactional
+    public Product decrementStock(Long id, Integer qty) {
+        try {
+            Product entity = repository.getReferenceById(id);
+            updateData(entity, entity.getQuantity() - qty);
+            return repository.save(entity);
+        } catch (EntityNotFoundException e) {
+            throw new ResourceNotFoundException(id);
+        }
+    }
     private void updateData(Product entity, Integer qty) {
         entity.setQuantity(qty);
     }

@@ -1,13 +1,20 @@
 package com.rpx.bsm.records;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.rpx.bsm.entities.Product;
+import com.rpx.bsm.entities.User;
 import org.hibernate.validator.constraints.Length;
 
-public record AddresRecord(
-        @Length(max = 8) String zipCode,
-        @Length(max = 60) String publicPlace,
-        @Length(max = 30) String neighborhood,
-        @Length(max = 60) String complement,
-        @Length(max = 45) String city,
-        @Length(max = 2) String state
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
+import java.time.LocalDate;
+
+public record StockWriteOffRecord(
+        @NotNull User user,
+        @NotNull Product product,
+        @NotNull @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd") LocalDate record,
+        @NotNull @Min(1) Integer qty,
+        @NotBlank @Length(max = 255) String reason
 ) {
 }

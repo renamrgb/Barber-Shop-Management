@@ -1,35 +1,37 @@
 package com.rpx.bsm.dto;
 
-import com.rpx.bsm.entities.Nfe;
-import com.rpx.bsm.entities.StockEntry;
-import com.rpx.bsm.entities.StockEntryProducts;
+import com.rpx.bsm.entities.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
 import java.io.Serializable;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
 @Getter
 @Setter
 @NoArgsConstructor
-public class StockEntryDTO implements Serializable {
+public class StockWriteOffDTO implements Serializable {
 
 
-    private Long Id;
-    private String supplier;
-    private List<StockEntryProductsDTO> products;
-    private Nfe nfe;
+    private Long id;
+    private ProductDTO product;
+    private UserDTO user;
+    private LocalDate record;
+    private Integer qty;
+    private String reason;
 
-    public StockEntryDTO(StockEntry obj) {
+    public StockWriteOffDTO(StockWriteOff obj) {
         setId(obj.getId());
-        setSupplier(obj.getSupplier());
-        setNfe(obj.getNfe());
-        products = new ArrayList<>();
-        if (obj.getProducts() != null)
-            for (StockEntryProducts e : obj.getProducts())
-                products.add(new StockEntryProductsDTO(e));
+        setProduct(new ProductDTO(obj.getProduct()));
+        setUser(new UserDTO(obj.getUser()));
+        setQty(obj.getQty());
+        setRecord(obj.getRecord());
+        setReason(obj.getReason());
     }
 }

@@ -82,22 +82,28 @@
       >
         Fechar
       </CButton>
-      <CButton color="primary">Confirmar</CButton>
+      <CButton color="primary" @click="formValidation">Confirmar</CButton>
     </CModalFooter>
   </CModal>
+  <toast ref="toast" />
 </template>
 <script>
+import Toast from "@/components/Toast.vue";
 import ProdutoService from "@/Services/produtoService";
 import DateNow from "@/util/dateNow";
+import StockWriteOffService from "@/Services/stockWriteOffService.js";
 export default {
+  components: { Toast },
   data() {
     return {
       service: new ProdutoService(),
+      stockWriteOffService: new StockWriteOffService(),
       visibleLiveDemo: false,
       id: "",
       dateNow: new DateNow(),
       form: {
         product: {
+          id: "",
           title: "",
           price: "",
         },
@@ -112,12 +118,44 @@ export default {
     };
   },
   methods: {
+    formValidation() {
+      let valid = true;
+      if (this.form.qty <= 0) {
+        this.$refs.toast.createToastDanger("Quantidade deve ser maior que 0");
+        valid = false;
+      }
+      if (this.form.reason == "") {
+        this.$refs.toast.createToastDanger("Descrição é obrigatória");
+        valid = false;
+      }
+      if (this.form.reason.length >= 255) {
+        this.$refs.toast.createToastDanger(
+          "O motivo deve conter até 255 caracteres"
+        );
+        valid = false;
+      }
+      if (valid) {
+        this.save();
+      }
+    },
     async getById(id) {
       let product = await this.service.buscarUm(id);
       this.form.product = product;
     },
     setDateNow() {
       this.form.record = this.dateNow.dateNowISO();
+    },
+    async save() {
+      this.form.product.id = this.id;
+      let res = await this.stockWriteOffService.save(this.form);
+      if (res.status == 201) {
+        this.$refs.toast.createToast("Baixa registrada com sucesso");
+        this.$router.push("/forms/produto");
+        this.visibleLiveDemo = false;
+        this.form.qty = 0;
+        this.form.reason = "";
+      } else
+        this.$refs.toast.createToastDanger("Ocorreu um erro ao realizar baixa");
     },
   },
   beforeUpdate() {

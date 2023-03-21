@@ -41,31 +41,39 @@ public class User implements UserDetails, Serializable {
     @JoinColumn(name = "accesslevel_id")
     private AccessLevel accessLevel;
     private Boolean isActive;
+
     public User() {
         this.address = new Address();
         this.accessLevel = new AccessLevel();
     }
-    
-    public User(UserRecord record){
+
+    public User(Long id) {
+        Id = id;
+    }
+
+    public User(UserRecord record) {
         BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
         this.setName(record.name());
         this.setEmail(record.email());
-        this.setPassword(bCryptPasswordEncoder.encode(record.password()));
+        if (record.password() != null)
+            this.setPassword(bCryptPasswordEncoder.encode(record.password()));
         this.setPhoneNumber(record.phoneNumber());
         this.setDocument(record.document());
         this.setTypePerson(record.typePerson());
         this.setRg(record.rg());
         this.setIsActive(record.isActive());
         this.address = new Address();
-        this.getAddress().setZipCode(record.address().zipCode());
-        this.getAddress().setPublicPlace(record.address().publicPlace());
-        this.getAddress().setNeighborhood(record.address().neighborhood());
-        this.getAddress().setComplement(record.address().complement());
-        this.getAddress().setCity(record.address().city());
-        this.getAddress().setState(record.address().state());
+        if(record.address() != null){
+            this.getAddress().setZipCode(record.address().zipCode());
+            this.getAddress().setPublicPlace(record.address().publicPlace());
+            this.getAddress().setNeighborhood(record.address().neighborhood());
+            this.getAddress().setComplement(record.address().complement());
+            this.getAddress().setCity(record.address().city());
+            this.getAddress().setState(record.address().state());
+        }
         this.accessLevel = new AccessLevel();
     }
-    
+
     public User(String name, String email, String password, String phoneNumber, String document, String rg, Address address, AccessLevel accessLevel, Boolean isActive) {
         this.name = name;
         this.email = email;
