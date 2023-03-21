@@ -33,6 +33,7 @@ public class Product implements Serializable {
     private ProductProcedureType productProcedureType;
     @Column(nullable = false)
     private Boolean isActive;
+    @JsonIgnore
     @OneToMany(mappedBy = "product")
     private List<StockEntryProducts> stockEntryProducts;
 

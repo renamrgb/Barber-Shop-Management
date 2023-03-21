@@ -2,11 +2,9 @@ package com.rpx.bsm.resources;
 
 import com.rpx.bsm.dto.ExpenseDTO;
 import com.rpx.bsm.dto.InstallmentDTO;
+import com.rpx.bsm.dto.ProfessionalDTO;
 import com.rpx.bsm.dto.StockEntryDTO;
-import com.rpx.bsm.entities.Expense;
-import com.rpx.bsm.entities.Installment;
-import com.rpx.bsm.entities.StockEntry;
-import com.rpx.bsm.entities.StockEntryProducts;
+import com.rpx.bsm.entities.*;
 import com.rpx.bsm.records.ExpenseRecord;
 import com.rpx.bsm.records.PayOffExpenseBody;
 import com.rpx.bsm.records.StockEntryRecord;
@@ -39,6 +37,18 @@ public class StockEntryResource {
         List<StockEntryDTO> listDto = list.stream().map(x -> new StockEntryDTO(x)).collect(Collectors.toList());
         return ResponseEntity.ok().body(listDto);
     }
+    @GetMapping(value = "/{id}")
+    public ResponseEntity<StockEntryDTO> findById(@PathVariable Long id) {
+        StockEntry obj = service.findById(id);
+        return ResponseEntity.ok().body(new StockEntryDTO(obj));
+    }
+
+    @GetMapping(value = "/paged")
+    public ResponseEntity<Page<StockEntryDTO>> findAllPaged(@RequestParam(name = "dtStart", defaultValue = "") String dtStart, @RequestParam(name = "dtEnd", defaultValue = "") String dtEnd, @RequestParam(defaultValue = "", name = "supplier") String supplier, Pageable pageable) {
+        Page<StockEntry> list = service.findPaged(dtStart, dtEnd, supplier, pageable);
+        Page<StockEntryDTO> listDto = list.map(x -> new StockEntryDTO(x));
+        return ResponseEntity.ok().body(listDto);
+    }
 
     @PostMapping
     public ResponseEntity<StockEntryDTO> insert(@Valid @RequestBody StockEntryRecord r) {
@@ -46,7 +56,6 @@ public class StockEntryResource {
         URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(obj.getId()).toUri();
         return ResponseEntity.created(uri).body(new StockEntryDTO(obj));
     }
-
 
 
 }

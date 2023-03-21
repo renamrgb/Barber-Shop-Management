@@ -190,11 +190,6 @@ const routes = [
             name: 'Parâmetros',
             component: () => import('@/views/parameters/Parameters.vue'),
           },
-          {
-            path: '/expense/form',
-            name: 'Cadastrar despesa',
-            component: () => import('@/views/expense/ExpenseForm.vue'),
-          },   
         ],
       },
       {
@@ -209,9 +204,19 @@ const routes = [
         children: [                    
           {
             path: '/stock/launchProducts',
-            name: 'Parâmetros',
+            name: 'Lançar Produtos em estoque',
             component: () => import('@/views/stock/LançarProdutos.vue'),
-          },           
+          },
+          {
+            path: '/stock/listLaunchProducts',
+            name: 'Listagem de lançamentos',
+            component: () => import('@/views/stock/LançarProdutosList.vue'),
+          },
+          {
+            path: '/stock/launchProducts/:id',
+            name: 'Visualizar Lançamento',
+            component: () => import('@/views/stock/LançarProdutos.vue'),
+          },         
         ],
       },
     ],

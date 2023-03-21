@@ -9,10 +9,15 @@
           <div class="row mb-3">
             <div class="col">
               <CFormLabel for="nome">* Fornecedor</CFormLabel>
-              <CFormInput name="nome" type="text" v-model="form.supplier" />
+              <CFormInput
+                name="nome"
+                type="text"
+                v-model="form.supplier"
+                :disabled="disabled"
+              />
             </div>
           </div>
-          <div class="row mb-3">
+          <div class="row mb-3" v-if="id == undefined">
             <div class="col">
               <CFormLabel for="nome">* Produto</CFormLabel>
               <CFormSelect
@@ -83,6 +88,7 @@
                 name="Data da compra"
                 type="date"
                 v-model="form.nfe.dateofPurchase"
+                :disabled="disabled"
               />
             </div>
             <div class="col">
@@ -91,29 +97,34 @@
                 name="Numero da nfe"
                 type="number"
                 v-model="form.nfe.numberNfe"
+                :disabled="disabled"
               />
             </div>
             <div class="col">
               <CFormLabel for="nome">CFOP</CFormLabel>
-              <CFormInput name="Cfop" type="number" v-model="form.nfe.cfop" />
+              <CFormInput name="Cfop" type="number" v-model="form.nfe.cfop" :disabled="disabled" />
             </div>
             <div class="col">
               <CFormLabel for="nome">* Valor da nota fiscal</CFormLabel>
               <CInputGroup class="mb-1">
                 <CInputGroupText>R$</CInputGroupText>
-                <CFormInput price="price" v-model="form.nfe.valueNfe" />
+                <CFormInput price="price" v-model="form.nfe.valueNfe" :disabled="disabled" />
               </CInputGroup>
             </div>
           </div>
           <div class="row mb-3">
             <div class="col">
               <CFormLabel for="nome">Chave</CFormLabel>
-              <CFormInput name="chave" type="text" v-model="form.nfe.key" />
+              <CFormInput name="chave" type="text" v-model="form.nfe.key" :disabled="disabled"/>
             </div>
           </div>
           <div class="d-grid gap-2 d-md-flex justify-content-md-end">
-            <CButton color="primary" class="me-md-2" @click="formValidation"
+            <CButton color="primary" class="me-md-2" @click="formValidation" v-if="id == un
+            "
               >Confirmar</CButton
+            >
+            <a href="/#/stock/listLaunchProducts" class="btn btn-danger"
+              >Cancelar</a
             >
           </div>
         </CCardBody>
@@ -131,6 +142,7 @@ export default {
   components: { Toast },
   data() {
     return {
+      id: this.$route.params.id,
       productService: new ProdutoService(),
       optionsSelect: ["Abra este menu de seleção"],
       service: new LancarProdutoService(),
@@ -153,6 +165,7 @@ export default {
         price: 0,
         quantity: 0,
       },
+      disabled: false,
     };
   },
   methods: {
@@ -284,9 +297,19 @@ export default {
       }
       return duplicados;
     },
+    disabladInpluts() {
+      this.disabled = true;
+    },
+    async getById(id) {
+      this.form = await this.service.getById(id);
+    },
   },
   mounted() {
     this.carregarOptionsSelect();
+    if (this.id != undefined) {
+      this.disabladInpluts();
+      this.getById(this.id);
+    }
   },
 };
 </script>

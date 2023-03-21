@@ -1,33 +1,20 @@
 package com.rpx.bsm.services;
 
-import com.rpx.bsm.entities.Expense;
-import com.rpx.bsm.entities.Installment;
-import com.rpx.bsm.entities.StockEntry;
-import com.rpx.bsm.entities.StockEntryProducts;
-import com.rpx.bsm.records.ExpenseRecord;
-import com.rpx.bsm.records.PayOffExpenseBody;
+import com.rpx.bsm.entities.*;
 import com.rpx.bsm.records.StockEntryRecord;
-import com.rpx.bsm.repositories.ExpenseRepository;
 import com.rpx.bsm.repositories.StockEntryRepository;
-import com.rpx.bsm.resources.exceptions.DatabaseException;
 import com.rpx.bsm.resources.exceptions.ResourceNotFoundException;
-import com.rpx.bsm.resources.exceptions.ValidateInstallments;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DataIntegrityViolationException;
-import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.persistence.EntityNotFoundException;
-import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+
 
 @Service
 public class StockEntryService {
@@ -51,5 +38,22 @@ public class StockEntryService {
             stockService.addStock(e.getProduct().getId(), e.getQuantity());
         }
     }
+    public Page<StockEntry> findPaged(String dtStartString, String dtEndString, String supplier, Pageable pageable) {
+        Page<StockEntry> list = null;
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        LocalDate dtStart = LocalDate.parse(dtStartString, formatter);
+        LocalDate dtEnd = LocalDate.parse(dtEndString, formatter);
 
+        if(!supplier.isEmpty())
+            list = repository.findByNfeDateofPurchaseBetweenAAndSupplier(supplier, dtStart, dtEnd, pageable);
+        else
+            list = repository.findByNfeDateofPurchaseBetween(dtStart, dtEnd, pageable);
+
+        return list;
+    }
+    public StockEntry findById(Long id) {
+        Optional<StockEntry> obj = repository.findById(id);
+        StockEntry entity = obj.orElseThrow(() -> new ResourceNotFoundException(id));
+        return entity;
+    }
 }
