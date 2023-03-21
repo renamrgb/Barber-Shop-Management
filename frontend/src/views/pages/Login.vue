@@ -13,14 +13,22 @@
                     <CInputGroupText>
                       <CIcon icon="cil-user" />
                     </CInputGroupText>
-                    <CFormInput placeholder="Username" autocomplete="username" v-model="usuario" />
+                    <CFormInput
+                      placeholder="Username"
+                      autocomplete="username"
+                      v-model="usuario"
+                    />
                   </CInputGroup>
                   <CInputGroup class="mb-4">
                     <CInputGroupText>
                       <CIcon icon="cil-lock-locked" />
                     </CInputGroupText>
-                    <CFormInput type="password" placeholder="Password" autocomplete="current-password"
-                      v-model="senha" />
+                    <CFormInput
+                      type="password"
+                      placeholder="Password"
+                      autocomplete="current-password"
+                      v-model="senha"
+                    />
                   </CInputGroup>
                   <CRow>
                     <CCol :xs="6">
@@ -41,31 +49,30 @@
 </template>
 
 <script>
-import Toast from '@/components/Toast.vue'
-import UsuarioService from '@/Services/usuarioService.js'
+import Toast from "@/components/Toast.vue";
+import UsuarioService from "@/Services/usuarioService.js";
 export default {
   components: { Toast },
-  name: 'Login',
+  name: "Login",
   data() {
     return {
       service: new UsuarioService(),
-      usuario: '',
-      senha: '',
-    }
+      usuario: "",
+      senha: "",
+    };
   },
   methods: {
     async login() {
-      let res = await this.service.login(this.usuario, this.senha)
+      let res = await this.service.login(this.usuario, this.senha);      
       if (res.status == 200) {
-        localStorage.setItem('access_token', res.data.access_token);
-        localStorage.setItem('nome_usuario', res.data.userFirstName);
-        this.$router.push({ path: `/` })
-      } else if(res.response.status == 400) {        
-        this.$refs.toast.createToast(
-          'Usuário não existe ou senha inválida'
-        )
+        localStorage.setItem("access_token", res.data.access_token);
+        localStorage.setItem("nome_usuario", res.data.userFirstName);
+        localStorage.setItem("userId", res.data.userId);
+        this.$router.push({ path: `/` });
+      } else if (res.response.status == 400) {
+        this.$refs.toast.createToastDanger("Usuário não existe ou senha inválida");
       }
     },
   },
-}
+};
 </script>

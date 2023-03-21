@@ -37,11 +37,11 @@
           </div>
           <div class="row">
             <div class="col-md-12 mx-auto">
-              <br>
+              <br />
               <CFormSwitch
                 id="formSwitchCheckDefault"
                 label="Apenas ativos"
-                v-model="findAssets"              
+                v-model="findAssets"
               />
             </div>
           </div>
@@ -52,15 +52,21 @@
                   <CTableHeaderCell scope="col">#</CTableHeaderCell>
                   <CTableHeaderCell scope="col">Título</CTableHeaderCell>
                   <CTableHeaderCell scope="col">Valor</CTableHeaderCell>
+                  <CTableHeaderCell scope="col"
+                    >Qtde Disponível</CTableHeaderCell
+                  >
                   <CTableHeaderCell scope="col">Ativo</CTableHeaderCell>
-                  <CTableHeaderCell scope="col"></CTableHeaderCell>
+                  <CTableHeaderCell scope="col" colspan="3"></CTableHeaderCell>
                 </CTableRow>
               </CTableHead>
               <CTableBody>
                 <CTableRow v-for="item in this.itens" :key="item.id">
                   <CTableHeaderCell scope="row">{{ item.id }}</CTableHeaderCell>
                   <CTableDataCell>{{ item.title }}</CTableDataCell>
-                  <CTableDataCell>R$ {{ item.price.toFixed(2) }}</CTableDataCell>
+                  <CTableDataCell
+                    >R$ {{ item.price.toFixed(2) }}</CTableDataCell
+                  >
+                  <CTableDataCell> {{ item.quantity }}</CTableDataCell>
                   <IconsTdTable
                     :isActiveProps="item.isActive"
                     :id-item-props="item.id"
@@ -68,6 +74,11 @@
                     @get-all="consultaTodos"
                     @alterar-item="alterar"
                   />
+                  <CTableDataCell
+                    ><CButton color="light" @click="modalStockWriteOff(item.id)"
+                      >Baixar produto</CButton
+                    ></CTableDataCell
+                  >
                 </CTableRow>
               </CTableBody>
             </CTable>
@@ -80,8 +91,9 @@
         </CCardBody>
       </CCard>
     </CCol>
-  </CRow> 
+  </CRow>
   <toast ref="toast" />
+  <ModalStockWriteOffVue ref="modalStockWriteOffVue" />
 </template>
 
 <script>
@@ -89,8 +101,16 @@ import Service from "@/Services/produtoService.js";
 import Toast from "@/components/Toast.vue";
 import NextPageTable from "@/components/NextPageTable.vue";
 import IconsTdTable from "@/components/IconsTdTable.vue";
+import { CButton } from "@coreui/vue";
+import ModalStockWriteOffVue from "@/components/product/ModalStockWriteOff.vue";
 export default {
-  components: { Toast, NextPageTable, IconsTdTable },
+  components: {
+    Toast,
+    NextPageTable,
+    IconsTdTable,
+    CButton,
+    ModalStockWriteOffVue,
+  },
   name: "Produto",
   data() {
     return {
@@ -100,19 +120,31 @@ export default {
       idItem: "",
       searchText: "",
       pageId: 0,
-      findAssets: false
+      findAssets: false,
     };
   },
   methods: {
-    async getByTitle() {      
-      let itensPaged = await this.service.getByTitlePaged(this.searchText, this.pageId, this.findAssets);
-      this.itens = itensPaged.content;      
+    modalStockWriteOff(id) {
+      this.$refs.modalStockWriteOffVue.visibleLiveDemo = true;
+      this.$refs.modalStockWriteOffVue.id = id;
+    },
+    async getByTitle() {
+      let itensPaged = await this.service.getByTitlePaged(
+        this.searchText,
+        this.pageId,
+        this.findAssets
+      );
+      this.itens = itensPaged.content;
       this.$refs.nextPageTable.totalPages = itensPaged.totalPages;
       this.$refs.nextPageTable.totalElements = itensPaged.totalElements;
-      this.$refs.nextPageTable.pageable.pageNumber = itensPaged.pageable.pageNumber;
+      this.$refs.nextPageTable.pageable.pageNumber =
+        itensPaged.pageable.pageNumber;
     },
     async consultaTodos() {
-      let itensPaged = await this.service.getAllPaged(this.pageId, this.findAssets);
+      let itensPaged = await this.service.getAllPaged(
+        this.pageId,
+        this.findAssets
+      );
       this.itens = itensPaged.content;
       this.$refs.nextPageTable.totalPages = itensPaged.totalPages;
       this.$refs.nextPageTable.totalElements = itensPaged.totalElements;
@@ -134,7 +166,7 @@ export default {
     },
     alterar(id) {
       this.$router.push({ path: `/forms/produto/cadastro/${id}` });
-    },    
+    },
     updatePageId(newValue) {
       this.pageId = newValue;
       this.consultaTodos();

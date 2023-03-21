@@ -1,6 +1,5 @@
-import api from '@/Services/API/api'
-var qs = require('qs')
-var axios = require('axios')
+import api from "@/Services/API/api";
+var qs = require("qs");
 
 export default class UsuarioService {
   async login(usuario, senha) {
@@ -8,17 +7,17 @@ export default class UsuarioService {
       var data = qs.stringify({
         username: usuario,
         password: senha,
-        grant_type: 'password',
-      })      
-      let res = await api.post('/oauth/token', data, {
-        headers: {
-          Authorization: 'Basic YnNtOmJzbTEyMw==',
-          'Content-Type': 'application/x-www-form-urlencoded',
-        },
+        grant_type: "password",
       });
-      return res
+      let res = await api.post("/oauth/token", data, {
+        headers: {
+          Authorization: "Basic YnNtOmJzbTEyMw==",
+          "Content-Type": "application/x-www-form-urlencoded",
+        },
+      });      
+      return res;
     } catch (error) {
-      return error
+      return error;
     }
   }
 }
