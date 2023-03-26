@@ -37,20 +37,19 @@
           </div>
           <CCard>
             <CCardBody>
-              <div class="row mb-2
-              ">
+              <div class="row mb-2">
                 <div class="col">
                   <CFromLabel>Data de lançamento da despesa:</CFromLabel>
                 </div>
-              </div>  
-              <div class="row mb-3">                
-                <div class="col-2">                  
+              </div>
+              <div class="row mb-3">
+                <div class="col-2">
                   <input
                     type="date"
                     name=""
                     id=""
                     class="form-control"
-                    v-model="filter.dtStart"                    
+                    v-model="filter.dtStart"
                   />
                 </div>
                 <div class="col-2">
@@ -79,6 +78,9 @@
               <CTableHead class="table-dark">
                 <CTableRow>
                   <CTableHeaderCell scope="col">#</CTableHeaderCell>
+                  <CTableHeaderCell scope="col"
+                    >Data de lançamento</CTableHeaderCell
+                  >
                   <CTableHeaderCell scope="col">Descrição</CTableHeaderCell>
                   <CTableHeaderCell scope="col">Valor</CTableHeaderCell>
                   <CTableHeaderCell scope="col"
@@ -91,6 +93,9 @@
               <CTableBody>
                 <CTableRow v-for="item in this.itens" :key="item.id">
                   <CTableHeaderCell scope="row">{{ item.id }}</CTableHeaderCell>
+                  <CTableDataCell>{{
+                    formatDateBr.toDateBr(item.releaseDate)
+                  }}</CTableDataCell>
                   <CTableDataCell>{{ item.description }}</CTableDataCell>
                   <CTableDataCell
                     >R$ {{ item.total.toFixed(2) }}</CTableDataCell
@@ -101,6 +106,7 @@
                   <CTableDataCell>{{
                     item.quantityOfInstallments
                   }}</CTableDataCell>
+
                   <CTableDataCell>
                     <CButton
                       color="light"
@@ -186,6 +192,7 @@ import { CForm, CTableDataCell } from "@coreui/vue";
 import NextPageTable from "@/components/NextPageTable.vue";
 import QuitarDespesa from "@/components/expense/QuitarDespesa.vue";
 import DateNow from "@/util/dateNow.js";
+import FormatDateBr from "@/util/formatDateBr";
 export default {
   components: { Toast, CForm, NextPageTable, CTableDataCell, QuitarDespesa },
   name: "FormaPagamento",
@@ -194,6 +201,7 @@ export default {
       id: "",
       dateNow: new DateNow(),
       service: new ExpenseService(),
+      formatDateBr: new FormatDateBr(),
       itens: "",
       modalExcluir: false,
       id: "",
@@ -203,7 +211,7 @@ export default {
       filter: {
         dtStart: "",
         dtEnd: "",
-        bringPaid: false
+        bringPaid: false,
       },
     };
   },

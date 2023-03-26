@@ -4,7 +4,7 @@
       <CCard>
         <CCardHeader>
           <CRow>
-            <CCol> <h4>Lançamentos de produtos em estoque</h4> </CCol>
+            <CCol> <h4>Entrada de produtos em estoque</h4> </CCol>
             <CCol id="teste-align">
               <router-link to="/stock/launchProducts">
                 <CIcon icon="cil-playlist-add" size="xxl" />

@@ -68,7 +68,7 @@ export default [
     items: [  
       {
         component: 'CNavItem',
-        name: 'Lançar Produdo',
+        name: 'Lançar Produto',
         to: '/stock/listLaunchProducts',
       },          
     ],

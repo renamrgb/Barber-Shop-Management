@@ -73,7 +73,7 @@
                   <CTableDataCell>R$ {{ item.price }}</CTableDataCell>
                   <CTableDataCell>{{ item.quantity }}</CTableDataCell>
                   <CTableDataCell>
-                    <CButton color="light" @click="removeProduct(index)">
+                    <CButton color="light" @click="removeProduct(index)" v-if="id == undefined">
                       <CIcon icon="cil-trash" />
                     </CButton>
                   </CTableDataCell>
