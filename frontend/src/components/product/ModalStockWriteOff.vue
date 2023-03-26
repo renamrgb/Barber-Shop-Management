@@ -148,14 +148,22 @@ export default {
     async save() {
       this.form.product.id = this.id;
       let res = await this.stockWriteOffService.save(this.form);
+      console.log(res.response);
       if (res.status == 201) {
         this.$refs.toast.createToast("Baixa registrada com sucesso");
         this.$router.push("/forms/produto");
         this.visibleLiveDemo = false;
         this.form.qty = 0;
         this.form.reason = "";
-      } else
-        this.$refs.toast.createToastDanger("Ocorreu um erro ao realizar baixa");
+      } else {
+        if (res.response.status == 400) {
+          this.$refs.toast.createToastDanger(res.response.data.message)
+        } else {
+          this.$refs.toast.createToastDanger(
+            "Ocorreu um erro ao realizar baixa"
+          );
+        }
+      }
     },
   },
   beforeUpdate() {

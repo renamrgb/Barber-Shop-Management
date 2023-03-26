@@ -6,6 +6,7 @@ import com.rpx.bsm.records.ProductRecord;
 import com.rpx.bsm.records.StockEntryRecord;
 import com.rpx.bsm.repositories.ProductRepository;
 import com.rpx.bsm.repositories.StockEntryRepository;
+import com.rpx.bsm.resources.exceptions.DefaultErrorException;
 import com.rpx.bsm.resources.exceptions.ResourceNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -32,8 +33,12 @@ public class StockService {
     public Product decrementStock(Long id, Integer qty) {
         try {
             Product entity = repository.getReferenceById(id);
-            updateData(entity, entity.getQuantity() - qty);
-            return repository.save(entity);
+            if(qty <= entity.getQuantity()){
+                updateData(entity, entity.getQuantity() - qty);
+                return repository.save(entity);
+            }else{
+                throw new DefaultErrorException("A quantidade não pode ser maior que a quantidade em estoque");
+            }
         } catch (EntityNotFoundException e) {
             throw new ResourceNotFoundException(id);
         }
