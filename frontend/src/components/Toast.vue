@@ -12,7 +12,7 @@ export default {
   data() {
     return {
       toasts: [],
-      color: "info"
+      color: "info",
     };
   },
   methods: {
@@ -24,6 +24,12 @@ export default {
     },
     createToastDanger(mensagem) {
       this.color = "danger";
+      this.toasts.push({
+        content: mensagem,
+      });
+    },
+    createToastWarning(mensagem) {
+      this.color = "warning";
       this.toasts.push({
         content: mensagem,
       });
