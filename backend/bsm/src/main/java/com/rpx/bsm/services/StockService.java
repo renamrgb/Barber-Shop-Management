@@ -37,7 +37,7 @@ public class StockService {
                 updateData(entity, entity.getQuantity() - qty);
                 return repository.save(entity);
             }else{
-                throw new DefaultErrorException("A quantidade não pode ser maior que a quantidade em estoque");
+                throw new DefaultErrorException("A quantidade não pode ser maior que a quantidade disponível em estoque");
             }
         } catch (EntityNotFoundException e) {
             throw new ResourceNotFoundException(id);

@@ -22,6 +22,8 @@
             :disabled="true"
           />
         </div>
+      </div>
+      <div class="row mb-3">
         <div class="col-4">
           <CFormLabel for="nome">Preço</CFormLabel>
           <CInputGroup class="mb-1">
@@ -30,7 +32,16 @@
           </CInputGroup>
         </div>
         <div class="col-4">
-          <CFormLabel for="quantidade">* Quantidade a ser baixada</CFormLabel>
+          <CFormLabel for="qtyProduct">* Qtde disponível</CFormLabel>
+          <CFormInput
+            name="qtyProduct"
+            type="number"
+            v-model="form.product.quantity"
+            :disabled="true"
+          />
+        </div>
+        <div class="col-4">
+          <CFormLabel for="quantidade">* Qtde a ser baixada</CFormLabel>
           <CFormInput
             name="quantidade"
             type="number"
@@ -106,6 +117,7 @@ export default {
           id: "",
           title: "",
           price: "",
+          quantity: "",
         },
         qty: 0,
         record: "",
@@ -157,7 +169,7 @@ export default {
         this.form.reason = "";
       } else {
         if (res.response.status == 400) {
-          this.$refs.toast.createToastDanger(res.response.data.message)
+          this.$refs.toast.createToastDanger(res.response.data.message);
         } else {
           this.$refs.toast.createToastDanger(
             "Ocorreu um erro ao realizar baixa"
