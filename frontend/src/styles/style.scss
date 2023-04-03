@@ -13,9 +13,10 @@ $enable-rtl: true;
 @import "layout";
 @import "example";
 
+@import 'vue-select/dist/vue-select.css';
+
 // If you want to add something do it here
 @import "custom";
-
 .bdr {
   border-radius: 6px;
   overflow: hidden;
