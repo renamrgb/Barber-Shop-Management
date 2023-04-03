@@ -185,8 +185,10 @@ export default {
       }
     },
     baixar(index) {
-      console.log(` index ${index} \n paid ${this.expense.installments[index].paid} \n disabled ${this.disabledInputs[index].disabled}`);
-      debugger;
+      // console.log(
+      //   ` index ${index} \n paid ${this.expense.installments[index].paid} \n disabled ${this.disabledInputs[index].disabled}`
+      // );
+      // debugger;
       if (this.disabledInputs[index].disabled) {
         if (index == 0 && this.expense.installments[index].paid == false)
           this.disabledInputs[index].disabled = false;
@@ -198,7 +200,7 @@ export default {
           this.$refs.toast.createToastDanger(
             "Você não pode quitar essa parcela, a anterior ainda não está paga!"
           );
-        }else{
+        } else {
           this.disabledInputs[index].disabled = false;
         }
       } else this.save(index);
@@ -215,7 +217,15 @@ export default {
         let res = await this.service.payOffExpense(this.expense.id, index, obj);
         if (res.status == 200) {
           res = res.data;
-          this.$refs.toast.createToast("Quitação feita com sucesso!");
+          if (
+            obj.amountPaid > this.expense.installments[index].installmentValue
+          ) {
+            this.$refs.toast.createToastWarning(
+              "A despesa foi quitada com o valor superior ao valor da parcela."
+            );
+          } else {
+            this.$refs.toast.createToast("Quitação feita com sucesso!");
+          }
           this.disabledInputs[index].disabled = true;
           this.expense.installments[index].paymentDate =
             res.installments[index].paymentDate;
@@ -253,10 +263,10 @@ export default {
           "Preencha o campo forma de pagamento!"
         );
       }
-      if (amountPaid != installmentValue) {
+      if (amountPaid < installmentValue) {
         valid = false;
         this.$refs.toast.createToastDanger(
-          "O valor pago deve ser igual ao valor da parcela!"
+          "O valor pago deve ser maior ou igual ao valor da parcela!"
         );
       }
       if (paymentDate == undefined || paymentDate > this.dateNow.dateNowISO()) {
