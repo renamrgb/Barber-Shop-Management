@@ -7,6 +7,7 @@ import CoreuiVue from "@coreui/vue";
 import CIcon from "@coreui/icons-vue";
 import { iconsSet as icons } from "@/assets/icons";
 import DocsExample from "@/components/DocsExample";
+import vSelect from 'vue-select'
 
 import { VueMaskDirective } from "v-mask";
 const vMaskV2 = VueMaskDirective;
@@ -25,5 +26,5 @@ app.use(CoreuiVue);
 app.provide("icons", icons);
 app.component("CIcon", CIcon);
 app.component("DocsExample", DocsExample);
-
+app.component('v-select', vSelect)
 app.mount("#app");

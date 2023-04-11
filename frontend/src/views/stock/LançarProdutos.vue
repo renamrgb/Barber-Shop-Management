@@ -20,11 +20,12 @@
           <div class="row mb-3" v-if="id == undefined">
             <div class="col">
               <CFormLabel for="nome">* Produto</CFormLabel>
-              <CFormSelect
+              <v-select
+                id="selectV"
+                v-model="productSelected"
+                label="label"
                 :options="optionsSelect"
-                :searchable="true"
-                v-model="product.product.id"
-              ></CFormSelect>
+              ></v-select>
             </div>
             <div class="col-2">
               <CFormLabel for="price">* Preço</CFormLabel>
@@ -73,7 +74,11 @@
                   <CTableDataCell>R$ {{ item.price }}</CTableDataCell>
                   <CTableDataCell>{{ item.quantity }}</CTableDataCell>
                   <CTableDataCell>
-                    <CButton color="light" @click="removeProduct(index)" v-if="id == undefined">
+                    <CButton
+                      color="light"
+                      @click="removeProduct(index)"
+                      v-if="id == undefined"
+                    >
                       <CIcon icon="cil-trash" />
                     </CButton>
                   </CTableDataCell>
@@ -102,25 +107,42 @@
             </div>
             <div class="col">
               <CFormLabel for="nome">CFOP</CFormLabel>
-              <CFormInput name="Cfop" type="number" v-model="form.nfe.cfop" :disabled="disabled" />
+              <CFormInput
+                name="Cfop"
+                type="number"
+                v-model="form.nfe.cfop"
+                :disabled="disabled"
+              />
             </div>
             <div class="col">
               <CFormLabel for="nome">* Valor da nota fiscal</CFormLabel>
               <CInputGroup class="mb-1">
                 <CInputGroupText>R$</CInputGroupText>
-                <CFormInput price="price" v-model="form.nfe.valueNfe" :disabled="disabled" />
+                <CFormInput
+                  price="price"
+                  v-model="form.nfe.valueNfe"
+                  :disabled="disabled"
+                />
               </CInputGroup>
             </div>
           </div>
           <div class="row mb-3">
             <div class="col">
               <CFormLabel for="nome">Chave</CFormLabel>
-              <CFormInput name="chave" type="text" v-model="form.nfe.key" :disabled="disabled"/>
+              <CFormInput
+                name="chave"
+                type="text"
+                v-model="form.nfe.key"
+                :disabled="disabled"
+              />
             </div>
           </div>
           <div class="d-grid gap-2 d-md-flex justify-content-md-end">
-            <CButton color="primary" class="me-md-2" @click="formValidation" v-if="id == un
-            "
+            <CButton
+              color="primary"
+              class="me-md-2"
+              @click="formValidation"
+              v-if="id == un"
               >Confirmar</CButton
             >
             <a href="/#/stock/listLaunchProducts" class="btn btn-danger"
@@ -144,7 +166,7 @@ export default {
     return {
       id: this.$route.params.id,
       productService: new ProdutoService(),
-      optionsSelect: ["Abra este menu de seleção"],
+      optionsSelect: [],
       service: new LancarProdutoService(),
       form: {
         supplier: "",
@@ -166,20 +188,28 @@ export default {
         quantity: 0,
       },
       disabled: false,
+      productSelected: "",
     };
   },
   methods: {
     removeProduct(index) {
+      const priceProduct = this.form.products[index].price;
+      const qtyProduct = this.form.products[index].quantity;
+      const valueSubtract = parseFloat(priceProduct) * qtyProduct;
       this.form.nfe.valueNfe =
-        parseFloat(this.form.nfe.valueNfe) -
-        (parseFloat(this.form.products[index].price) -
-          this.form.products[index].quantity);
+        parseFloat(this.form.nfe.valueNfe) - parseFloat(valueSubtract);
       this.form.products.pop(index);
     },
     addProduct() {
       let valid = true;
-      let product = this.product;
-
+      let product = {
+        product: {
+          id: this.productSelected.value,
+        },
+        title: this.product.title,
+        price: this.product.price,
+        quantity: this.product.quantity,
+      };
       if (product.product.id == "") {
         this.$refs.toast.createToastDanger(
           "Selecionar o produto é obrigatório"
@@ -202,31 +232,34 @@ export default {
         this.$refs.toast.createToastDanger("A quantidade deve ser maior que 0");
         valid = false;
       }
-      if (valid) {
-        this.form.nfe.valueNfe = this.addValueNfe(
-          product.price,
-          product.quantity
+      const duplicate = this.validateDuplicateProduct(product.product.id);
+      if (duplicate == undefined) {
+        if (valid) {
+          this.form.nfe.valueNfe = this.addValueNfe(
+            product.price,
+            product.quantity
+          );
+          product.price = parseFloat(product.price);
+          this.form.products.push(product);
+          this.product = {
+            product: {
+              id: "",
+            },
+            title: "",
+            price: 0,
+            quantity: 0,
+          };
+          this.productSelected = "";
+        }
+      } else {
+        this.$refs.toast.createToastDanger(
+          `O produto ${duplicate.title} já está na lista e não é permitido duplicidade!`
         );
-        product.price = parseFloat(product.price);
-        this.form.products.push(product);
-        this.product = {
-          product: {
-            id: "",
-          },
-          title: "",
-          price: 0,
-          quantity: 0,
-        };
       }
     },
     addValueNfe(value, qty) {
       let valueNfe = parseFloat(this.form.nfe.valueNfe);
       valueNfe += parseFloat(value) * qty;
-      return valueNfe;
-    },
-    subtractValueNfe(value) {
-      let valueNfe = parseFloat(this.form.valueNfe);
-      valueNfe = valueNfe - parseFloat(value);
       return valueNfe;
     },
     async carregarOptionsSelect() {
@@ -264,13 +297,6 @@ export default {
         valid = false;
         this.$refs.toast.createToastDanger("Valor da NFE deve ser maior que 0");
       }
-      let duplicate = this.validateDuplicateProduct();
-      if (duplicate.length > 0) {
-        valid = false;
-        this.$refs.toast.createToastDanger(
-          "A lista de produtos não pode conter produtos duplicados, remova e tente novamente"
-        );
-      }
       if (valid) this.salvar();
     },
     async salvar() {
@@ -282,20 +308,11 @@ export default {
           "Ocorreu um erro ao lançar o produto"
         );
     },
-    validateDuplicateProduct() {
-      let products = this.form.products;
-      let duplicados = [];
-      for (var i = 0; i < products.length; i++) {
-        for (var j = i + 1; j < products.length; j++) {
-          if (
-            products[i] === products[j] &&
-            duplicados.indexOf(products[i]) === -1
-          ) {
-            duplicados.push(products[i]);
-          }
-        }
-      }
-      return duplicados;
+    validateDuplicateProduct(id) {
+      const duplicado = this.form.products.find(
+        (product) => product.product.id == id
+      );
+      return duplicado;
     },
     disabladInpluts() {
       this.disabled = true;
@@ -313,3 +330,4 @@ export default {
   },
 };
 </script>
+<style></style>
