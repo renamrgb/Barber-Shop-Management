@@ -102,7 +102,7 @@
                       style="margin-right: 1%"
                       @click="this.alterar(item.id)"
                     >
-                      <CIcon icon="cil-pencil" size="x" />
+                    <i class="bi bi-eye"></i>
                     </CButton>
                   </CTableDataCell>
                 </CTableRow>

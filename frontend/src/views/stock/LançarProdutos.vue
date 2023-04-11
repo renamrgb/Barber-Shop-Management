@@ -193,10 +193,11 @@ export default {
   },
   methods: {
     removeProduct(index) {
+      const priceProduct = this.form.products[index].price;
+      const qtyProduct = this.form.products[index].quantity;
+      const valueSubtract = parseFloat(priceProduct) * qtyProduct;
       this.form.nfe.valueNfe =
-        parseFloat(this.form.nfe.valueNfe) -
-        (parseFloat(this.form.products[index].price) -
-          this.form.products[index].quantity);
+        parseFloat(this.form.nfe.valueNfe) - parseFloat(valueSubtract);
       this.form.products.pop(index);
     },
     addProduct() {
@@ -218,7 +219,7 @@ export default {
         let criterio = function (elemento) {
           return elemento.value == product.product.id;
         };
-        let p = this.optionsSelect.find(criterio);        
+        let p = this.optionsSelect.find(criterio);
         product.title = p.title;
       }
       if (product.price == "" || product.price <= 0) {
@@ -231,7 +232,7 @@ export default {
         this.$refs.toast.createToastDanger("A quantidade deve ser maior que 0");
         valid = false;
       }
-      const duplicate = this.validateDuplicateProduct(product.product.id);      
+      const duplicate = this.validateDuplicateProduct(product.product.id);
       if (duplicate == undefined) {
         if (valid) {
           this.form.nfe.valueNfe = this.addValueNfe(
@@ -259,11 +260,6 @@ export default {
     addValueNfe(value, qty) {
       let valueNfe = parseFloat(this.form.nfe.valueNfe);
       valueNfe += parseFloat(value) * qty;
-      return valueNfe;
-    },
-    subtractValueNfe(value) {
-      let valueNfe = parseFloat(this.form.valueNfe);
-      valueNfe = valueNfe - parseFloat(value);
       return valueNfe;
     },
     async carregarOptionsSelect() {
@@ -300,13 +296,6 @@ export default {
       if (item.valueNfe <= 0) {
         valid = false;
         this.$refs.toast.createToastDanger("Valor da NFE deve ser maior que 0");
-      }
-      let duplicate = this.validateDuplicateProduct();
-      if (duplicate.length > 0) {
-        valid = false;
-        this.$refs.toast.createToastDanger(
-          "A lista de produtos não pode conter produtos duplicados, remova e tente novamente"
-        );
       }
       if (valid) this.salvar();
     },
