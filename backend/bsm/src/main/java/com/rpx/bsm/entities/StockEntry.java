@@ -27,6 +27,7 @@ public class StockEntry implements Serializable {
     private List<StockEntryProducts> products;
     @OneToOne(mappedBy = "stockEntry", cascade = CascadeType.ALL)
     private Nfe nfe;
+    private Boolean reversed;
 
     public StockEntry(StockEntryRecord r) {
         setSupplier(r.supplier());
@@ -35,7 +36,7 @@ public class StockEntry implements Serializable {
         for(int i=0; i<r.products().size(); i++){
             this.products.add(new StockEntryProducts(r.products().get(i), this));
         }
-
+        this.reversed = false;
     }
 
     @Override

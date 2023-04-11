@@ -22,11 +22,13 @@ public class StockEntryDTO implements Serializable {
     private String supplier;
     private List<StockEntryProductsDTO> products;
     private Nfe nfe;
+    private Boolean reversed;
 
     public StockEntryDTO(StockEntry obj) {
         setId(obj.getId());
         setSupplier(obj.getSupplier());
         setNfe(obj.getNfe());
+        setReversed(obj.getReversed());
         products = new ArrayList<>();
         if (obj.getProducts() != null)
             for (StockEntryProducts e : obj.getProducts())

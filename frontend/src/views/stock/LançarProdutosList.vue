@@ -62,7 +62,6 @@
                   />
                 </div>
               </div>
-              
             </CCardBody>
           </CCard>
           <div class="bdr">
@@ -83,9 +82,12 @@
                   <CTableDataCell
                     >R$ {{ item.nfe.valueNfe.toFixed(2) }}</CTableDataCell
                   >
-                  <CTableDataCell>{{ formatDateBr.toDateBr(item.nfe.dateofPurchase) }}</CTableDataCell>
+                  <CTableDataCell>{{
+                    formatDateBr.toDateBr(item.nfe.dateofPurchase)
+                  }}</CTableDataCell>
                   <CTableDataCell>
                     <CButton
+                      v-if="item.reversed == false"
                       color="light"
                       style="margin-right: 1%"
                       @click="
@@ -102,7 +104,7 @@
                       style="margin-right: 1%"
                       @click="this.alterar(item.id)"
                     >
-                    <i class="bi bi-eye"></i>
+                      Visualizar
                     </CButton>
                   </CTableDataCell>
                 </CTableRow>
@@ -149,7 +151,7 @@
         "
         >Cancelar</CButton
       >
-      <CButton color="primary" @click="this.delete()">Confirmar</CButton>
+      <CButton color="primary" @click="this.estornar()">Confirmar</CButton>
     </CModalFooter>
   </CModal>
   <toast ref="toast" />
@@ -178,7 +180,7 @@ export default {
       searchText: "",
       filter: {
         dtStart: "",
-        dtEnd: "",        
+        dtEnd: "",
       },
     };
   },
@@ -193,7 +195,7 @@ export default {
         this.pageId,
         this.filter
       );
-      this.itens = itensPaged.content;      
+      this.itens = itensPaged.content;
     },
     async gelAll() {
       let itensPaged = await this.service.getAllPaged(this.pageId, this.filter);
@@ -209,7 +211,17 @@ export default {
     payOffExpense(item) {
       this.$refs.quitarDespesa.visibleLiveDemo = true;
       this.$refs.quitarDespesa.expense = item;
-    },    
+    },
+    async estornar() {
+      const res = await this.service.reverse(this.id);
+      console.log(res);
+      if (res.status != 204) {
+        this.$refs.toast.createToastDanger(
+          `Ocorreu um erro ao realizar a operação ${res}`
+        );
+      }
+      this.modalExcluir = false;
+    },
   },
   mounted() {
     this.getDate();

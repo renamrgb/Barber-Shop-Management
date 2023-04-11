@@ -57,5 +57,10 @@ public class StockEntryResource {
         return ResponseEntity.created(uri).body(new StockEntryDTO(obj));
     }
 
+    @PostMapping(value = "/reverse/{id}")
+    public ResponseEntity<Void> reverse(@PathVariable Long id) {
+        service.reverse(id);
+        return ResponseEntity.ok();
+    }
 
 }

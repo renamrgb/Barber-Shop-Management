@@ -10,6 +10,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.persistence.EntityNotFoundException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
@@ -56,4 +57,19 @@ public class StockEntryService {
         StockEntry entity = obj.orElseThrow(() -> new ResourceNotFoundException(id));
         return entity;
     }
+    @Transactional
+    public void reverse(Long id){
+        try {
+            StockEntry entity = repository.getReferenceById(id);
+            List<StockEntryProducts> products = entity.getProducts();
+            for(StockEntryProducts p : products){
+                stockService.decrementStock(p.getProduct().getId(), p.getQuantity());
+            }
+            entity.setReversed(true);
+            repository.save(entity);
+        } catch (EntityNotFoundException e) {
+            throw new ResourceNotFoundException(id);
+        }
+    }
+
 }

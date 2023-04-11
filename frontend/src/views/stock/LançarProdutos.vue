@@ -137,6 +137,15 @@
               />
             </div>
           </div>
+          <div
+            class="row mb-3"
+            v-if="form.reversed != undefined"
+            style="color: red;"
+          >
+            <div class="col" style="text-align: center">
+              O Lançamento já foi estornado
+            </div>
+          </div>
           <div class="d-grid gap-2 d-md-flex justify-content-md-end">
             <CButton
               color="primary"
@@ -169,6 +178,7 @@ export default {
       optionsSelect: [],
       service: new LancarProdutoService(),
       form: {
+        reversed: undefined,
         supplier: "",
         products: [],
         nfe: {
