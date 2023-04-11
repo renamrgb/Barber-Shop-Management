@@ -215,7 +215,7 @@ export default {
     async estornar() {
       const res = await this.service.reverse(this.id);
       console.log(res);
-      if (res.status != 204) {
+      if (res.status != 200) {
         this.$refs.toast.createToastDanger(
           `Ocorreu um erro ao realizar a operação ${res}`
         );

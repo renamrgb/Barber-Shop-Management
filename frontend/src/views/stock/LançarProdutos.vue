@@ -137,11 +137,7 @@
               />
             </div>
           </div>
-          <div
-            class="row mb-3"
-            v-if="form.reversed != undefined"
-            style="color: red;"
-          >
+          <div class="row mb-3" v-if="form.reversed == true" style="color: red">
             <div class="col" style="text-align: center">
               O Lançamento já foi estornado
             </div>
@@ -168,6 +164,7 @@
 import Toast from "@/components/Toast.vue";
 import ProdutoService from "@/Services/produtoService";
 import LancarProdutoService from "@/Services/LancarProdutoService";
+import DateNow from "@/util/dateNow";
 export default {
   name: "Lançar Produtos",
   components: { Toast },
@@ -287,8 +284,7 @@ export default {
     },
     formValidation() {
       let item = this.form;
-      let valid = true;
-
+      let valid = true;      
       if (item.supplier == "") {
         valid = false;
         this.$refs.toast.createToastDanger("Fornecedor é obrigatório");
@@ -298,10 +294,23 @@ export default {
         this.$refs.toast.createToastDanger(
           "É obrigatório selecionar pelo menos um produto"
         );
-      }
+      }          
       if (item.dateofPurchase == "") {
         valid = false;
         this.$refs.toast.createToastDanger("A data da compra é obrigatória");
+      }
+      const now = new Date();      
+      const dateofPurchaseDate = new Date(this.form.nfe.dateofPurchase)
+      let difference = dateofPurchaseDate.getTime() - now.getTime();
+      let daysDifference = Math.round(difference / 86400000)  
+      console.log(daysDifference);
+      if(daysDifference < -7){
+        valid = false;
+        this.$refs.toast.createToastDanger("A data da compra não pode ser menor que o período de uma semana");
+      }
+      if(daysDifference > -0){
+        valid = false;
+        this.$refs.toast.createToastDanger("A data da compra não pode ser maior que a data atual");
       }
       if (item.valueNfe <= 0) {
         valid = false;
@@ -329,6 +338,7 @@ export default {
     },
     async getById(id) {
       this.form = await this.service.getById(id);
+      console.log(this.form.reversed);
     },
   },
   mounted() {

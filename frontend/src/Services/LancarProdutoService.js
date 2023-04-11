@@ -42,7 +42,7 @@ export default class LancarProdutoService {
   async reverse(id) {
     try {
       const res = await api.post(`${this.url}/reverse/${id}`);
-      return res.data;
+      return res;
     } catch (error) {
       return error;
     }
