@@ -11,6 +11,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -49,7 +50,8 @@ public class TestConfig implements CommandLineRunner {
 
     @Autowired
     private OrganizationRepository organizationRepository;
-
+    @Autowired
+    private ScheduleRepository scheduleRepository;
     @Override
     public void run(String... args) throws Exception {
 
@@ -144,6 +146,13 @@ public class TestConfig implements CommandLineRunner {
         parameter.getParameterValues().add(new ParameterValue("Horário de termino do almoço","LUNCH_BREAK_TIME", "14:00", parameter));
         parameter.getParameterValues().add(new ParameterValue("Horário de encerramento","END_TIME", "18:00", parameter));
         parametersRepository.save(parameter);
+        /*============================================================================================================*/
+        Schedule s = new Schedule();
+        s.setClient(cli);
+        s.setProcedure(proc1);
+        LocalDateTime lt = LocalDateTime.now();
+        s.setDate(lt);
+        scheduleRepository.save(s);
     }
 
 }

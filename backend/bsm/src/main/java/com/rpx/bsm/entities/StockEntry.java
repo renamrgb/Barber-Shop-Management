@@ -5,6 +5,8 @@ import com.rpx.bsm.records.StockEntryRecord;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -28,6 +30,10 @@ public class StockEntry implements Serializable {
     @OneToOne(mappedBy = "stockEntry", cascade = CascadeType.ALL)
     private Nfe nfe;
     private Boolean reversed;
+    //@ManyToOne
+    //@JoinColumn(name = "expense_id")
+    //@Fetch(FetchMode.JOIN)
+    //private Expense expenseStockEntry;
 
     public StockEntry(StockEntryRecord r) {
         setSupplier(r.supplier());

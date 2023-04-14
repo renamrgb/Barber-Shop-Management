@@ -3,6 +3,8 @@ package com.rpx.bsm.entities;
 import com.rpx.bsm.records.ExpenseRecord;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -28,6 +30,8 @@ public class Expense implements Serializable {
     private ExpenseType expenseType;
     @OneToMany(mappedBy = "expense", fetch = FetchType.EAGER,cascade = CascadeType.ALL)
     private List<Installment> installments;
+    //@OneToMany(mappedBy = "expenseStockEntry")
+    //private List<StockEntry> stockEntries;
 
     public Expense() {
         installments = new ArrayList<>();

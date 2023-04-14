@@ -1,19 +1,13 @@
 package com.rpx.bsm.services;
 
 import com.rpx.bsm.entities.Product;
-import com.rpx.bsm.entities.StockEntry;
-import com.rpx.bsm.records.ProductRecord;
-import com.rpx.bsm.records.StockEntryRecord;
 import com.rpx.bsm.repositories.ProductRepository;
-import com.rpx.bsm.repositories.StockEntryRepository;
 import com.rpx.bsm.resources.exceptions.DefaultErrorException;
 import com.rpx.bsm.resources.exceptions.ResourceNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
 import javax.persistence.EntityNotFoundException;
 import javax.transaction.Transactional;
-import java.util.List;
 
 @Service
 public class StockService {
