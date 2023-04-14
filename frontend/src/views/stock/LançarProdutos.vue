@@ -304,7 +304,7 @@ export default {
       let difference = dateofPurchaseDate.getTime() - now.getTime();
       let daysDifference = Math.round(difference / 86400000)  
       console.log(daysDifference);
-      if(daysDifference < -7){
+      if(daysDifference <= -7){
         valid = false;
         this.$refs.toast.createToastDanger("A data da compra não pode ser menor que o período de uma semana");
       }
