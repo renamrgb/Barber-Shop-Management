@@ -20,22 +20,31 @@ public class Schedule {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "client_id", nullable = false)
-    private Customer client;
+    @JoinColumn(name = "customer_id", nullable = false)
+    private Customer customer;
     @Column(nullable = false)
-    private LocalDateTime date;
+    private LocalDateTime startDate;
+    @Column(nullable = false)
+    private LocalDateTime endDate;
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "procedure_id", nullable = false)
     private Procedure procedure;
 
-    public Schedule(Customer client, LocalDateTime date, Procedure procedure) {
-        this.client = client;
-        this.date = date;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "professional_id", nullable = false)
+    private Professional professional;
+
+    public Schedule(Customer customer, LocalDateTime startDate, LocalDateTime endDate, Procedure procedure) {
+        this.customer = customer;
+        this.startDate = startDate;
+        this.endDate = endDate;
         this.procedure = procedure;
     }
+
     public Schedule(ScheduleRecord r) {
-        this.client = r.client();
-        this.date = r.date();
+        this.customer = r.client();
+        this.startDate = r.startDate();
+        this.endDate = r.endDate();
         this.procedure = r.procedure();
     }
 
@@ -51,12 +60,14 @@ public class Schedule {
     public int hashCode() {
         return Objects.hash(id);
     }
+
     @Override
     public String toString() {
         return "Schedule{" +
                 "id=" + id +
-                ", client=" + client +
-                ", date=" + date +
+                ", customer=" + customer +
+                ", startDate=" + startDate +
+                ", endDate=" + endDate +
                 ", procedure=" + procedure +
                 '}';
     }

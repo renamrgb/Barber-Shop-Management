@@ -9,7 +9,10 @@ public record ScheduleRecord(
         @NotNull
         Customer client,
         @NotNull
-        LocalDateTime date,
+        LocalDateTime startDate,
+        @NotNull
+        LocalDateTime endDate,
         @NotNull
         Procedure procedure
+
 ) {}

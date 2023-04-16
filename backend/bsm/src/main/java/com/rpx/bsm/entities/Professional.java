@@ -9,6 +9,7 @@ import lombok.Setter;
 import javax.persistence.*;
 import java.io.Serializable;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 
@@ -30,7 +31,11 @@ public class Professional implements Serializable {
             inverseJoinColumns = @JoinColumn(name = "procedure_id")
     )
     private Set<Procedure> procedures = new HashSet<>();
-
+    @OneToMany(mappedBy = "professional")
+    private List<Schedule> schedules;
+    public Professional(Long id) {
+        Id = id;
+    }
     public Professional() {
         this.user = new User();
     }

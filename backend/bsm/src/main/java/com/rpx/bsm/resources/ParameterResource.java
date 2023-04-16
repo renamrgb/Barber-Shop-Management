@@ -45,7 +45,7 @@ public class ParameterResource {
     }
     @GetMapping(value = "/{id}")
     public ResponseEntity<ParameterDTO> findById(@PathVariable Long id){
-        Parameter obj = service.findById(id);
+        Parameter obj = service.findById();
         return ResponseEntity.ok().body(new ParameterDTO(obj));
     }
 

@@ -134,7 +134,6 @@ public class TestConfig implements CommandLineRunner {
             e.getInstallments().add(installment);
             expenseRepository.save(e);
         }
-
         Organization organization = new Organization();
         organization.setCnpj("92384290348092");
         organization.setName("Xavvier Barber Shop");
@@ -148,11 +147,24 @@ public class TestConfig implements CommandLineRunner {
         parametersRepository.save(parameter);
         /*============================================================================================================*/
         Schedule s = new Schedule();
-        s.setClient(cli);
+        s.setCustomer(new Customer(1L));
         s.setProcedure(proc1);
-        LocalDateTime lt = LocalDateTime.now();
-        s.setDate(lt);
+        LocalDateTime agora = LocalDateTime.now();
+        agora = agora.withHour(16).withMinute(0).withSecond(0).withNano(0);
+        s.setStartDate(agora);
+        s.setEndDate(agora.plusMinutes(90));
+        s.setProfessional(new Professional(1L));
         scheduleRepository.save(s);
+        /*============================================================================================================*/
+        Schedule s2 = new Schedule();
+        s2.setCustomer(new Customer(2L));
+        s2.setProcedure(proc1);
+        agora = LocalDateTime.now();
+        agora = agora.withHour(10).withMinute(0).withSecond(0).withNano(0);
+        s2.setStartDate(agora);
+        s2.setEndDate(agora.plusMinutes(90));
+        s2.setProfessional(new Professional(1L));
+        scheduleRepository.save(s2);
     }
 
 }

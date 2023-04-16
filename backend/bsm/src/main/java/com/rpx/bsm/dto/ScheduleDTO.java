@@ -1,9 +1,6 @@
 package com.rpx.bsm.dto;
 
-import com.rpx.bsm.entities.Address;
-import com.rpx.bsm.entities.Customer;
-import com.rpx.bsm.entities.Procedure;
-import com.rpx.bsm.entities.Schedule;
+import com.rpx.bsm.entities.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -18,15 +15,18 @@ import java.time.LocalDateTime;
 public class ScheduleDTO implements Serializable {
     private Long id;
     private CustomerDTO client;
-    private LocalDateTime date;
+    private LocalDateTime startDate;
+    private LocalDateTime endDate;
     private ProcedureDTO procedure;
+    private ProfessionalDTO professional;
 
     public ScheduleDTO(Schedule obj) {
         setId(obj.getId());
-        setDate(obj.getDate());
-        setClient(new CustomerDTO(obj.getClient()));
+        setStartDate(obj.getStartDate());
+        setEndDate(obj.getEndDate());
+        setClient(new CustomerDTO(obj.getCustomer()));
         setProcedure(new ProcedureDTO(obj.getProcedure()));
+        setProfessional(new ProfessionalDTO(obj.getProfessional()));
     }
-
 }
 

@@ -10,6 +10,7 @@ import lombok.Setter;
 import javax.persistence.*;
 import java.io.Serializable;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 
@@ -34,6 +35,8 @@ public class Procedure implements Serializable {
     @JsonIgnore
     @ManyToMany(mappedBy = "procedures") //Nome do set
     private Set<Professional> professionals = new HashSet<>();
+    @OneToMany(mappedBy = "customer")
+    private List<Schedule> procedure;
 
     public Procedure(Long id) {
         Id = id;
