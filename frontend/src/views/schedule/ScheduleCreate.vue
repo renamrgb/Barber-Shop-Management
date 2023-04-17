@@ -250,7 +250,13 @@ export default {
     },
   },
   mounted() {
-    this.date = this.dateNow.dateNowISO();    
+    this.date = this.dateNow.dateNowISO();
+    let min = 30;
+    let ini = 08;
+    
+    
+
+
     this.carregarOptionsProfessional();
     if (this.id != undefined) {
       this.disabladInpluts();
