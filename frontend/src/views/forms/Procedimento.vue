@@ -36,7 +36,7 @@
               </div>
             </div>
             <div class="row">
-              <div class="col-auto">
+              <div class="col">
                 <CFormLabel for="price">* Preço</CFormLabel>
                 <CInputGroup class="mb-1">
                   <CInputGroupText>R$</CInputGroupText>
@@ -52,6 +52,20 @@
                   class="invalid-input-form"
                 >
                   {{ v$.form.price.$errors[0].$message }}
+                </div>
+              </div>
+              <div class="col">
+                <CFormLabel for="price">* Tempo de duração</CFormLabel>
+                <CFormSelect
+                  :options="optionsDuration"
+                  :searchable="true"
+                  v-model="form.duration"
+                ></CFormSelect>
+                <div
+                  v-if="v$.form.duration.$errors.length > 0"
+                  class="invalid-input-form"
+                >
+                  {{ v$.form.duration.$errors[0].$message }}
                 </div>
               </div>
             </div>
@@ -98,12 +112,14 @@ export default {
       form: {
         description: "",
         price: "",
+        duration: "",
         procedureType: {
           id: "",
         },
         isActive: false,
       },
       optionsSelect: ["Abra este menu de seleção"],
+      optionsDuration: ["00:30:00", "01:00:00", "01:30:00", "02:00:00", "02:30:00", "03:00:00"],
     };
   },
   validations() {
@@ -118,11 +134,15 @@ export default {
           decimal: this.validationsMessage.decimalMessage,
           minValue: this.validationsMessage.minMenssage(0.1),
         },
+        duration: {
+          required: this.validationsMessage.requiredMessage,
+        },
       },
     };
   },
   methods: {
     submitForm(event) {
+      console.log(this.form.duration);
       this.v$.$validate();
       if (!this.v$.$error) {
         this.salvar();
@@ -162,8 +182,8 @@ export default {
     async consultarUm() {
       if (this.id != undefined) {
         this.form = await this.service.buscarUm(this.id);
-        console.log(`DATA: ${this.form}`);
       }
+      console.log(this.form.duration);
     },
   },
   mounted() {

@@ -1,6 +1,18 @@
 export default [  
   {
     component: 'CNavGroup',
+    name: 'Agendamentos',
+    icon: 'cil-cog',
+    items: [  
+      {
+        component: 'CNavItem',
+        name: 'Registrar',
+        to: '/schedule/create',
+      },          
+    ],
+  },
+  {
+    component: 'CNavGroup',
     name: 'Cadastros',
     to: '/forms',
     icon: 'cil-notes',

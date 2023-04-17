@@ -12,10 +12,8 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.time.LocalTime;
+import java.util.*;
 
 @Configuration
 @Profile("test")
@@ -71,10 +69,10 @@ public class TestConfig implements CommandLineRunner {
             customerRepository.save(customer);
         }
         /*============================================================================================================*/
-        Procedure proc1 = new Procedure("Corte de Cabelo", 100.00, true);
+        Procedure proc1 = new Procedure("Corte de Cabelo", 100.00, true, LocalTime.of(0, 30));
         procedimentoRepository.save(proc1);
         for (int i = 0; i < 25; i++)
-            procedimentoRepository.save(new Procedure("PROCEDIMENTO" + i, 100.00, true));
+            procedimentoRepository.save(new Procedure("PROCEDIMENTO" + i, 100.00, true, LocalTime.of(0, 30)));
         /*============================================================================================================*/
         Customer cli = new Customer();
         User u = new User();
@@ -97,7 +95,7 @@ public class TestConfig implements CommandLineRunner {
             p.setUser(new User(
                     "PROFISSIONAL " + i, "user" + i + "@teste.com.br", "12345678", "18997101710", "50349034826", "102345879", new Address(), new AccessLevel(NivelAcessoEnum.ROLE_ADMIN), true
             ));
-            p.setProcedures(new HashSet<>());
+            p.getProcedures().add(proc1);
             professionalRepository.save(p);
         }
 

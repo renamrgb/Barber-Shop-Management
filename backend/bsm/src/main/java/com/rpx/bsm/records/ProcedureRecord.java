@@ -18,5 +18,8 @@ public record ProcedureRecord(
         Double price,
         ProductProcedureType procedureType,
         @NotNull
+        String duration,
+
+        @NotNull
         Boolean isActive
 ) {}

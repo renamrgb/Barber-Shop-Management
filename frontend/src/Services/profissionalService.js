@@ -72,10 +72,12 @@ export default class ProfissionalService {
     item.user.phoneNumber = item.user.phoneNumber.replace(/[^\d]+/g, "");
     item.user.document = item.user.document.replace(/[^\d]+/g, "");
     item.user.rg = item.user.rg.replace(/[^\d]+/g, "");
-    item.user.address.zipCode = item.user.address.zipCode.replace(
-      /[^\d]+/g,
-      ""
-    );
+    if(item.user.address.zipCode != undefined){
+      item.user.address.zipCode = item.user.address.zipCode.replace(
+        /[^\d]+/g,
+        ""
+      );
+    }
     return item;
   }
 }

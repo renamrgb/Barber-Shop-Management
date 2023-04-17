@@ -8,7 +8,12 @@ import lombok.NonNull;
 import lombok.Setter;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 import java.io.Serializable;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
@@ -38,6 +43,9 @@ public class Procedure implements Serializable {
     @OneToMany(mappedBy = "customer")
     private List<Schedule> procedure;
 
+    @NotNull
+    private LocalTime duration;
+
     public Procedure(Long id) {
         Id = id;
     }
@@ -47,6 +55,9 @@ public class Procedure implements Serializable {
         setPrice(record.price());
         setProductProcedureType(record.procedureType());
         setIsActive(record.isActive());
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm");
+        LocalTime duration = LocalTime.parse(record.duration(), formatter);
+        setDuration(duration);
     }
 
     public Procedure(String description, Double price, Boolean isActive, Set<Professional> professionals) {
@@ -56,10 +67,11 @@ public class Procedure implements Serializable {
         this.professionals = professionals;
     }
 
-    public Procedure(String description, Double price, Boolean isActive) {
+    public Procedure(String description, Double price, Boolean isActive, LocalTime duration) {
         this.description = description;
         this.price = price;
         this.isActive = isActive;
+        this.duration = duration;
     }
 
     @Override

@@ -6,6 +6,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.time.LocalTime;
+
 @Getter
 @Setter
 @NoArgsConstructor
@@ -15,15 +17,9 @@ public class ProcedureDTO {
     private Double price;
     private ProductProcedureType procedureType;
     private Boolean isActive;
+    public LocalTime duration;
     public ProcedureDTO(Long id) {
         this.id = id;
-    }
-
-    public ProcedureDTO(Long id, String description, Double price, Boolean isActive) {
-        this.id = id;
-        this.description = description;
-        this.price = price;
-        this.isActive = isActive;
     }
 
     public ProcedureDTO(Procedure obj){
@@ -35,6 +31,7 @@ public class ProcedureDTO {
         }else{
             setProcedureType(new ProductProcedureType(0L));
         }
+        setDuration(obj.getDuration());
         setIsActive(obj.getIsActive());
     }
 }

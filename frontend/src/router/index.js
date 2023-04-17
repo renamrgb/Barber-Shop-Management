@@ -219,6 +219,33 @@ const routes = [
           },         
         ],
       },
+      {
+        path: '/schedule',
+        name: 'Schedule',
+        component: {
+          render() {
+            return h(resolveComponent('router-view'))
+          },
+        },
+        redirect: '/schedule',
+        children: [                    
+          {
+            path: '/schedule/create',
+            name: 'Registar Agendamento',
+            component: () => import('@/views/schedule/ScheduleCreate.vue'),
+          },
+          {
+            path: '/stock/listLaunchProducts',
+            name: 'Listagem de lançamentos',
+            component: () => import('@/views/stock/LançarProdutosList.vue'),
+          },
+          {
+            path: '/stock/launchProducts/:id',
+            name: 'Visualizar Lançamento',
+            component: () => import('@/views/stock/LançarProdutos.vue'),
+          },         
+        ],
+      },
     ],
   },
   {

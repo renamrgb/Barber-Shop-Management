@@ -222,6 +222,7 @@ export default {
         this.form.password = "";
         res = await this.service.alterar(this.id, this.form);
       }
+      console.log(res);
       if (res.status == 201) {
         this.$refs.toast.createToast("Cadastrado com sucesso!");
         this.$router.push("/forms/profissional");
