@@ -96,6 +96,7 @@ public class TestConfig implements CommandLineRunner {
                     "PROFISSIONAL " + i, "user" + i + "@teste.com.br", "12345678", "18997101710", "50349034826", "102345879", new Address(), new AccessLevel(NivelAcessoEnum.ROLE_ADMIN), true
             ));
             p.getProcedures().add(proc1);
+            p.getProcedures().add(new Procedure(2L));
             professionalRepository.save(p);
         }
 

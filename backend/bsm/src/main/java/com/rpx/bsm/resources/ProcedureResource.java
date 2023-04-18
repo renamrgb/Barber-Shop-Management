@@ -1,8 +1,6 @@
 package com.rpx.bsm.resources;
 
-import com.rpx.bsm.dto.ExpenseTypeDTO;
 import com.rpx.bsm.dto.ProcedureDTO;
-import com.rpx.bsm.dto.ProductDTO;
 import com.rpx.bsm.entities.Procedure;
 import com.rpx.bsm.records.ProcedureRecord;
 import com.rpx.bsm.services.ProcedureService;
