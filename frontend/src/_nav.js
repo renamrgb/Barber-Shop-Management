@@ -2,7 +2,7 @@ export default [
   {
     component: 'CNavGroup',
     name: 'Agendamentos',
-    icon: 'cil-cog',
+    icon: 'cil-calendar-check',
     items: [  
       {
         component: 'CNavItem',

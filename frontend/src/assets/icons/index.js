@@ -24,6 +24,7 @@ import {
   cibCcApplePay,
   cibCcAmex,
   cilTrash,
+  cilCalendarCheck,
   cilPlus,
   cilCasino
 } from '@coreui/icons'
@@ -173,6 +174,7 @@ export const iconsSet = Object.assign(
     cibCcApplePay,
     cibCcAmex,
     cilTrash,
+    cilCalendarCheck,
     cilPlus,
     cilPlaylistAdd,
     cilMagnifyingGlass,
