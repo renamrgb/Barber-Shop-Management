@@ -144,9 +144,11 @@ public class TestConfig implements CommandLineRunner {
         parameter.getParameterValues().add(new ParameterValue("Horário de encerramento","END_TIME", "18:00", parameter));
         parametersRepository.save(parameter);
         /*============================================================================================================*/
+        Set<Procedure> procedures = new HashSet<>();
+        procedures.add(new Procedure(1L));
         Schedule s = new Schedule();
         s.setCustomer(new Customer(1L));
-        s.setProcedure(proc1);
+        s.setProcedures(procedures);
         LocalDateTime agora = LocalDateTime.now();
         agora = agora.withHour(16).withMinute(0).withSecond(0).withNano(0);
         s.setStartDate(agora);
@@ -156,7 +158,7 @@ public class TestConfig implements CommandLineRunner {
         /*============================================================================================================*/
         Schedule s2 = new Schedule();
         s2.setCustomer(new Customer(2L));
-        s2.setProcedure(proc1);
+        s2.setProcedures(procedures);
         agora = LocalDateTime.now();
         agora = agora.withHour(10).withMinute(0).withSecond(0).withNano(0);
         s2.setStartDate(agora);

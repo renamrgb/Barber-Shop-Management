@@ -4,10 +4,15 @@ import com.rpx.bsm.entities.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.springframework.data.domain.Page;
 
 import javax.persistence.*;
 import java.io.Serializable;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Getter
 @Setter
@@ -17,7 +22,7 @@ public class ScheduleDTO implements Serializable {
     private CustomerDTO client;
     private LocalDateTime startDate;
     private LocalDateTime endDate;
-    private ProcedureDTO procedure;
+    private List<ProcedureDTO> procedures;
     private ProfessionalDTO professional;
 
     public ScheduleDTO(Schedule obj) {
@@ -25,7 +30,12 @@ public class ScheduleDTO implements Serializable {
         setStartDate(obj.getStartDate());
         setEndDate(obj.getEndDate());
         setClient(new CustomerDTO(obj.getCustomer()));
-        setProcedure(new ProcedureDTO(obj.getProcedure()));
+        List<Procedure> list = new ArrayList<>(obj.getProcedures());
+        List<ProcedureDTO> listaDTO = list.stream().map(modelo -> {
+            ProcedureDTO dto = new ProcedureDTO(modelo);
+            return dto;
+        }).collect(Collectors.toList());
+        setProcedures(listaDTO);
         setProfessional(new ProfessionalDTO(obj.getProfessional()));
     }
 }

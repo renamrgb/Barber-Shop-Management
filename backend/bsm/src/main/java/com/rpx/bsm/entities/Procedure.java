@@ -40,8 +40,8 @@ public class Procedure implements Serializable {
     @JsonIgnore
     @ManyToMany(mappedBy = "procedures") //Nome do set
     private Set<Professional> professionals = new HashSet<>();
-    @OneToMany(mappedBy = "customer")
-    private List<Schedule> procedure;
+    @ManyToMany(mappedBy = "procedures")
+    private Set<Schedule> schedules;
 
     @NotNull
     private LocalTime duration;

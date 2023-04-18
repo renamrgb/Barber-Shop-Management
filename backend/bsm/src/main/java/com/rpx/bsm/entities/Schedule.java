@@ -8,6 +8,7 @@ import lombok.Setter;
 import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.Objects;
+import java.util.Set;
 
 @Getter
 @Setter
@@ -26,26 +27,30 @@ public class Schedule {
     private LocalDateTime startDate;
     @Column(nullable = false)
     private LocalDateTime endDate;
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "procedure_id", nullable = false)
-    private Procedure procedure;
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(name = "schedule_procedure",
+            joinColumns = @JoinColumn(name = "schedule_id"),
+            inverseJoinColumns = @JoinColumn(name = "procedure_id"))
+    private Set<Procedure> procedures;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "professional_id", nullable = false)
     private Professional professional;
 
-    public Schedule(Customer customer, LocalDateTime startDate, LocalDateTime endDate, Procedure procedure) {
+    public Schedule(Customer customer, LocalDateTime startDate, LocalDateTime endDate, Set<Procedure> procedures, Professional professional) {
         this.customer = customer;
         this.startDate = startDate;
         this.endDate = endDate;
-        this.procedure = procedure;
+        this.procedures = procedures;
+        this.professional = professional;
     }
 
     public Schedule(ScheduleRecord r) {
         this.customer = r.client();
         this.startDate = r.startDate();
         this.endDate = r.endDate();
-        this.procedure = r.procedure();
+        this.procedures = r.procedures();
+        this.professional = r.professional();
     }
 
     @Override
@@ -68,7 +73,8 @@ public class Schedule {
                 ", customer=" + customer +
                 ", startDate=" + startDate +
                 ", endDate=" + endDate +
-                ", procedure=" + procedure +
+                ", procedures=" + procedures +
+                ", professional=" + professional +
                 '}';
     }
 }

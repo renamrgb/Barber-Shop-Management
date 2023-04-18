@@ -24,4 +24,5 @@ public interface StockEntryRepository extends JpaRepository<StockEntry, Long> {
             "WHERE " +
             "  N.DATEOF_PURCHASE BETWEEN :min AND :max AND S.SUPPLIER LIKE %:supplier%", nativeQuery = true)
     Page<StockEntry> findByNfeDateofPurchaseBetweenAAndSupplier(String supplier, LocalDate min, LocalDate max, Pageable pageable);
+
 }

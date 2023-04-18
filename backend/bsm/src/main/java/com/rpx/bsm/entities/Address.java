@@ -1,5 +1,6 @@
 package com.rpx.bsm.entities;
 
+import com.rpx.bsm.records.AddresRecord;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -31,6 +32,10 @@ public class Address implements Serializable {
         this.complement = complement;
         this.city = city;
         this.state = state;
+    }
+
+    public Address(AddresRecord r){
+        setCity(r.city());
     }
 
     @Override

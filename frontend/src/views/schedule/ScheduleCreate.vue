@@ -236,8 +236,12 @@ export default {
       }
       if (valid) this.save();
     },
-    async save() {      
-      let res = await this.scheduleService.save(this.form, this.date, this.startTime);
+    async save() {
+      let res = await this.scheduleService.save(
+        this.form,
+        this.date,
+        this.startTime
+      );
       if (res.status == 201)
         this.$refs.toast.createToast("Agendamento registrado com sucesso!");
       else
@@ -251,12 +255,6 @@ export default {
   },
   mounted() {
     this.date = this.dateNow.dateNowISO();
-    let min = 30;
-    let ini = 08;
-    
-    
-
-
     this.carregarOptionsProfessional();
     if (this.id != undefined) {
       this.disabladInpluts();
