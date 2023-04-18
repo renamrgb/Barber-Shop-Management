@@ -167,6 +167,7 @@ export default {
         this.visibleLiveDemo = false;
         this.form.qty = 0;
         this.form.reason = "";
+        this.$emit('refreshList');
       } else {
         if (res.response.status == 400) {
           this.$refs.toast.createToastDanger(res.response.data.message);
@@ -177,6 +178,7 @@ export default {
         }
       }
     },
+
   },
   beforeUpdate() {
     if (this.id != "" && this.visibleLiveDemo) {

@@ -78,6 +78,7 @@
                 :options="options"
                 :searchable="true"
                 mode="tags"
+                @input="teste()"
               >
               </Multiselect>
             </div>
@@ -239,34 +240,29 @@ export default {
     },
     async consultarUm() {
       if (this.id != undefined) {
-        this.form.user = await this.service.buscarUm(this.id);
-        this.form.user.procedures.forEach((element) => {
+        this.form.user = await this.service.buscarUm(this.id);        
+        for (const element of this.form.user.procedures) {
           this.value.push(element.id);
-        });
-
+        }        
         this.$refs.documentForUser.typePerson = this.form.user.typePerson;
         this.$refs.documentForUser.document = this.form.user.document;
         this.$refs.documentForUser.rg = this.form.user.rg;
-
         this.$refs.addressForUser.address = this.form.user.address;
         this.$refs.addressForUser.change = true;
-
         this.$refs.passwordForUser.password = this.form.user.password;
       }
     },
     async carregarSelectProcedimentos() {
-      let res = await this.procedimentoService.consultarTodos();
-      res.forEach((element) => {
+      const RES = await this.procedimentoService.consultarTodos();
+      for(const E of RES){
         this.options.push({
-          value: element.id,
-          description: element.description,
+          value: E.id,
+          description: E.description,
         });
-      });
-    },
-    carregaValue(itens) {
-      itens.forEach((element) => {
-        this.value.push(element.id);
-      });
+      }
+    },    
+    teste() {
+      console.log(this.value);
     },
   },
   mounted() {

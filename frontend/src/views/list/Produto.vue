@@ -93,7 +93,10 @@
     </CCol>
   </CRow>
   <toast ref="toast" />
-  <ModalStockWriteOffVue ref="modalStockWriteOffVue" />
+  <ModalStockWriteOffVue
+    ref="modalStockWriteOffVue"
+    @refreshList="refreshList"
+  />
 </template>
 
 <script>
@@ -163,6 +166,10 @@ export default {
           this.$refs.toast.createToast("Ocorreu um erro ao excluir item!");
         }
       }
+    },
+    refreshList() {
+      console.log("Aqui!");
+      this.consultaTodos();
     },
     alterar(id) {
       this.$router.push({ path: `/forms/produto/cadastro/${id}` });

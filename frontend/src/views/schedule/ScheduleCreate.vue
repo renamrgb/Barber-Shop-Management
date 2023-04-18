@@ -9,7 +9,12 @@
           <div class="row mb-3">
             <div class="col">
               <CFormLabel for="nome">* Data do agendamento</CFormLabel>
-              <CFormInput name="Data da compra" type="date" v-model="date" />
+              <CFormInput
+                name="Data da compra"
+                type="date"
+                v-model="date"
+                @change="changeDate()"
+              />
             </div>
             <div class="col">
               <CFormLabel for="nome">* Profissional</CFormLabel>
@@ -51,6 +56,10 @@
                 >
                 </Multiselect>
               </div>
+            </div>
+            <div class="row">
+              <div class="col"></div>
+              <div class="col"><span style="font-weight: bold;">Tempo de atendimento:</span> {{ timeService }}</div>
             </div>
             <div class="row">
               <div class="col">
@@ -140,13 +149,51 @@ export default {
       startTime: "",
     };
   },
+  computed: {
+    timeService() {
+      let value = 0,
+        procedure = undefined,
+        vetTimes = [];
+      for (const E of this.proceduresSelected) {
+        procedure = this.optionsSelectProcedures.find((p) => p.id == E.id);
+        vetTimes.push(procedure.duration);
+      }
+      return this.calcularHorarioTotal(vetTimes);
+    },
+  },
   methods: {
+    calcularHorarioTotal(vetor) {
+      const totalSegundos = vetor.reduce((acumulador, valorAtual) => {
+        const [horas, minutos, segundos] = valorAtual.split(":");
+        return acumulador + horas * 3600 + minutos * 60 + segundos * 1; // multiplicar por 1 para converter em número
+      }, 0);
+
+      const horas = Math.floor(totalSegundos / 3600);
+      const minutos = Math.floor((totalSegundos % 3600) / 60);
+      const segundos = totalSegundos % 60;
+
+      return `${horas.toString().padStart(2, "0")}:${minutos
+        .toString()
+        .padStart(2, "0")}:${segundos.toString().padStart(2, "0")}`;
+    },
+    changeDate() {
+      if (this.form.professional.id != "") {
+        const DIFFERENCE_IN_DAYS = this.dateNow.compareDates(this.date);
+        if (DIFFERENCE_IN_DAYS > 0) {
+          this.$refs.toast.createToastDanger(
+            "A data do agendamento não pode ser maior que a data atual ou vazia!"
+          );
+          this.availableTimes = [];
+        } else this.searchSchedules();
+      }
+    },
     async searchSchedules() {
       this.adjustmentSelects();
       const RES = await this.scheduleService.searchAvailable(
         this.date,
         this.form.professional.id
       );
+      this.availableTimes = [];
       this.availableTimes.push("Selecione um horário");
       RES.forEach((item) => {
         this.availableTimes.push(item);
@@ -208,7 +255,7 @@ export default {
       if (DIFFERENCE_IN_DAYS > 0) {
         valid = false;
         this.$refs.toast.createToastDanger(
-          "A data de pagamento não pode ser maior que a data atual ou vazia!"
+          "A data do agendamento não pode ser maior que a data atual ou vazia!"
         );
       }
       if (valid) this.searchSchedules();
