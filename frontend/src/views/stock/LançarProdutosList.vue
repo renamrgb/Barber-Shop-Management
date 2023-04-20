@@ -104,7 +104,7 @@
                       style="margin-right: 1%"
                       @click="this.alterar(item.id)"
                     >
-                      Visualizar
+                    <CIcon icon="cil-clipboard" />
                     </CButton>
                   </CTableDataCell>
                 </CTableRow>

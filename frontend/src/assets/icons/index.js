@@ -24,6 +24,7 @@ import {
   cibCcApplePay,
   cibCcAmex,
   cilTrash,
+  cilClipboard,
   cilCalendarCheck,
   cilPlus,
   cilCasino
@@ -174,6 +175,7 @@ export const iconsSet = Object.assign(
     cibCcApplePay,
     cibCcAmex,
     cilTrash,
+    cilClipboard,
     cilCalendarCheck,
     cilPlus,
     cilPlaylistAdd,

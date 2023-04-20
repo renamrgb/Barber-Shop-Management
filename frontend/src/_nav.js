@@ -8,7 +8,12 @@ export default [
         component: 'CNavItem',
         name: 'Registrar',
         to: '/schedule/create',
-      },          
+      },
+      {
+        component: 'CNavItem',
+        name: 'Consultar',
+        to: '/schedule/get',
+      },    
     ],
   },
   {
