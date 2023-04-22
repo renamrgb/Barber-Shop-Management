@@ -242,9 +242,9 @@ const routes = [
             component: () => import("@/views/schedule/ScheduleGet.vue"),
           },
           {
-            path: "/stock/launchProducts/:id",
-            name: "Visualizar Lançamento",
-            component: () => import("@/views/stock/LançarProdutos.vue"),
+            path: "/schedule/create/:time",
+            name: "Registrar Agendamento",
+            component: () => import("@/views/schedule/ScheduleCreate.vue"),
           },
         ],
       },

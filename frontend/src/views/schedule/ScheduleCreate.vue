@@ -14,6 +14,7 @@
                 type="date"
                 v-model="date"
                 @change="changeDate()"
+                :disabled="disabled"
               />
             </div>
             <div class="col">
@@ -23,17 +24,18 @@
                 v-model="profissionalSelected"
                 label="label"
                 :options="optionsSelectProfessional"
+                v-on:change="changeProfessional()"
               ></v-select>
             </div>
           </div>
-          <div class="row mb-3">
+          <div class="row mb-3" v-if="time == undefined">
             <div class="col d-grid gap-2">
               <CButton color="secondary" @click="searchValidation()"
                 >Buscar</CButton
               >
             </div>
           </div>
-          <div v-if="availableTimes.length > 0">
+          <div v-if="availableTimes.length > 0 || time != undefined">
             <div class="row mb-3">
               <div class="col">
                 <CFormLabel for="nome">* Horários disponíveis</CFormLabel>
@@ -41,6 +43,7 @@
                   :options="availableTimes"
                   :searchable="true"
                   v-model="startTime"
+                  :disabled="disabled"
                 >
                 </CFormSelect>
               </div>
@@ -59,7 +62,10 @@
             </div>
             <div class="row">
               <div class="col"></div>
-              <div class="col"><span style="font-weight: bold;">Tempo de atendimento:</span> {{ timeService }}</div>
+              <div class="col">
+                <span style="font-weight: bold">Tempo de atendimento:</span>
+                {{ timeService }}
+              </div>
             </div>
             <div class="row">
               <div class="col">
@@ -94,9 +100,7 @@
               @click="formValidation"
               >Confirmar</CButton
             >
-            <a href="/#/stock/listLaunchProducts" class="btn btn-danger"
-              >Cancelar</a
-            >
+            <a href="/#/schedule/get" class="btn btn-danger">Cancelar</a>
           </div>
         </CCardBody>
       </CCard>
@@ -118,7 +122,9 @@ export default {
   data() {
     return {
       dateNow: new DateNow(),
+      time: this.$route.params.time,
       id: this.$route.params.id,
+      disabled: false,
       date: "",
       optionsSelectProfessional: [],
       optionsSelectProcedures: [],
@@ -202,8 +208,9 @@ export default {
       this.carregarOptionsCustomer();
     },
     async searchProceduresProfessional(id) {
-      const RES = await this.pService.buscarUm(id);
-      RES.procedures.forEach((element) => {
+      let res = await this.pService.buscarUm(id);
+      res = res.procedures;
+      res.forEach((element) => {
         this.optionsSelectProcedures.push({
           value: element.id,
           description: element.description,
@@ -299,10 +306,28 @@ export default {
     async getById(id) {
       this.form = await this.service.getById(id);
     },
+    screenviaFullCalendar() {
+      let aux = this.time.split("T");
+      this.date = aux[0];
+      aux = aux[1].split("-");
+      this.time = aux[0];
+      this.availableTimes.push(this.time);
+      this.startTime = this.time;
+      this.carregarOptionsCustomer();
+      this.carregarOptionsProfessional();
+      this.disabled = true;
+    },
+    changeProfessional() {    
+      console.log("AQUI");  
+      if (this.profissionalSelected.value != "" && this.proceduresSelected.value != "") {        
+        this.searchProceduresProfessional(this.profissionalSelected.value);
+      }
+    },
   },
   mounted() {
     this.date = this.dateNow.dateNowISO();
     this.carregarOptionsProfessional();
+    this.screenviaFullCalendar();
     if (this.id != undefined) {
       this.disabladInpluts();
       this.getById(this.id);

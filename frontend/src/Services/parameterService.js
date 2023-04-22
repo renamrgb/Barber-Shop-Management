@@ -11,7 +11,7 @@ export default class ParameterService {
       return error;
     }
   }
-  async save(data){
+  async save(data) {
     try {
       const res = await api.put(`${this.url}/1`, data);
       return res.data;
@@ -19,4 +19,12 @@ export default class ParameterService {
       return error;
     }
   }
+  async consultWorkSchedules() {
+    try {
+      const RES = await api.get(`${this.url}/1`);
+      return RES.data.parameterValues;
+    } catch (error) {
+      return error;
+    }
+  }  
 }

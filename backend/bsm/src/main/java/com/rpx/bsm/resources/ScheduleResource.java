@@ -47,6 +47,13 @@ public class ScheduleResource {
         return ResponseEntity.ok().body(listDto);
     }
 
+    @GetMapping()@Transactional
+    public ResponseEntity<List<EventFullCalendarDTO>> consultScheduledTimes() {
+        List<Schedule> list = service.consultScheduledTimes();
+        List<EventFullCalendarDTO> listDto = list.stream().map(x -> new EventFullCalendarDTO(x)).collect(Collectors.toList());
+        return ResponseEntity.ok().body(listDto);
+    }
+
     @GetMapping(value = "/{id}")
     public ResponseEntity<ScheduleDTO> findById(@PathVariable Long id) {
         Schedule obj = service.findById(id);

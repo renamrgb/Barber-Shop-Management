@@ -139,4 +139,9 @@ public class ScheduleService {
     private void removeUnavailableTimes(List<LocalTime> availableTimes, Function<LocalTime, Boolean> condition, LocalTime endTime) {
         availableTimes.removeIf(time -> condition.apply(time) && time.isBefore(endTime));
     }
+
+    public List<Schedule> consultScheduledTimes(){
+        return repository.findAll();
+    }
+
 }
