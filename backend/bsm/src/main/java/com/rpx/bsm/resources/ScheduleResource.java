@@ -47,13 +47,15 @@ public class ScheduleResource {
         return ResponseEntity.ok().body(listDto);
     }
 
-    @GetMapping()@Transactional
+    @Transactional
+    @GetMapping()
     public ResponseEntity<List<EventFullCalendarDTO>> consultScheduledTimes() {
         List<Schedule> list = service.consultScheduledTimes();
         List<EventFullCalendarDTO> listDto = list.stream().map(x -> new EventFullCalendarDTO(x)).collect(Collectors.toList());
         return ResponseEntity.ok().body(listDto);
     }
 
+    @Transactional
     @GetMapping(value = "/{id}")
     public ResponseEntity<ScheduleDTO> findById(@PathVariable Long id) {
         Schedule obj = service.findById(id);
@@ -73,5 +75,16 @@ public class ScheduleResource {
         LocalDateTime startOfDay = date.atStartOfDay();
         LocalDateTime endOfDay = startOfDay.plusDays(1).minusSeconds(1);
         return service.availableTimes(startOfDay, endOfDay, professionalId);
+    }
+    @Transactional
+    @PutMapping(value = "/{id}")
+    public ResponseEntity<ScheduleDTO> update(@PathVariable Long id, @RequestBody ScheduleRecord record) {
+        Schedule obj = service.update(id, record);
+        return ResponseEntity.ok().body(new ScheduleDTO(obj));
+    }
+    @DeleteMapping(value = "/{id}")
+    public ResponseEntity<Void> delete(@PathVariable Long id) {
+        service.delete(id);
+        return ResponseEntity.noContent().build();
     }
 }

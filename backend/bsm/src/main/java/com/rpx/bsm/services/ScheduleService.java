@@ -1,17 +1,26 @@
 package com.rpx.bsm.services;
 
+import com.rpx.bsm.entities.Procedure;
 import com.rpx.bsm.entities.Professional;
 import com.rpx.bsm.entities.Schedule;
+import com.rpx.bsm.entities.ServiceItems;
+import com.rpx.bsm.records.ProcedimentoIdRecord;
+import com.rpx.bsm.records.ProfessionalRecord;
 import com.rpx.bsm.records.ScheduleRecord;
 import com.rpx.bsm.records.util.WorkSchedule;
 import com.rpx.bsm.repositories.ScheduleRepository;
+import com.rpx.bsm.resources.exceptions.DatabaseException;
+import com.rpx.bsm.resources.exceptions.ResourceNotFoundException;
 import net.bytebuddy.asm.Advice;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.persistence.EntityNotFoundException;
 import javax.sound.midi.Soundbank;
 import java.time.Duration;
 import java.time.LocalDate;
@@ -27,6 +36,8 @@ public class ScheduleService {
     private ScheduleRepository repository;
     @Autowired
     private ParameterService parameterService;
+    @Autowired
+    private ServiceItemsService serviceItemsService;
 
     public Schedule insert(ScheduleRecord record) {
         return repository.save(new Schedule(record));
@@ -144,4 +155,39 @@ public class ScheduleService {
         return repository.findAll();
     }
 
+    @Transactional
+    public Schedule update(Long id, ScheduleRecord record) {
+        try {
+            Schedule obj = repository.getReferenceById(id);
+            if(record.products().size() < obj.getServiceItems().size())
+                serviceItemsService.removenonCommonItems(obj.getServiceItems(), record.products());
+            obj = updateData(record, obj);
+            return repository.save(obj);
+        } catch (EntityNotFoundException e) {
+            throw new ResourceNotFoundException(id);
+        }
+    }
+    private Schedule updateData(ScheduleRecord record, Schedule obj) {
+        obj.setProfessional(record.professional());
+        obj.setCustomer(record.client());
+        obj.setProcedures(record.procedures());
+        obj.setEndDate(record.endDate());
+        obj.setStartDate(record.startDate());
+        List<ServiceItems> serviceItems = new ArrayList<>();
+        for(ServiceItems s : record.products()){
+            s.setSchedule(obj);
+            serviceItems.add(s);
+        }
+        obj.setServiceItems(serviceItems);
+        return obj;
+    }
+    public void delete(Long id) {
+        try {
+            repository.deleteById(id);
+        } catch (EmptyResultDataAccessException e) {
+            throw new ResourceNotFoundException(id);
+        } catch (DataIntegrityViolationException e) {
+            throw new DatabaseException(e.getMessage());
+        }
+    }
 }

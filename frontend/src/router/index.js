@@ -246,6 +246,11 @@ const routes = [
             name: "Registrar Agendamento",
             component: () => import("@/views/schedule/ScheduleCreate.vue"),
           },
+          {
+            path: "/schedule/get/:id",
+            name: "Consulta Atendimento",
+            component: () => import("@/views/schedule/ScheduleCreate.vue"),
+          },
         ],
       },
     ],

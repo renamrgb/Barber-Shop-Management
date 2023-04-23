@@ -58,18 +58,12 @@ export default {
     handleWeekendsToggle() {
       this.calendarOptions.weekends = !this.calendarOptions.weekends; // update a property
     },
-    handleDateSelect(selectInfo) {            
+    handleDateSelect(selectInfo) {
       this.$router.push(`/schedule/create/${selectInfo.startStr}`);
     },
     //Clicar no evento
     handleEventClick(clickInfo) {
-      if (
-        confirm(
-          `Tem certeza de que deseja excluir o evento '${clickInfo.event.title}'`
-        )
-      ) {
-        clickInfo.event.remove();
-      }
+      this.$router.push(`/schedule/get/${clickInfo.event.id}`);
     },
     handleEvents(events) {
       this.currentEvents = events;

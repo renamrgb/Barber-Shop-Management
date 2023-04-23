@@ -88,8 +88,34 @@ export default class ScheduleService {
   }
   async consultScheduledTimes() {
     try {
-      const RES = await api.get(`${this.url}`);      
+      const RES = await api.get(`${this.url}`);
       return RES.data;
+    } catch (error) {
+      return error;
+    }
+  }
+  async getById(id) {
+    try {
+      const RES = await api.get(`${this.url}/${id}`);
+      return RES.data;
+    } catch (error) {
+      return error;
+    }
+  }
+  async delete(id) {
+    try {
+      const RES = await api.delete(`${this.url}/${id}`);
+      return RES;
+    } catch (error) {
+      return error;
+    }
+  }
+  async update(id, item) {
+    try {      
+      item.endDate = item.endDate.replace("T", " ");
+      item.startDate = item.startDate.replace("T", " ");      
+      const res = await api.put(`${this.url}/${id}`, item);
+      return res;
     } catch (error) {
       return error;
     }

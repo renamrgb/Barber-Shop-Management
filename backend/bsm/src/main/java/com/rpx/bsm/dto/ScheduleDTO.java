@@ -24,6 +24,7 @@ public class ScheduleDTO implements Serializable {
     private LocalDateTime endDate;
     private List<ProcedureDTO> procedures;
     private ProfessionalDTO professional;
+    private List<ServiceItemsDTO> products;
 
     public ScheduleDTO(Schedule obj) {
         setId(obj.getId());
@@ -37,6 +38,11 @@ public class ScheduleDTO implements Serializable {
         }).collect(Collectors.toList());
         setProcedures(listaDTO);
         setProfessional(new ProfessionalDTO(obj.getProfessional()));
+        List<ServiceItemsDTO> serviceItemsDTOs = obj.getServiceItems().stream().map(modelo -> {
+            ServiceItemsDTO serviceItemsDTO = new ServiceItemsDTO(modelo);
+            return serviceItemsDTO;
+        }).collect(Collectors.toList());
+        setProducts(serviceItemsDTOs);
     }
 }
 

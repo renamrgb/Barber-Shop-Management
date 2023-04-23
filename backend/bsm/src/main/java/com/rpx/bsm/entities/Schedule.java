@@ -7,6 +7,8 @@ import lombok.Setter;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 
@@ -36,6 +38,8 @@ public class Schedule {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "professional_id", nullable = false)
     private Professional professional;
+    @OneToMany(mappedBy = "schedule", cascade = CascadeType.ALL)
+    private List<ServiceItems> serviceItems = new ArrayList<>();
 
     public Schedule(Customer customer, LocalDateTime startDate, LocalDateTime endDate, Set<Procedure> procedures, Professional professional) {
         this.customer = customer;
