@@ -40,6 +40,9 @@ public class Schedule {
     private Professional professional;
     @OneToMany(mappedBy = "schedule", cascade = CascadeType.ALL)
     private List<ServiceItems> serviceItems = new ArrayList<>();
+    @ManyToOne
+    @JoinColumn(name = "payment_method_id")
+    private PaymentMethod paymentMethod;
 
     public Schedule(Customer customer, LocalDateTime startDate, LocalDateTime endDate, Set<Procedure> procedures, Professional professional) {
         this.customer = customer;

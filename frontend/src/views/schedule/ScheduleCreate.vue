@@ -73,10 +73,13 @@
               </div>
             </div>
             <div class="row">
-              <div class="col"></div>
               <div class="col">
                 <span style="font-weight: bold">Tempo de atendimento:</span>
                 {{ timeService }}
+              </div>
+              <div class="col">
+                <span style="font-weight: bold">Valor dos procedimentos:</span>
+                {{ priceProceduresSelected }}
               </div>
             </div>
             <div class="row">
@@ -184,6 +187,67 @@
                 </CTable>
               </div>
             </div>
+            <div class="row mb-3">
+              <div class="col">
+                <div class="d-grid gap-2">
+                  <CButton
+                    color="danger"
+                    style="color: white"
+                    @click="
+                      () => {
+                        endService = !endService;
+                        if (endService == true) carregarOptionsPaymentMethod();
+                      }
+                    "
+                    >Finalizar Atendimento</CButton
+                  >
+                </div>
+              </div>
+            </div>
+            <div v-if="endService == true">
+              <div class="row">
+                <div class="col">
+                  <CFormLabel>* Forma de pagamento</CFormLabel>
+                </div>
+              </div>
+              <div class="row mb-3">
+                <div class="col">
+                  <CFormSelect
+                    :options="optionsSelectPaymentMethod"
+                    :searchable="true"
+                    v-model="payment.paymentMethod.id"
+                  >
+                  </CFormSelect>
+                </div>
+              </div>
+              <div class="row mb-3">
+                <div class="col">
+                  <CFormLabel>* Valor bruto</CFormLabel>
+                  <CInputGroup>
+                    <CInputGroupText>R$</CInputGroupText>
+                    <CFormInput v-model="payment.grossvalue" min="0" />
+                  </CInputGroup>
+                </div>
+                <div class="col">
+                  <CFormLabel>Desconto</CFormLabel>
+                  <CInputGroup>
+                    <CInputGroupText>R$</CInputGroupText>
+                    <CFormInput v-model="payment.discount" min="0" />
+                  </CInputGroup>
+                </div>
+                <div class="col">
+                  <CFormLabel>Valor total</CFormLabel>
+                  <CInputGroup>
+                    <CInputGroupText>R$</CInputGroupText>
+                    <CFormInput
+                      v-model="payment.amount"
+                      min="0"
+                      :disabled="true"
+                    />
+                  </CInputGroup>
+                </div>
+              </div>
+            </div>
           </div>
           <div class="d-grid gap-2 d-md-flex justify-content-md-end">
             <CButton
@@ -216,9 +280,11 @@ import ScheduleService from "@/Services/scheduleService";
 import ProdutoService from "@/Services/produtoService";
 import DateNow from "@/util/dateNow.js";
 import ModalDelete from "@/components/ModalDelete.vue";
+import FormaPagamentoService from "@/Services/formaPagamentoService";
+import { CFormLabel } from "@coreui/vue";
 export default {
   name: "Registrar Atendiemtno",
-  components: { Toast, Multiselect, ModalDelete },
+  components: { Toast, Multiselect, ModalDelete, CFormLabel },
   data() {
     return {
       modalExcluir: false,
@@ -233,6 +299,8 @@ export default {
       scheduleService: new ScheduleService(),
       cServeice: new ClienteService(),
       productService: new ProdutoService(),
+      paymentMethodService: new FormaPagamentoService(),
+      endService: false,
       form: {
         client: {
           id: "",
@@ -244,6 +312,14 @@ export default {
         },
         procedures: [],
         products: [],
+      },
+      payment: {
+        amount: 0.0,
+        discount: 0.0,
+        grossvalue: 0.0,
+        paymentMethod: {
+          id: ""
+        },
       },
       profissionalSelected: {
         value: "",
@@ -257,6 +333,7 @@ export default {
       proceduresSelected: [],
       optionsSelectCustomer: [],
       optionsSelectProduct: [],
+      optionsSelectPaymentMethod: [],
       availableTimes: [],
       startTime: "",
       product: {
@@ -276,15 +353,26 @@ export default {
       }
       return total.toFixed(2);
     },
+    total() {
+      return this.payment.grossvalue - this.payment.discount;
+    },
     timeService() {
-      let value = 0,
-        procedure = undefined,
+      let procedure = undefined,
         vetTimes = [];
       for (const E of this.proceduresSelected) {
         procedure = this.optionsSelectProcedures.find((p) => p.id == E.id);
         vetTimes.push(procedure.duration);
       }
       return this.calcularHorarioTotal(vetTimes);
+    },
+    priceProceduresSelected() {
+      let priceProcedures = 0,
+        procedure = undefined;
+      for (const E of this.proceduresSelected) {
+        procedure = this.optionsSelectProcedures.find((p) => p.id == E.id);
+        priceProcedures += parseFloat(procedure.price);
+      }
+      return priceProcedures.toFixed(2);
     },
     labelTimeAvaliabel() {
       if (this.id == undefined) {
@@ -301,7 +389,32 @@ export default {
       }
     },
   },
+  watch: {
+    calculateTotal(novoValor) {
+      this.payment.grossvalue =
+        parseFloat(novoValor) + parseFloat(this.priceProceduresSelected);
+    },
+    "payment.discount"(novoValor) {
+      if (novoValor == "") this.payment.discount = 0;
+      else
+        this.payment.amount = this.payment.grossvalue - parseFloat(novoValor);
+    },
+    "payment.grossvalue"(novoValor) {
+      this.payment.amount = parseFloat(novoValor);
+    },
+  },
   methods: {
+    async carregarOptionsPaymentMethod() {
+      const RESPONSE =
+        await this.paymentMethodService.consultarFormasPagamento();
+      this.optionsSelectPaymentMethod.push("Selecione uma opção");
+      for (const ELEMENT of RESPONSE) {
+        this.optionsSelectPaymentMethod.push({
+          value: ELEMENT.id,
+          label: ELEMENT.description,
+        });
+      }
+    },
     toCallModalDele() {
       this.modalExcluir = true;
     },
@@ -322,6 +435,25 @@ export default {
       if (indice > -1) this.form.products.splice(indice, 1);
       console.log(JSON.stringify(this.form.products));
       console.log(indice);
+    },
+    validationFinishService() {
+      let valid = true;
+      if (this.payment.grossvalue <= 0) {
+        valid = false;
+        this.$refs.toast.createToastDanger("O valor bruto deve ser maior de 0");
+      }
+      // if (this.payment.discount <= 0) {
+      //   valid = false;
+      //   this.$refs.toast.createToastDanger("O desconto deve ser maior de 0");
+      // }
+      if (this.payment.paymentMethod == "") {
+        console.log(this.payment.paymentMethod);
+        valid = false;
+        this.$refs.toast.createToastDanger(
+          "A forma de pagamento é obrigatória"
+        );
+      }
+      return valid;
     },
     validationAddProduct() {
       let valid = true;
@@ -411,6 +543,7 @@ export default {
           value: ELEMENT.id,
           description: ELEMENT.description,
           duration: ELEMENT.duration,
+          price: ELEMENT.price,
         });
       }
     },
@@ -484,6 +617,9 @@ export default {
           "Você deve selecionar o cliente para o agendamento"
         );
       }
+      if (this.endService) {
+        valid = this.validationFinishService();
+      }
       if (valid) this.save();
     },
     async save() {
@@ -494,8 +630,15 @@ export default {
           this.date,
           this.startTime
         );
-      else res = await this.scheduleService.update(this.id, this.form);
-
+      else if (this.id != undefined && this.endService) {
+        console.log("AQUI");
+        res = await this.scheduleService.finishService(this.id, this.form, this.payment);
+      } else
+        res = await this.scheduleService.update(
+          this.id,
+          this.form,
+          this.payment
+        );
       if (res.status == 201) {
         this.$refs.toast.createToast("Atendiemnto registrado com sucesso!");
         this.$router.push(`/schedule/get`);

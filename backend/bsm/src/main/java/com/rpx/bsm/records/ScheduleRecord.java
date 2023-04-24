@@ -1,10 +1,7 @@
 package com.rpx.bsm.records;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.rpx.bsm.entities.Customer;
-import com.rpx.bsm.entities.Procedure;
-import com.rpx.bsm.entities.Professional;
-import com.rpx.bsm.entities.ServiceItems;
+import com.rpx.bsm.entities.*;
 
 import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
@@ -23,6 +20,6 @@ public record ScheduleRecord(
         Set<Procedure> procedures,
         @NotNull
         Professional professional,
-        List<ServiceItems> products
-
+        List<ServiceItems> products,
+        PaymentMethod paymentMethod
 ) {}

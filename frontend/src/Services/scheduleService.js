@@ -111,9 +111,21 @@ export default class ScheduleService {
     }
   }
   async update(id, item) {
-    try {      
+    try {
       item.endDate = item.endDate.replace("T", " ");
-      item.startDate = item.startDate.replace("T", " ");      
+      item.startDate = item.startDate.replace("T", " ");
+      const res = await api.put(`${this.url}/${id}`, item);
+      return res;
+    } catch (error) {
+      return error;
+    }
+  }
+  async finishService(id, item, payment) {
+    try {
+      console.log(payment);
+      item.endDate = item.endDate.replace("T", " ");
+      item.startDate = item.startDate.replace("T", " ");
+      item.paymentMethod = payment;
       const res = await api.put(`${this.url}/${id}`, item);
       return res;
     } catch (error) {

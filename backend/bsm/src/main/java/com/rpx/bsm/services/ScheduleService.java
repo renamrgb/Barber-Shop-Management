@@ -179,6 +179,7 @@ public class ScheduleService {
             serviceItems.add(s);
         }
         obj.setServiceItems(serviceItems);
+        obj.setPaymentMethod(record.paymentMethod());
         return obj;
     }
     public void delete(Long id) {
