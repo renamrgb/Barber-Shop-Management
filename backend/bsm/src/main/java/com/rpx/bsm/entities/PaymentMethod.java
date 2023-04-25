@@ -32,6 +32,10 @@ public class PaymentMethod implements Serializable {
         this.isActive = isActive;
     }
 
+    public PaymentMethod(Long id) {
+        Id = id;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

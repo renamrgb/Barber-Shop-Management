@@ -72,7 +72,7 @@
                 </Multiselect>
               </div>
             </div>
-            <div class="row">
+            <div class="row mb-3">
               <div class="col">
                 <span style="font-weight: bold">Tempo de atendimento:</span>
                 {{ timeService }}
@@ -187,7 +187,7 @@
                 </CTable>
               </div>
             </div>
-            <div class="row mb-3">
+            <div class="row mb-3" v-if="id != undefined">
               <div class="col">
                 <div class="d-grid gap-2">
                   <CButton
@@ -447,7 +447,7 @@ export default {
         valid = false;
         this.$refs.toast.createToastDanger(
           "A forma de pagamento é obrigatória"
-        );      
+        );
       }
       return valid;
     },
@@ -626,18 +626,22 @@ export default {
           this.date,
           this.startTime
         );
-      else if (this.id != undefined && this.endService) {            
+      else if (this.id != undefined && this.endService) {
+        console.log("AQUI finishService ");
         res = await this.scheduleService.finishService(
           this.id,
           this.form,
           this.payment
         );
-      } else
+      } else {
+        console.log("AQUI update");
         res = await this.scheduleService.update(
           this.id,
           this.form,
           this.payment
         );
+      }
+
       if (res.status == 201) {
         this.$refs.toast.createToast("Atendimento registrado com sucesso!");
         this.$router.push(`/schedule/get`);
@@ -685,11 +689,17 @@ export default {
       this.customerSelected.value = this.form.client.id;
       this.customerSelected.label = this.form.client.name;
       this.disabled = true;
-      this.disabledById = true;
+      this.disabledById = true;            
+      if (this.form.payment.paymentMethod.id != undefined) {
+        this.endService = true;
+        await this.carregarOptionsPaymentMethod();
+        this.payment = this.form.payment;
+      }
       this.carregarProductSelect();
     },
   },
   mounted() {
+    console.log(JSON.stringify(this.payment));
     this.date = this.dateNow.dateNowISO();
     this.carregarOptionsProfessional();
     if (this.time != undefined) this.screenviaFullCalendar();

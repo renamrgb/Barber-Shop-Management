@@ -25,14 +25,19 @@ public class PaymentSchedule implements Serializable {
     @ManyToOne
     @JoinColumn(name = "payment_method_id")
     private PaymentMethod paymentMethod;
-    @OneToMany(mappedBy = "paymentSchedule")
-    private List<Schedule> schedules;
+    @OneToOne
+    @JoinColumn(name = "schedule_id")
+    private Schedule schedule;
 
     public PaymentSchedule(Double amount, Double grossvalue, Double discount, PaymentMethod paymentMethod) {
         this.amount = amount;
         this.grossvalue = grossvalue;
         this.discount = discount;
         this.paymentMethod = paymentMethod;
+    }
+
+    public PaymentSchedule(Schedule schedule) {
+        this.schedule = schedule;
     }
 
     @Override
@@ -47,7 +52,6 @@ public class PaymentSchedule implements Serializable {
     public int hashCode() {
         return Objects.hash(Id);
     }
-
     @Override
     public String toString() {
         return "PaymentSchedule{" +
@@ -56,6 +60,7 @@ public class PaymentSchedule implements Serializable {
                 ", grossvalue=" + grossvalue +
                 ", discount=" + discount +
                 ", paymentMethod=" + paymentMethod +
+                ", schedule=" + schedule +
                 '}';
     }
 }

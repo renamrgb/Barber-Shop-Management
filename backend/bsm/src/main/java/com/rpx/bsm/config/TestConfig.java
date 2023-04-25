@@ -155,6 +155,7 @@ public class TestConfig implements CommandLineRunner {
         s.setStartDate(agora);
         s.setEndDate(agora.plusMinutes(90));
         s.setProfessional(new Professional(1L));
+        s.setPaymentSchedule(new PaymentSchedule(s));
         scheduleRepository.save(s);
         /*============================================================================================================*/
         Schedule s2 = new Schedule();
@@ -165,6 +166,7 @@ public class TestConfig implements CommandLineRunner {
         s2.setStartDate(agora);
         s2.setEndDate(agora.plusMinutes(90));
         s2.setProfessional(new Professional(1L));
+        s2.setPaymentSchedule(new PaymentSchedule(s2));
         scheduleRepository.save(s2);
     }
 

@@ -1,9 +1,6 @@
 package com.rpx.bsm.services;
 
-import com.rpx.bsm.entities.Procedure;
-import com.rpx.bsm.entities.Professional;
-import com.rpx.bsm.entities.Schedule;
-import com.rpx.bsm.entities.ServiceItems;
+import com.rpx.bsm.entities.*;
 import com.rpx.bsm.records.ProcedimentoIdRecord;
 import com.rpx.bsm.records.ProfessionalRecord;
 import com.rpx.bsm.records.ScheduleRecord;
@@ -179,8 +176,13 @@ public class ScheduleService {
             serviceItems.add(s);
         }
         obj.setServiceItems(serviceItems);
-        if(record.payment() != null)
-            obj.setPaymentSchedule(record.payment());
+        if(record.payment().getPaymentMethod().getId() != null){
+            obj.getPaymentSchedule().setSchedule(obj);
+            obj.getPaymentSchedule().setPaymentMethod(new PaymentMethod(record.payment().getPaymentMethod().getId()));
+            obj.getPaymentSchedule().setAmount(record.payment().getAmount());
+            obj.getPaymentSchedule().setDiscount(record.payment().getDiscount());
+            obj.getPaymentSchedule().setGrossvalue(record.payment().getGrossvalue());
+        }
         return obj;
     }
     public void delete(Long id) {
