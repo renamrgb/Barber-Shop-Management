@@ -25,7 +25,7 @@ public class PaymentMethod implements Serializable {
     @OneToMany(mappedBy = "paymentMethod")
     private List<Installment> installmentList;
     @OneToMany(mappedBy = "paymentMethod")
-    private List<Schedule> schedules;
+    private List<PaymentSchedule> paymentSchedules;
 
     public PaymentMethod(String description, boolean isActive) {
         this.description = description;

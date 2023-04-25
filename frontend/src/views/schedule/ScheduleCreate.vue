@@ -318,7 +318,7 @@ export default {
         discount: 0.0,
         grossvalue: 0.0,
         paymentMethod: {
-          id: ""
+          id: "",
         },
       },
       profissionalSelected: {
@@ -442,16 +442,12 @@ export default {
         valid = false;
         this.$refs.toast.createToastDanger("O valor bruto deve ser maior de 0");
       }
-      // if (this.payment.discount <= 0) {
-      //   valid = false;
-      //   this.$refs.toast.createToastDanger("O desconto deve ser maior de 0");
-      // }
-      if (this.payment.paymentMethod == "") {
+      if (this.payment.paymentMethod.id == "") {
         console.log(this.payment.paymentMethod);
         valid = false;
         this.$refs.toast.createToastDanger(
           "A forma de pagamento é obrigatória"
-        );
+        );      
       }
       return valid;
     },
@@ -630,9 +626,12 @@ export default {
           this.date,
           this.startTime
         );
-      else if (this.id != undefined && this.endService) {
-        console.log("AQUI");
-        res = await this.scheduleService.finishService(this.id, this.form, this.payment);
+      else if (this.id != undefined && this.endService) {            
+        res = await this.scheduleService.finishService(
+          this.id,
+          this.form,
+          this.payment
+        );
       } else
         res = await this.scheduleService.update(
           this.id,
@@ -640,10 +639,10 @@ export default {
           this.payment
         );
       if (res.status == 201) {
-        this.$refs.toast.createToast("Atendiemnto registrado com sucesso!");
+        this.$refs.toast.createToast("Atendimento registrado com sucesso!");
         this.$router.push(`/schedule/get`);
       } else if (res.status == 200)
-        this.$refs.toast.createToast("Atendiemnto registrado com sucesso!");
+        this.$refs.toast.createToast("Atendimento registrado com sucesso!");
       else
         this.$refs.toast.createToastDanger(
           "Ocorreu um erro ao registar agendamento!"

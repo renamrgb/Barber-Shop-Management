@@ -25,7 +25,7 @@ public class ScheduleDTO implements Serializable {
     private List<ProcedureDTO> procedures;
     private ProfessionalDTO professional;
     private List<ServiceItemsDTO> products;
-    private PaymentMethod paymentMethod;
+    private PaymentScheduleDTO payment;
 
     public ScheduleDTO(Schedule obj) {
         setId(obj.getId());
@@ -44,7 +44,7 @@ public class ScheduleDTO implements Serializable {
             return serviceItemsDTO;
         }).collect(Collectors.toList());
         setProducts(serviceItemsDTOs);
-        setPaymentMethod(obj.getPaymentMethod());
+        setPayment(new PaymentScheduleDTO(obj.getPaymentSchedule()));
     }
 }
 

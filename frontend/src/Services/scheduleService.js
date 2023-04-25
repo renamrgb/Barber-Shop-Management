@@ -121,11 +121,11 @@ export default class ScheduleService {
     }
   }
   async finishService(id, item, payment) {
-    try {
-      console.log(payment);
+    try {      
       item.endDate = item.endDate.replace("T", " ");
       item.startDate = item.startDate.replace("T", " ");
-      item.paymentMethod = payment;
+      item.payment = payment;
+      console.log(JSON.stringify(item));
       const res = await api.put(`${this.url}/${id}`, item);
       return res;
     } catch (error) {

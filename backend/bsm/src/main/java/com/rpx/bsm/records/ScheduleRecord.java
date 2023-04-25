@@ -21,5 +21,5 @@ public record ScheduleRecord(
         @NotNull
         Professional professional,
         List<ServiceItems> products,
-        PaymentMethod paymentMethod
+        PaymentSchedule payment
 ) {}

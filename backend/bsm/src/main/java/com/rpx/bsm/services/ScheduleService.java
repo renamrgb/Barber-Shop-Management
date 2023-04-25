@@ -179,7 +179,8 @@ public class ScheduleService {
             serviceItems.add(s);
         }
         obj.setServiceItems(serviceItems);
-        obj.setPaymentMethod(record.paymentMethod());
+        if(record.payment() != null)
+            obj.setPaymentSchedule(record.payment());
         return obj;
     }
     public void delete(Long id) {

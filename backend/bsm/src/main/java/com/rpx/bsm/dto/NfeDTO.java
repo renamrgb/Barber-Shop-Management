@@ -16,8 +16,6 @@ import java.time.LocalDate;
 @Setter
 @NoArgsConstructor
 public class NfeDTO implements Serializable {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY) //Auto incremento
     private Long id;
     private LocalDate dateofPurchase;
     private String numberNfe;
