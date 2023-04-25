@@ -169,8 +169,9 @@ export default {
       ) {
         this.salvar();
       }
-      console.log(`${this.$refs.passwordForUser.btnChangePassword}`);
-      console.log(this.v$.$errors);
+      console.log(`!${this.v$.$error} && \n
+        !${this.$refs.passwordForUser.btnChangePassword} && \n
+        ${this.$refs.passwordForUser.isValid()}`);
     },
     async salvar() {
       let res = undefined;

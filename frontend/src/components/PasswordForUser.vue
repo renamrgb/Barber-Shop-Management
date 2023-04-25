@@ -115,8 +115,10 @@ export default {
       }      
     },
     isValid() {
-      this.v$.$validate();
-      if (this.v$.$error && this.comparePasswords == "") return true;
+      this.v$.$validate();      
+      if (this.v$.$errors.length == 0 && this.comparePasswords == ""){        
+        return true;
+      } 
       return false;
     },
   },

@@ -150,7 +150,7 @@
                       <CTableHeaderCell scope="col"
                         >Quantidade</CTableHeaderCell
                       >
-                      <CTableHeaderCell scope="col">Preço</CTableHeaderCell>
+                      <CTableHeaderCell scope="col">Preço unitário</CTableHeaderCell>
                       <CTableHeaderCell scope="col"></CTableHeaderCell>
                     </CTableRow>
                   </CTableHead>
@@ -160,7 +160,7 @@
                       :key="index"
                     >
                       <CTableHeaderCell scope="row">{{
-                        item.id
+                        index + 1
                       }}</CTableHeaderCell>
                       <CTableDataCell>{{ item.title }}</CTableDataCell>
                       <CTableDataCell>{{ item.quantity }}</CTableDataCell>
@@ -187,7 +187,7 @@
                 </CTable>
               </div>
             </div>
-            <div class="row mb-3" v-if="id != undefined">
+            <div class="row mb-3" v-if="id != undefined && endService != true">
               <div class="col">
                 <div class="d-grid gap-2">
                   <CButton
@@ -689,7 +689,7 @@ export default {
       this.customerSelected.value = this.form.client.id;
       this.customerSelected.label = this.form.client.name;
       this.disabled = true;
-      this.disabledById = true;            
+      this.disabledById = true;
       if (this.form.payment.paymentMethod.id != undefined) {
         this.endService = true;
         await this.carregarOptionsPaymentMethod();
