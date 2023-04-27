@@ -67,6 +67,7 @@
                   trackBy="description"
                   :options="optionsSelectProcedures"
                   :searchable="true"
+                  :disabled="isItFinished"
                   mode="tags"
                 >
                 </Multiselect>
@@ -107,7 +108,7 @@
                 >
               </div>
             </div>
-            <div class="row mb-3" v-if="id != undefined">
+            <div class="row mb-3" v-if="id != undefined && !isItFinished">
               <div class="row">
                 <div class="col">
                   <CFormLabel for="nome">* Produto</CFormLabel>
@@ -150,7 +151,9 @@
                       <CTableHeaderCell scope="col"
                         >Quantidade</CTableHeaderCell
                       >
-                      <CTableHeaderCell scope="col">Preço unitário</CTableHeaderCell>
+                      <CTableHeaderCell scope="col"
+                        >Preço unitário</CTableHeaderCell
+                      >
                       <CTableHeaderCell scope="col"></CTableHeaderCell>
                     </CTableRow>
                   </CTableHead>
@@ -196,7 +199,9 @@
                     @click="
                       () => {
                         endService = !endService;
-                        if (endService == true) carregarOptionsPaymentMethod();
+                        if (endService == true) {
+                          carregarOptionsPaymentMethod();
+                        }
                       }
                     "
                     >Finalizar Atendimento</CButton
@@ -216,6 +221,7 @@
                     :options="optionsSelectPaymentMethod"
                     :searchable="true"
                     v-model="payment.paymentMethod.id"
+                    :disabled="isItFinished"
                   >
                   </CFormSelect>
                 </div>
@@ -225,14 +231,22 @@
                   <CFormLabel>* Valor bruto</CFormLabel>
                   <CInputGroup>
                     <CInputGroupText>R$</CInputGroupText>
-                    <CFormInput v-model="payment.grossvalue" min="0" />
+                    <CFormInput
+                      v-model="payment.grossvalue"
+                      :disabled="isItFinished"
+                      min="0"
+                    />
                   </CInputGroup>
                 </div>
                 <div class="col">
                   <CFormLabel>Desconto</CFormLabel>
                   <CInputGroup>
                     <CInputGroupText>R$</CInputGroupText>
-                    <CFormInput v-model="payment.discount" min="0" />
+                    <CFormInput
+                      v-model="payment.discount"
+                      :disabled="isItFinished"
+                      min="0"
+                    />
                   </CInputGroup>
                 </div>
                 <div class="col">
@@ -247,15 +261,31 @@
                   </CInputGroup>
                 </div>
               </div>
+              <div class="row mb-3" v-if="!isItFinished">
+                <div class="col">
+                  <LoyaltyCard
+                    v-if="form.client.loyaltyCard != undefined"
+                    :card="form.client.loyaltyCard"
+                    @apply-discount="applyDiscount"
+                  />
+                </div>
+              </div>
             </div>
           </div>
           <div class="d-grid gap-2 d-md-flex justify-content-md-end">
             <CButton
-              v-if="availableTimes.length > 0"
+              v-if="availableTimes.length > 0 && !isItFinished"
               color="primary"
               class="me-md-2"
               @click="formValidation"
               >Confirmar</CButton
+            >
+            <CButton
+              v-if="isItFinished"
+              color="primary"
+              class="me-md-2"
+              @click="formValidation"
+              >Estornar atendimento</CButton
             >
             <a href="/#/schedule/get" class="btn btn-danger">Cancelar</a>
           </div>
@@ -282,12 +312,14 @@ import DateNow from "@/util/dateNow.js";
 import ModalDelete from "@/components/ModalDelete.vue";
 import FormaPagamentoService from "@/Services/formaPagamentoService";
 import { CFormLabel } from "@coreui/vue";
+import LoyaltyCard from "@/components/loyaltyCard/LoyaltyCard.vue";
 export default {
   name: "Registrar Atendiemtno",
-  components: { Toast, Multiselect, ModalDelete, CFormLabel },
+  components: { Toast, Multiselect, ModalDelete, CFormLabel, LoyaltyCard },
   data() {
     return {
       modalExcluir: false,
+      isItFinished: false,
       dateNow: new DateNow(),
       time: this.$route.params.time,
       id: this.$route.params.id,
@@ -390,6 +422,16 @@ export default {
     },
   },
   watch: {
+    priceProceduresSelected(novoValor) {
+      console.log(novoValor);
+      this.payment.grossvalue =
+        parseFloat(this.payment.grossvalue) + parseFloat(novoValor);
+    },
+    calculateTotal(novoValor) {
+      console.log(novoValor);
+      this.payment.grossvalue =
+        parseFloat(this.payment.grossvalue) + parseFloat(novoValor);
+    },
     calculateTotal(novoValor) {
       this.payment.grossvalue =
         parseFloat(novoValor) + parseFloat(this.priceProceduresSelected);
@@ -404,6 +446,9 @@ export default {
     },
   },
   methods: {
+    applyDiscount(discount) {
+      this.payment.discount = discount;
+    },
     async carregarOptionsPaymentMethod() {
       const RESPONSE =
         await this.paymentMethodService.consultarFormasPagamento();
@@ -645,9 +690,12 @@ export default {
       if (res.status == 201) {
         this.$refs.toast.createToast("Atendimento registrado com sucesso!");
         this.$router.push(`/schedule/get`);
-      } else if (res.status == 200)
+      } else if (res.status == 200) {
         this.$refs.toast.createToast("Atendimento registrado com sucesso!");
-      else
+        if (this.endService) {
+          this.$router.push(`/schedule/get`);
+        }
+      } else
         this.$refs.toast.createToastDanger(
           "Ocorreu um erro ao registar agendamento!"
         );
@@ -694,6 +742,7 @@ export default {
         this.endService = true;
         await this.carregarOptionsPaymentMethod();
         this.payment = this.form.payment;
+        this.isItFinished = true;
       }
       this.carregarProductSelect();
     },

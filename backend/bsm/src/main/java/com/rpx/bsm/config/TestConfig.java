@@ -66,6 +66,7 @@ public class TestConfig implements CommandLineRunner {
         for (int i = 0; i < 25; i++) {
             Customer customer = new Customer();
             customer.setUser(new User("CLIENTE " + i, "customer" + i + "@teste.com.br", "12345678", "18997101710", "50349034826", "102345879", new Address(), new AccessLevel(NivelAcessoEnum.ROLE_ADMIN), true));
+            customer.setLoyaltyCard(new LoyaltyCard(0L, customer, 0L));
             customerRepository.save(customer);
         }
         /*============================================================================================================*/
@@ -143,6 +144,8 @@ public class TestConfig implements CommandLineRunner {
         parameter.getParameterValues().add(new ParameterValue("Horário de início do almoço","LUNCH_START_TIME", "12:00", parameter));
         parameter.getParameterValues().add(new ParameterValue("Horário de termino do almoço","LUNCH_BREAK_TIME", "14:00", parameter));
         parameter.getParameterValues().add(new ParameterValue("Horário de encerramento","END_TIME", "18:00", parameter));
+        parameter.getParameterValues().add(new ParameterValue("Qtde de itens da cartela fidelidade","QTY_LOYALYTY_CARD", "6", parameter));
+        parameter.getParameterValues().add(new ParameterValue("Valor do disconto para a cartela fidelidade","DISCOUNT_LOYALYTY_CARD", "30.00", parameter));
         parametersRepository.save(parameter);
         /*============================================================================================================*/
         Set<Procedure> procedures = new HashSet<>();

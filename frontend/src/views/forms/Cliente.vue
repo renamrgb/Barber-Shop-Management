@@ -68,6 +68,11 @@
               </div>
             </div>
             <AddressForUser ref="addressForUser" />
+            <div class="row mb-3" v-if="form.loyaltyCard != undefined">
+              <div class="col">
+                <LoyaltyCard :card="form.loyaltyCard" />
+              </div>
+            </div>
             <div class="mb-3">
               <br />
               <CFormSwitch
@@ -98,8 +103,15 @@ import Toast from "@/components/Toast.vue";
 import DocumentForUser from "@/components/DocumentForUser.vue";
 import AddressForUser from "@/components/AddressForUser.vue";
 import PasswordForUserVue from "@/components/PasswordForUser.vue";
+import LoyaltyCard from "@/components/loyaltyCard/LoyaltyCard.vue";
 export default {
-  components: { Toast, DocumentForUser, AddressForUser, PasswordForUserVue },
+  components: {
+    Toast,
+    DocumentForUser,
+    AddressForUser,
+    PasswordForUserVue,
+    LoyaltyCard,
+  },
   name: "Cliente",
   data() {
     return {
@@ -169,9 +181,6 @@ export default {
       ) {
         this.salvar();
       }
-      console.log(`!${this.v$.$error} && \n
-        !${this.$refs.passwordForUser.btnChangePassword} && \n
-        ${this.$refs.passwordForUser.isValid()}`);
     },
     async salvar() {
       let res = undefined;
@@ -180,7 +189,6 @@ export default {
       this.form.user.typePerson = this.$refs.documentForUser.typePerson;
       this.form.user.address = this.$refs.addressForUser.address;
       this.form.user.password = this.$refs.passwordForUser.password;
-
       if (this.id == undefined) {
         res = await this.service.cadastrar(this.form);
       } else {
@@ -204,7 +212,7 @@ export default {
     async consultarUm() {
       if (this.id != undefined) {
         this.form.user = await this.service.buscarUm(this.id);
-
+        this.form.loyaltyCard = this.form.user.loyaltyCard;
         this.$refs.documentForUser.document = this.form.user.document;
         this.$refs.documentForUser.rg = this.form.user.rg;
         this.$refs.documentForUser.typePerson = this.form.user.typePerson;

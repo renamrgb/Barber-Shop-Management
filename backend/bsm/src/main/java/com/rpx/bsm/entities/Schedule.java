@@ -40,7 +40,7 @@ public class Schedule {
     private Professional professional;
     @OneToMany(mappedBy = "schedule", cascade = CascadeType.ALL)
     private List<ServiceItems> serviceItems = new ArrayList<>();
-    @OneToOne(cascade = CascadeType.PERSIST, mappedBy = "schedule")
+    @OneToOne(cascade = CascadeType.ALL, mappedBy = "schedule")
     private PaymentSchedule paymentSchedule;
 
     public Schedule(Customer customer, LocalDateTime startDate, LocalDateTime endDate, Set<Procedure> procedures, Professional professional) {

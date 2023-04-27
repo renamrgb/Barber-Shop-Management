@@ -35,6 +35,8 @@ public class ScheduleService {
     private ParameterService parameterService;
     @Autowired
     private ServiceItemsService serviceItemsService;
+    @Autowired
+    private LoyaltyCardService loyaltyCardService;
 
     public Schedule insert(ScheduleRecord record) {
         return repository.save(new Schedule(record));
@@ -156,6 +158,8 @@ public class ScheduleService {
     public Schedule update(Long id, ScheduleRecord record) {
         try {
             Schedule obj = repository.getReferenceById(id);
+            loyaltyCardService.update(record.client().getLoyaltyCard());
+            loyaltyCardService.setQtyUsed(record.client().getLoyaltyCard());
             if(record.products().size() < obj.getServiceItems().size())
                 serviceItemsService.removenonCommonItems(obj.getServiceItems(), record.products());
             obj = updateData(record, obj);

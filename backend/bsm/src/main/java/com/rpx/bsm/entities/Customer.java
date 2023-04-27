@@ -25,6 +25,8 @@ public class Customer implements Serializable {
     private User user;
     @OneToMany(mappedBy = "customer")
     private List<Schedule> schedule;
+    @OneToOne(cascade = CascadeType.ALL, mappedBy = "customer")
+    private LoyaltyCard loyaltyCard;
 
     public Customer() {
         this.user = new User();
@@ -37,6 +39,7 @@ public class Customer implements Serializable {
     public Customer(CustomerRecord record) {
         this.user = new User(record.user());
         this.user.getAccessLevel().setAuthority(NivelAcessoEnum.ROLE_USER);
+        setLoyaltyCard(new LoyaltyCard(this));
     }
 
     public Customer(Long id) {

@@ -1,13 +1,7 @@
 package com.rpx.bsm.resources;
 
-import com.rpx.bsm.dto.ExpenseDTO;
-import com.rpx.bsm.dto.InstallmentDTO;
-import com.rpx.bsm.dto.ParameterDTO;
-import com.rpx.bsm.dto.ProcedureDTO;
-import com.rpx.bsm.entities.Expense;
-import com.rpx.bsm.entities.Installment;
-import com.rpx.bsm.entities.Parameter;
-import com.rpx.bsm.entities.Procedure;
+import com.rpx.bsm.dto.*;
+import com.rpx.bsm.entities.*;
 import com.rpx.bsm.records.ExpenseRecord;
 import com.rpx.bsm.records.ParameterRecord;
 import com.rpx.bsm.services.ExpenseService;
@@ -47,6 +41,12 @@ public class ParameterResource {
     public ResponseEntity<ParameterDTO> findById(@PathVariable Long id){
         Parameter obj = service.findById();
         return ResponseEntity.ok().body(new ParameterDTO(obj));
+    }
+
+    @GetMapping(value = "findByKey")
+    public ResponseEntity<ParameterValueDTO> findByPameterKey(@RequestParam(name = "pameterKey", defaultValue = "") String pameterKey){
+        ParameterValue obj = service.findByPameterKey(pameterKey);
+        return ResponseEntity.ok().body(new ParameterValueDTO(obj));
     }
 
 }

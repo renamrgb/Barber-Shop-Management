@@ -12,7 +12,7 @@ export default class ClienteService {
     }
   }
   async cadastrar(item) {
-    try {      
+    try {
       const res = await api.post(this.url, this.replaceItem(item));
       return res;
     } catch (error) {
@@ -28,10 +28,12 @@ export default class ClienteService {
     }
   }
   async alterar(id, item) {
+    console.log(`${JSON.stringify(item)}`);
     try {
       const res = await api.put(`${this.url}/${id}`, this.replaceItem(item));
       return res;
     } catch (error) {
+      console.log(error);
       return error;
     }
   }
@@ -51,7 +53,7 @@ export default class ClienteService {
       return error;
     }
   }
-  async getAllPaged(pageId) {    
+  async getAllPaged(pageId) {
     try {
       const res = await api.get(`${this.url}/paged?page=${pageId}`);
       return res.data;
@@ -59,7 +61,7 @@ export default class ClienteService {
       return error;
     }
   }
-  async getByNamePaged(name, pageId) {    
+  async getByNamePaged(name, pageId) {
     try {
       const res = await api.get(
         `${this.url}/paged?name=${name}&page=${pageId}`
@@ -73,10 +75,11 @@ export default class ClienteService {
     item.user.phoneNumber = item.user.phoneNumber.replace(/[^\d]+/g, "");
     item.user.document = item.user.document.replace(/[^\d]+/g, "");
     item.user.rg = item.user.rg.replace(/[^\d]+/g, "");
-    item.user.address.zipCode = item.user.address.zipCode.replace(
-      /[^\d]+/g,
-      ""
-    );
+    if (item.user.address.zipCode != undefined)
+      item.user.address.zipCode = item.user.address.zipCode.replace(
+        /[^\d]+/g,
+        ""
+      );
     return item;
   }
 }

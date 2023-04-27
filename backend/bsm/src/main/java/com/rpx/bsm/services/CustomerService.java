@@ -27,30 +27,33 @@ public class CustomerService {
     private CustomerRepository repository;
     @Autowired
     private BCryptPasswordEncoder bCryptPasswordEncoder;
+    @Autowired
+    LoyaltyCardService loyaltyCardService;
 
-    public List<Customer> find(String name){
-        List<Customer> list= null;
+    public List<Customer> find(String name) {
+        List<Customer> list = null;
 
-        if(name.isEmpty())
-            list = repository.findAll();
-        else
-            list = repository.findByName(name);
+        if (name.isEmpty()) list = repository.findAll();
+        else list = repository.findByName(name);
 
         return list;
     }
-    public Page<Customer> findPaged(String name, Pageable pageable){
-        Page<Customer> list= null;
 
-        if(name.isEmpty())
-            list = repository.findAll(pageable);
-        else
-            list = repository.findByUserNameContaining(name, pageable);
+    public Page<Customer> findPaged(String name, Pageable pageable) {
+        Page<Customer> list = null;
+
+        if (name.isEmpty()) list = repository.findAll(pageable);
+        else list = repository.findByUserNameContaining(name, pageable);
 
         return list;
     }
 
     public Customer insert(CustomerRecord obj) {
-        return repository.save(new Customer(obj));
+        try {
+            return repository.save(new Customer(obj));
+        } catch (DataIntegrityViolationException e) {
+            throw new DatabaseException(e.getMessage());
+        }
     }
 
     public void delete(Long id) {

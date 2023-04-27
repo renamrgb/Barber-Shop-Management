@@ -17,6 +17,7 @@ public class CustomerDTO implements Serializable {
     private String document;
     private String rg;
     private AddressDTO address;
+    private LoyaltyCardDTO loyaltyCard;
     private Boolean isActive;
 
     public CustomerDTO() {
@@ -38,6 +39,7 @@ public class CustomerDTO implements Serializable {
         address.setNeighborhood(obj.getUser().getAddress().getNeighborhood());
         address.setComplement(obj.getUser().getAddress().getComplement());
         address.setCity(obj.getUser().getAddress().getCity());
+        setLoyaltyCard(new LoyaltyCardDTO(obj.getLoyaltyCard()));
         isActive = obj.getUser().getIsActive();
     }
 

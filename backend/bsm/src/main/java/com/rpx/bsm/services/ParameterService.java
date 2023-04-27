@@ -70,6 +70,11 @@ public class ParameterService {
         return entity;
     }
 
+    public ParameterValue findByPameterKey(String parameterKey) {
+        ParameterValue entity = repository.findByParameterKey(parameterKey);
+        return entity;
+    }
+
     @Transactional
     public Parameter update(Long id, ParameterRecord obj) {
         try {

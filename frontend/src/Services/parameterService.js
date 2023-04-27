@@ -26,5 +26,25 @@ export default class ParameterService {
     } catch (error) {
       return error;
     }
-  }  
+  }
+  async getMaxPointsCard() {
+    try {
+      const RES = await api.get(`${this.url}/1`);
+      const PARAMETER_VALUES = RES.data.parameterValues;
+      for (let e of PARAMETER_VALUES) {
+        if (e.parameter_key == "QTY_LOYALYTY_CARD")
+          return parseInt(e.parameter_value);
+      }
+    } catch (error) {
+      return error;
+    }
+  }
+  async getParamerterKey(key) {
+    try {
+      const RES = await api.get(`${this.url}/findByKey?pameterKey=${key}`);
+      return RES.data;
+    } catch (error) {
+      return error;
+    }
+  }
 }

@@ -21,12 +21,6 @@
                       placeholder=""
                       v-model="parameter.organization.name"
                     />
-                    <!-- <div
-                      v-if="v$.organization.name.$errors.length > 0"
-                      class="invalid-input-form"
-                    >
-                      {{ v$.organization.name.$errors[0].$message }}
-                    </div> -->
                   </div>
                 </div>
                 <div class="row mb-3">
@@ -39,12 +33,6 @@
                       v-model="parameter.organization.cnpj"
                       v-mask="'##.###.###/####-##'"
                     />
-                    <!-- <div
-                      v-if="v$.organization.cnpj.$errors.length > 0"
-                      class="invalid-input-form"
-                    >
-                      {{ v$.organization.cnpj.$errors[0].$message }}
-                    </div> -->
                   </div>
                 </div>
                 <CCard class="mb-4">
@@ -63,15 +51,27 @@
               <strong>Parametros</strong>
             </CCardHeader>
             <CCardBody>
-              <div class="row mb-3" v-for="e in this.parameter.parameterValues" :key="e.id">
+              <div
+                class="row mb-3"
+                v-for="e in this.parameter.parameterValues"
+                :key="e.id"
+              >
                 <div class="col">
                   <CFormLabel for="nome">* {{ e.parameter_name }}</CFormLabel>
                   <input
+                    v-if="e.parameter_key != 'DISCOUNT_LOYALYTY_CARD'"
                     :name="e.parameter_key"
-                    type="time"
+                    :type="type(e)"
                     class="form-control"
-                    v-model="e.parameter_value"                    
+                    v-model="e.parameter_value"
                   />
+                  <CInputGroup
+                    class="mb-1"
+                    v-if="e.parameter_key == 'DISCOUNT_LOYALYTY_CARD'"
+                  >
+                    <CInputGroupText>R$</CInputGroupText>
+                    <CFormInput v-model.lazy="e.parameter_value"
+                  /></CInputGroup>
                 </div>
               </div>
             </CCardBody>
@@ -124,15 +124,20 @@ export default {
     };
   },
   methods: {
+    type(item) {
+      if (item.parameter_key == "QTY_LOYALYTY_CARD") return "number";
+      else if (item.parameter_key == "DISCOUNT_LOYALYTY_CARD") return "text";
+      return "time";
+    },
     submitForm() {},
     async getParameter() {
-      this.parameter = await this.service.getParamerter();            
+      this.parameter = await this.service.getParamerter();
     },
-    async save(){
-      let res = await this.service.save(this.parameter);      
+    async save() {
+      let res = await this.service.save(this.parameter);
       console.log(res);
-      debugger
-    }
+      debugger;
+    },
   },
   mounted() {
     this.getParameter();
