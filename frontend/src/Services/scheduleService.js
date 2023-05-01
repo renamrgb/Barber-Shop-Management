@@ -24,7 +24,6 @@ export default class ScheduleService {
       );
       item.startDate = TIME_END_START.startTime;
       item.endDate = TIME_END_START.endTime;
-      console.log(JSON.stringify(item));
       const res = await api.post(this.url, item);
       return res;
     } catch (error) {
@@ -107,7 +106,7 @@ export default class ScheduleService {
       const RES = await api.delete(`${this.url}/${id}`);
       return RES;
     } catch (error) {
-      return error;
+      return error.response.data;
     }
   }
   async update(id, item) {
@@ -116,20 +115,27 @@ export default class ScheduleService {
       item.startDate = item.startDate.replace("T", " ");
       const res = await api.put(`${this.url}/${id}`, item);
       return res;
-    } catch (error) {
-      return error;
+    } catch (error) {      
+      return error.response.data;
     }
   }
   async finishService(id, item, payment) {
-    try {      
+    try {
       item.endDate = item.endDate.replace("T", " ");
       item.startDate = item.startDate.replace("T", " ");
       item.payment = payment;
-      console.log(JSON.stringify(item));
       const res = await api.put(`${this.url}/${id}`, item);
       return res;
     } catch (error) {
-      return error;
+      return error.response.data;
+    }
+  }
+  async reverseService(id) {
+    try {
+      const res = await api.put(`${this.url}/reverseService/${id}`);
+      return res;
+    } catch (error) {
+      return error.response.data;
     }
   }
 }

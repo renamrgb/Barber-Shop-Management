@@ -43,7 +43,7 @@
           >
         </div>
       </div>
-      <div class="row mb-3">
+      <div class="row mb-3" v-if="card.points == maxPoints">
         <div class="col" style="text-align: center">
           <CButton color="link" shape="rounded-0" @click="applyDiscount"
             >Aplicar desconto</CButton

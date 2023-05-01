@@ -108,167 +108,183 @@
                 >
               </div>
             </div>
-            <div class="row mb-3" v-if="id != undefined && !isItFinished">
-              <div class="row">
+            <div v-if="validForLaunchingProducts() || isFinite">
+              <div class="row mb-3" v-if="id != undefined && !isItFinished">
+                <div class="row">
+                  <div class="col">
+                    <CFormLabel for="nome">* Produto</CFormLabel>
+                  </div>
+                  <div class="col-5">
+                    <CFormLabel for="price">* Quantidade</CFormLabel>
+                  </div>
+                </div>
                 <div class="col">
-                  <CFormLabel for="nome">* Produto</CFormLabel>
+                  <v-select
+                    id="selectV"
+                    v-model="productSelected"
+                    label="label"
+                    :options="optionsSelectProduct"
+                  ></v-select>
                 </div>
-                <div class="col-5">
-                  <CFormLabel for="price">* Quantidade</CFormLabel>
+                <div class="col-4">
+                  <CInputGroup class="mb-1">
+                    <CFormInput
+                      name="quantidade"
+                      type="number"
+                      v-model="product.quantity"
+                      :min="0"
+                    />
+                  </CInputGroup>
+                </div>
+                <div class="col-1">
+                  <CButton color="info" shape="rounded-pill" @click="addProduct"
+                    ><CIcon icon="cil-plus" size="x"
+                  /></CButton>
+                </div>
+                <div class="bdr" v-if="form.products.length > 0">
+                  <CTable responsive="xl">
+                    <CTableHead class="table-dark">
+                      <CTableRow>
+                        <CTableHeaderCell scope="col">#</CTableHeaderCell>
+                        <CTableHeaderCell scope="col"
+                          >Título do produto</CTableHeaderCell
+                        >
+                        <CTableHeaderCell scope="col"
+                          >Quantidade</CTableHeaderCell
+                        >
+                        <CTableHeaderCell scope="col"
+                          >Preço unitário</CTableHeaderCell
+                        >
+                        <CTableHeaderCell scope="col"></CTableHeaderCell>
+                      </CTableRow>
+                    </CTableHead>
+                    <CTableBody>
+                      <CTableRow
+                        v-for="(item, index) in form.products"
+                        :key="index"
+                      >
+                        <CTableHeaderCell scope="row">{{
+                          index + 1
+                        }}</CTableHeaderCell>
+                        <CTableDataCell>{{ item.title }}</CTableDataCell>
+                        <CTableDataCell>{{ item.quantity }}</CTableDataCell>
+                        <CTableDataCell
+                          >R$ {{ item.price.toFixed(2) }}</CTableDataCell
+                        >
+                        <CTableDataCell>
+                          <CButton
+                            color="light"
+                            @click="removeProduct(item.id)"
+                          >
+                            <CIcon icon="cil-trash" />
+                          </CButton>
+                        </CTableDataCell>
+                      </CTableRow>
+                      <CTableRow>
+                        <CTableDataCell :colspan="4">
+                          <span style="font-weight: bold"
+                            >Total a ser pago:
+                          </span>
+                        </CTableDataCell>
+                        <CTableDataCell :colspan="1"
+                          >R$ {{ calculateTotal }}</CTableDataCell
+                        >
+                      </CTableRow>
+                    </CTableBody>
+                  </CTable>
                 </div>
               </div>
-              <div class="col">
-                <v-select
-                  id="selectV"
-                  v-model="productSelected"
-                  label="label"
-                  :options="optionsSelectProduct"
-                ></v-select>
-              </div>
-              <div class="col-4">
-                <CInputGroup class="mb-1">
-                  <CFormInput
-                    name="quantidade"
-                    type="number"
-                    v-model="product.quantity"
-                    :min="0"
-                  />
-                </CInputGroup>
-              </div>
-              <div class="col-1">
-                <CButton color="info" shape="rounded-pill" @click="addProduct"
-                  ><CIcon icon="cil-plus" size="x"
-                /></CButton>
-              </div>
-              <div class="bdr" v-if="form.products.length > 0">
-                <CTable responsive="xl">
-                  <CTableHead class="table-dark">
-                    <CTableRow>
-                      <CTableHeaderCell scope="col">#</CTableHeaderCell>
-                      <CTableHeaderCell scope="col"
-                        >Título do produto</CTableHeaderCell
-                      >
-                      <CTableHeaderCell scope="col"
-                        >Quantidade</CTableHeaderCell
-                      >
-                      <CTableHeaderCell scope="col"
-                        >Preço unitário</CTableHeaderCell
-                      >
-                      <CTableHeaderCell scope="col"></CTableHeaderCell>
-                    </CTableRow>
-                  </CTableHead>
-                  <CTableBody>
-                    <CTableRow
-                      v-for="(item, index) in form.products"
-                      :key="index"
-                    >
-                      <CTableHeaderCell scope="row">{{
-                        index + 1
-                      }}</CTableHeaderCell>
-                      <CTableDataCell>{{ item.title }}</CTableDataCell>
-                      <CTableDataCell>{{ item.quantity }}</CTableDataCell>
-                      <CTableDataCell
-                        >R$ {{ item.price.toFixed(2) }}</CTableDataCell
-                      >
-                      <CTableDataCell>
-                        <CButton color="light" @click="removeProduct(item.id)">
-                          <CIcon icon="cil-trash" />
-                        </CButton>
-                      </CTableDataCell>
-                    </CTableRow>
-                    <CTableRow>
-                      <CTableDataCell :colspan="4">
-                        <span style="font-weight: bold"
-                          >Total a ser pago:
-                        </span>
-                      </CTableDataCell>
-                      <CTableDataCell :colspan="1"
-                        >R$ {{ calculateTotal }}</CTableDataCell
-                      >
-                    </CTableRow>
-                  </CTableBody>
-                </CTable>
-              </div>
-            </div>
-            <div class="row mb-3" v-if="id != undefined && endService != true">
-              <div class="col">
-                <div class="d-grid gap-2">
-                  <CButton
-                    color="danger"
-                    style="color: white"
-                    @click="
-                      () => {
-                        endService = !endService;
-                        if (endService == true) {
-                          carregarOptionsPaymentMethod();
+              <div class="row mb-3" v-if="id != undefined && !endService">
+                <div class="col">
+                  <div class="d-grid gap-2">
+                    <CButton
+                      color="danger"
+                      style="color: white"
+                      @click="
+                        () => {
+                          endService = !endService;
+                          if (endService == true) {
+                            carregarOptionsPaymentMethod();
+                          }
                         }
-                      }
-                    "
-                    >Finalizar Atendimento</CButton
-                  >
+                      "
+                      >Finalizar Atendimento</CButton
+                    >
+                  </div>
+                </div>
+              </div>
+              <div v-if="endService == true">
+                <div class="row">
+                  <div class="col">
+                    <CFormLabel>* Forma de pagamento</CFormLabel>
+                  </div>
+                </div>
+                <div class="row mb-3">
+                  <div class="col">
+                    <CFormSelect
+                      :options="optionsSelectPaymentMethod"
+                      :searchable="true"
+                      v-model="payment.paymentMethod.id"
+                      :disabled="isItFinished"
+                    >
+                    </CFormSelect>
+                  </div>
+                </div>
+                <div class="row mb-3">
+                  <div class="col">
+                    <CFormLabel>* Valor bruto</CFormLabel>
+                    <CInputGroup>
+                      <CInputGroupText>R$</CInputGroupText>
+                      <CFormInput
+                        v-model="payment.grossvalue"
+                        :disabled="isItFinished"
+                        min="0"
+                      />
+                    </CInputGroup>
+                  </div>
+                  <div class="col">
+                    <CFormLabel>Desconto</CFormLabel>
+                    <CInputGroup>
+                      <CInputGroupText>R$</CInputGroupText>
+                      <CFormInput
+                        v-model="payment.discount"
+                        :disabled="isItFinished"
+                        min="0"
+                      />
+                    </CInputGroup>
+                  </div>
+                  <div class="col">
+                    <CFormLabel>Valor total</CFormLabel>
+                    <CInputGroup>
+                      <CInputGroupText>R$</CInputGroupText>
+                      <CFormInput
+                        v-model="payment.amount"
+                        min="0"
+                        :disabled="true"
+                      />
+                    </CInputGroup>
+                  </div>
+                </div>
+                <div class="row mb-3" v-if="!isItFinished">
+                  <div class="col">
+                    <LoyaltyCard
+                      v-if="form.client.loyaltyCard != undefined"
+                      :card="form.client.loyaltyCard"
+                      @apply-discount="applyDiscount"
+                    />
+                  </div>
+                </div>
+                <div class="row mb-3" v-if="isItFinished">
+                  <div class="col" style="text-align: center; color: red">
+                    Atendimento Finalizado
+                  </div>
                 </div>
               </div>
             </div>
-            <div v-if="endService == true">
-              <div class="row">
-                <div class="col">
-                  <CFormLabel>* Forma de pagamento</CFormLabel>
-                </div>
-              </div>
-              <div class="row mb-3">
-                <div class="col">
-                  <CFormSelect
-                    :options="optionsSelectPaymentMethod"
-                    :searchable="true"
-                    v-model="payment.paymentMethod.id"
-                    :disabled="isItFinished"
-                  >
-                  </CFormSelect>
-                </div>
-              </div>
-              <div class="row mb-3">
-                <div class="col">
-                  <CFormLabel>* Valor bruto</CFormLabel>
-                  <CInputGroup>
-                    <CInputGroupText>R$</CInputGroupText>
-                    <CFormInput
-                      v-model="payment.grossvalue"
-                      :disabled="isItFinished"
-                      min="0"
-                    />
-                  </CInputGroup>
-                </div>
-                <div class="col">
-                  <CFormLabel>Desconto</CFormLabel>
-                  <CInputGroup>
-                    <CInputGroupText>R$</CInputGroupText>
-                    <CFormInput
-                      v-model="payment.discount"
-                      :disabled="isItFinished"
-                      min="0"
-                    />
-                  </CInputGroup>
-                </div>
-                <div class="col">
-                  <CFormLabel>Valor total</CFormLabel>
-                  <CInputGroup>
-                    <CInputGroupText>R$</CInputGroupText>
-                    <CFormInput
-                      v-model="payment.amount"
-                      min="0"
-                      :disabled="true"
-                    />
-                  </CInputGroup>
-                </div>
-              </div>
-              <div class="row mb-3" v-if="!isItFinished">
-                <div class="col">
-                  <LoyaltyCard
-                    v-if="form.client.loyaltyCard != undefined"
-                    :card="form.client.loyaltyCard"
-                    @apply-discount="applyDiscount"
-                  />
-                </div>
+            <div v-else class="row mb-3">
+              <div class="col" style="text-align: center; color: red">
+                Você não pode adicionar produtos e finalizar o atendimento,
+                ainda não está na data dele
               </div>
             </div>
           </div>
@@ -284,7 +300,7 @@
               v-if="isItFinished"
               color="primary"
               class="me-md-2"
-              @click="formValidation"
+              @click="reverseService"
               >Estornar atendimento</CButton
             >
             <a href="/#/schedule/get" class="btn btn-danger">Cancelar</a>
@@ -423,12 +439,10 @@ export default {
   },
   watch: {
     priceProceduresSelected(novoValor) {
-      console.log(novoValor);
       this.payment.grossvalue =
         parseFloat(this.payment.grossvalue) + parseFloat(novoValor);
     },
     calculateTotal(novoValor) {
-      console.log(novoValor);
       this.payment.grossvalue =
         parseFloat(this.payment.grossvalue) + parseFloat(novoValor);
     },
@@ -446,6 +460,20 @@ export default {
     },
   },
   methods: {
+    async reverseService() {
+      const RESPONSE = await this.scheduleService.reverseService(this.id);
+      if (RESPONSE.status == 200) {
+        window.location.reload();
+      } else if (RESPONSE.status == 400) {
+        this.$refs.toast.createToastDanger(RESPONSE.message);
+      }
+    },
+    validForLaunchingProducts() {
+      let valid = false;
+      const DIFFERENCE_IN_DAYS = this.dateNow.compareDates(this.date);
+      if (DIFFERENCE_IN_DAYS == 0) valid = true;
+      return valid;
+    },
     applyDiscount(discount) {
       this.payment.discount = discount;
     },
@@ -465,21 +493,17 @@ export default {
     },
     async deleteItem() {
       const RESPONSE = await this.scheduleService.delete(this.id);
-      console.log(RESPONSE.status);
-      if (RESPONSE.status == 204) {
-        this.$router.push(`/schedule/get`);
-      } else {
+      if (RESPONSE.status == 204) this.$router.push(`/schedule/get`);
+      else if (RESPONSE.status == 400)
+        this.$refs.toast.createToastDanger(RESPONSE.message);
+      else
         this.$refs.toast.createToastDanger("Ocorreu um erro ao excluir o item");
-      }
     },
     removeProduct(id) {
-      console.log(`id: ${id}`);
       let indice = this.form.products.findIndex(
         (elemento) => elemento.id === id
       );
       if (indice > -1) this.form.products.splice(indice, 1);
-      console.log(JSON.stringify(this.form.products));
-      console.log(indice);
     },
     validationFinishService() {
       let valid = true;
@@ -488,13 +512,16 @@ export default {
         this.$refs.toast.createToastDanger("O valor bruto deve ser maior de 0");
       }
       if (this.payment.paymentMethod.id == "") {
-        console.log(this.payment.paymentMethod);
         valid = false;
         this.$refs.toast.createToastDanger(
           "A forma de pagamento é obrigatória"
         );
       }
       return valid;
+    },
+    duplicateProductValidation(product) {
+      let duplicate = this.form.products.find((p) => p.id == product.id);
+      return duplicate;
     },
     validationAddProduct() {
       let valid = true;
@@ -520,7 +547,12 @@ export default {
           price: this.productSelected.price,
           quantity: this.product.quantity,
         };
-        this.form.products.push(product);
+        if (this.duplicateProductValidation(product) == undefined)
+          this.form.products.push(product);
+        else
+          this.$refs.toast.createToastDanger(
+            "Não é permitido produtos duplicados"
+          );
       }
     },
     async carregarProductSelect() {
@@ -672,21 +704,19 @@ export default {
           this.startTime
         );
       else if (this.id != undefined && this.endService) {
-        console.log("AQUI finishService ");
         res = await this.scheduleService.finishService(
           this.id,
           this.form,
           this.payment
         );
       } else {
-        console.log("AQUI update");
         res = await this.scheduleService.update(
           this.id,
           this.form,
           this.payment
         );
       }
-
+      console.log(`RES: ${JSON.stringify(res)}`);
       if (res.status == 201) {
         this.$refs.toast.createToast("Atendimento registrado com sucesso!");
         this.$router.push(`/schedule/get`);
@@ -695,6 +725,8 @@ export default {
         if (this.endService) {
           this.$router.push(`/schedule/get`);
         }
+      } else if (res.status == 400) {
+        this.$refs.toast.createToastDanger(res.message);
       } else
         this.$refs.toast.createToastDanger(
           "Ocorreu um erro ao registar agendamento!"
@@ -745,10 +777,10 @@ export default {
         this.isItFinished = true;
       }
       this.carregarProductSelect();
+      this.validForLaunchingProducts();
     },
   },
   mounted() {
-    console.log(JSON.stringify(this.payment));
     this.date = this.dateNow.dateNowISO();
     this.carregarOptionsProfessional();
     if (this.time != undefined) this.screenviaFullCalendar();
