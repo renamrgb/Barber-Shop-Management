@@ -1,14 +1,14 @@
 package com.rpx.bsm.services;
 
-import com.rpx.bsm.entities.*;
-import com.rpx.bsm.records.ProcedimentoIdRecord;
-import com.rpx.bsm.records.ProfessionalRecord;
+import com.rpx.bsm.entities.PaymentMethod;
+import com.rpx.bsm.entities.Schedule;
+import com.rpx.bsm.entities.ServiceItems;
 import com.rpx.bsm.records.ScheduleRecord;
 import com.rpx.bsm.records.util.WorkSchedule;
 import com.rpx.bsm.repositories.ScheduleRepository;
 import com.rpx.bsm.resources.exceptions.DatabaseException;
+import com.rpx.bsm.resources.exceptions.DefaultErrorException;
 import com.rpx.bsm.resources.exceptions.ResourceNotFoundException;
-import net.bytebuddy.asm.Advice;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
@@ -18,12 +18,13 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityNotFoundException;
-import javax.sound.midi.Soundbank;
-import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -162,6 +163,9 @@ public class ScheduleService {
             loyaltyCardService.setQtyUsed(record.client().getLoyaltyCard());
             if(record.products().size() < obj.getServiceItems().size())
                 serviceItemsService.removenonCommonItems(obj.getServiceItems(), record.products());
+
+            if(record.payment() != null && record.startDate().toLocalDate().compareTo(LocalDate.now()) > 0)
+                throw new DefaultErrorException("Você não pode finalizar um atendimento futuro");
             obj = updateData(record, obj);
             return repository.save(obj);
         } catch (EntityNotFoundException e) {
@@ -191,11 +195,33 @@ public class ScheduleService {
     }
     public void delete(Long id) {
         try {
-            repository.deleteById(id);
+            Schedule obj = findById(id);
+            if(obj.getPaymentSchedule() != null)
+                throw new DefaultErrorException("Não é permitido excluir atendimentos que já foram pagos");
         } catch (EmptyResultDataAccessException e) {
             throw new ResourceNotFoundException(id);
         } catch (DataIntegrityViolationException e) {
             throw new DatabaseException(e.getMessage());
         }
     }
+    @Transactional
+    public void reverseService(Long id){
+        try {
+            LocalDate dateNow = LocalDate.now();
+            Schedule obj = repository.getReferenceById(id);
+            int days = dateNow.compareTo(obj.getStartDate().toLocalDate());
+            if(days == 0){
+                obj.getPaymentSchedule().setPaymentMethod(null);
+                obj.getPaymentSchedule().setAmount(null);
+                obj.getPaymentSchedule().setDiscount(null);
+                obj.getPaymentSchedule().setGrossvalue(null);
+            }else
+                throw new DefaultErrorException("Não é permitido estornar atendimentos fora da data dele");
+        } catch (EmptyResultDataAccessException e) {
+            throw new ResourceNotFoundException(id);
+        } catch (DataIntegrityViolationException e) {
+            throw new DatabaseException(e.getMessage());
+        }
+    }
+
 }
