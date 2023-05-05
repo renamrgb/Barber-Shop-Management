@@ -1,6 +1,5 @@
 package com.rpx.bsm.entities;
 
-import com.rpx.bsm.records.StockEntryRecord;
 import com.rpx.bsm.records.StockWriteOffRecord;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

@@ -3,8 +3,11 @@ package com.rpx.bsm.services;
 import com.rpx.bsm.entities.*;
 import com.rpx.bsm.records.StockEntryRecord;
 import com.rpx.bsm.repositories.StockEntryRepository;
+import com.rpx.bsm.resources.exceptions.DatabaseException;
 import com.rpx.bsm.resources.exceptions.ResourceNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -39,36 +42,50 @@ public class StockEntryService {
             stockService.addStock(e.getProduct().getId(), e.getQuantity());
         }
     }
+
     public Page<StockEntry> findPaged(String dtStartString, String dtEndString, String supplier, Pageable pageable) {
         Page<StockEntry> list = null;
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
         LocalDate dtStart = LocalDate.parse(dtStartString, formatter);
         LocalDate dtEnd = LocalDate.parse(dtEndString, formatter);
 
-        if(!supplier.isEmpty())
+        if (!supplier.isEmpty())
             list = repository.findByNfeDateofPurchaseBetweenAAndSupplier(supplier, dtStart, dtEnd, pageable);
-        else
-            list = repository.findByNfeDateofPurchaseBetween(dtStart, dtEnd, pageable);
+        else list = repository.findByNfeDateofPurchaseBetween(dtStart, dtEnd, pageable);
 
         return list;
     }
+
     public StockEntry findById(Long id) {
         Optional<StockEntry> obj = repository.findById(id);
         StockEntry entity = obj.orElseThrow(() -> new ResourceNotFoundException(id));
         return entity;
     }
+
     @Transactional
-    public void reverse(Long id){
+    public void reverse(Long id) {
         try {
             StockEntry entity = repository.getReferenceById(id);
             List<StockEntryProducts> products = entity.getProducts();
-            for(StockEntryProducts p : products){
+            for (StockEntryProducts p : products) {
                 stockService.decrementStock(p.getProduct().getId(), p.getQuantity());
             }
             entity.setReversed(true);
             repository.save(entity);
         } catch (EntityNotFoundException e) {
             throw new ResourceNotFoundException(id);
+        }
+    }
+
+    public void delete(Long id) {
+        try {
+            StockEntry obj = findById((id));
+            if (obj.getReversed()) repository.deleteById(id);
+            else throw new DatabaseException("Não é permitido excluir itens que não foram estornados");
+        } catch (EmptyResultDataAccessException e) {
+            throw new ResourceNotFoundException(id);
+        } catch (DataIntegrityViolationException e) {
+            throw new DatabaseException(e.getMessage());
         }
     }
 

@@ -44,7 +44,15 @@ export default class LancarProdutoService {
       const res = await api.post(`${this.url}/reverse/${id}`);
       return res;
     } catch (error) {
-      return error;
+      return error.response.data;
+    }
+  }
+  async delete(id) {
+    try {
+      const res = await api.delete(`${this.url}/${id}`);
+      return res;
+    } catch (error) {
+      return error.response.data;
     }
   }
 }

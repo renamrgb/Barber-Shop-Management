@@ -87,7 +87,12 @@ export default [
         component: 'CNavItem',
         name: 'Lançar Produto',
         to: '/stock/listLaunchProducts',
-      },          
+      },
+      {
+        component: 'CNavItem',
+        name: 'Baixas de estoque',
+        to: '/stockWriteOff',
+      },        
     ],
   },
   {
@@ -101,5 +106,5 @@ export default [
         to: '/settings/parameters',
       },          
     ],
-  }
+  },
 ]

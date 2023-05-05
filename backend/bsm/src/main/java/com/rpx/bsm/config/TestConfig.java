@@ -36,21 +36,21 @@ public class TestConfig implements CommandLineRunner {
     private BCryptPasswordEncoder bCryptPasswordEncoder;
     @Autowired
     private ProductProcedureTypesRepository productProcedureTypesRepository;
-
     @Autowired
     private MessageTemplateRepository messageTemplateRepository;
-
     @Autowired
     private ProfessionalRepository professionalRepository;
     @Autowired
     private CustomerRepository customerRepository;
     @Autowired
     private ParameterRepository parametersRepository;
-
     @Autowired
     private OrganizationRepository organizationRepository;
     @Autowired
     private ScheduleRepository scheduleRepository;
+    @Autowired
+    private BlockedTimesRepository blockedTimesRepository;
+
     @Override
     public void run(String... args) throws Exception {
 
@@ -94,9 +94,7 @@ public class TestConfig implements CommandLineRunner {
         usuarioRepository.save(u);
         for (int i = 0; i < 25; i++) {
             Professional p = new Professional();
-            p.setUser(new User(
-                    "PROFISSIONAL " + i, "user" + i + "@teste.com.br", "12345678", "18997101710", "50349034826", "102345879", new Address(), new AccessLevel(NivelAcessoEnum.ROLE_ADMIN), true
-            ));
+            p.setUser(new User("PROFISSIONAL " + i, "user" + i + "@teste.com.br", "12345678", "18997101710", "50349034826", "102345879", new Address(), new AccessLevel(NivelAcessoEnum.ROLE_ADMIN), true));
             p.getProcedures().add(proc1);
             p.getProcedures().add(new Procedure(2L));
             professionalRepository.save(p);
@@ -121,15 +119,15 @@ public class TestConfig implements CommandLineRunner {
         for (int i = 0; i < 25; i++)
             messageTemplateRepository.save(new MessageTemplate("MODELO" + i, "MENSAGEM DE TESTE", true));
 
-        Expense e2 = new Expense("DESPESA 26", 100.00, 30, LocalDate.parse("2023-03-04"), 3,  new ExpenseType(1L));
-        for (int i = 0; i < 3; i++){
+        Expense e2 = new Expense("DESPESA 26", 100.00, 30, LocalDate.parse("2023-03-04"), 3, new ExpenseType(1L));
+        for (int i = 0; i < 3; i++) {
             Installment installment = new Installment(BigDecimal.valueOf(100.00), LocalDate.parse("2023-03-04"));
             installment.setExpense(e2);
             e2.getInstallments().add(installment);
         }
         expenseRepository.save(e2);
-        for (int i = 0; i < 25; i++){
-            Expense e = new Expense("DESPESA "+i, 100.00, 30, LocalDate.parse("2023-03-04"), 0,  new ExpenseType(27L));
+        for (int i = 0; i < 25; i++) {
+            Expense e = new Expense("DESPESA " + i, 100.00, 30, LocalDate.parse("2023-03-04"), 0, new ExpenseType(27L));
             Installment installment = new Installment(BigDecimal.valueOf(100.00), LocalDate.parse("2023-03-04"));
             installment.setExpense(e);
             e.getInstallments().add(installment);
@@ -141,12 +139,12 @@ public class TestConfig implements CommandLineRunner {
         organizationRepository.save(organization);
         Parameter parameter = new Parameter();
         parameter.setOrganization(organization);
-        parameter.getParameterValues().add(new ParameterValue("Horário de início","START_TIME", "08:00", parameter));
-        parameter.getParameterValues().add(new ParameterValue("Horário de início do almoço","LUNCH_START_TIME", "12:00", parameter));
-        parameter.getParameterValues().add(new ParameterValue("Horário de termino do almoço","LUNCH_BREAK_TIME", "14:00", parameter));
-        parameter.getParameterValues().add(new ParameterValue("Horário de encerramento","END_TIME", "18:00", parameter));
-        parameter.getParameterValues().add(new ParameterValue("Qtde de itens da cartela fidelidade","QTY_LOYALYTY_CARD", "6", parameter));
-        parameter.getParameterValues().add(new ParameterValue("Valor do disconto para a cartela fidelidade","DISCOUNT_LOYALYTY_CARD", "30.00", parameter));
+        parameter.getParameterValues().add(new ParameterValue("Horário de início", "START_TIME", "08:00", parameter));
+        parameter.getParameterValues().add(new ParameterValue("Horário de início do almoço", "LUNCH_START_TIME", "12:00", parameter));
+        parameter.getParameterValues().add(new ParameterValue("Horário de termino do almoço", "LUNCH_BREAK_TIME", "14:00", parameter));
+        parameter.getParameterValues().add(new ParameterValue("Horário de encerramento", "END_TIME", "18:00", parameter));
+        parameter.getParameterValues().add(new ParameterValue("Qtde de itens da cartela fidelidade", "QTY_LOYALYTY_CARD", "6", parameter));
+        parameter.getParameterValues().add(new ParameterValue("Valor do disconto para a cartela fidelidade", "DISCOUNT_LOYALYTY_CARD", "30.00", parameter));
         parametersRepository.save(parameter);
         /*============================================================================================================*/
         Set<Procedure> procedures = new HashSet<>();
@@ -172,6 +170,9 @@ public class TestConfig implements CommandLineRunner {
         s2.setProfessional(new Professional(1L));
         s2.setPaymentSchedule(new PaymentSchedule(s2));
         scheduleRepository.save(s2);
+        /*============================================================================================================*/
+        BlockedTimes b1 = new BlockedTimes(LocalDateTime.now().withHour(8).withMinute(0).withSecond(0), LocalDateTime.now().withHour(9).withMinute(0).withSecond(0), "TESTE");
+        blockedTimesRepository.save(b1);
     }
 
 }

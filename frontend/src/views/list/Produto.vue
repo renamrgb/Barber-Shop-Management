@@ -167,8 +167,7 @@ export default {
         }
       }
     },
-    refreshList() {
-      console.log("Aqui!");
+    refreshList() {      
       this.consultaTodos();
     },
     alterar(id) {

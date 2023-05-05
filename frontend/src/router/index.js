@@ -222,6 +222,24 @@ const routes = [
         ],
       },
       {
+        path: "/stockWriteOff",
+        name: "Baixa de estoque",
+        component: {
+          render() {
+            return h(resolveComponent("router-view"));
+          },
+        },
+        redirect: "/stockWriteOff",
+        children: [
+          {
+            path: "/stockWriteOff",
+            name: "Baixas de Estoque",
+            component: () =>
+              import("@/views/stockWriteOff/StockWriteOffList.vue"),
+          },
+        ],
+      },
+      {
         path: "/schedule",
         name: "Schedule",
         component: {

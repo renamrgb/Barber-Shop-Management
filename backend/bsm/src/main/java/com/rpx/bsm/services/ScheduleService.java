@@ -67,57 +67,6 @@ public class ScheduleService {
         return removeUnavailableTimes(availableTimes, timesNotAvailable);
     }
 
-//    private List<LocalTime> removeUnavailableTimes(List<LocalTime> availableTimes, List<Schedule> schedules) {
-//        int j = 0, i = 0;
-//        LocalTime timeToCheck, startTime, endTime;
-//        Boolean itsBetween;
-//
-//        while (i < availableTimes.size() && j < schedules.size()) {
-//            startTime = schedules.get(j).getStartDate().toLocalTime();
-//            endTime = schedules.get(j).getEndDate().toLocalTime();
-//            timeToCheck = availableTimes.get(i);
-//            itsBetween = isBetween(timeToCheck, startTime, endTime);
-//            if (itsBetween) {
-//                while (itsBetween && i < availableTimes.size()) {
-//                    availableTimes.remove(availableTimes.get(i));
-//                    timeToCheck = availableTimes.get(i);
-//                    itsBetween = isBetween(timeToCheck, startTime, endTime);
-//                }
-//                j++;
-//            }
-//            i++;
-//        }
-//        sortLocalTimeList(availableTimes);
-//        return availableTimes;
-//    }
-
-    private boolean isBetween(LocalTime timeToCheck, LocalTime startTime, LocalTime endTime) {
-        // Verifica se o horário a ser checado é posterior ou igual ao horário de início
-        boolean isAfterStartTime = timeToCheck.isAfter(startTime) || timeToCheck.equals(startTime);
-        // Verifica se o horário a ser checado é anterior ao horário final
-        boolean isBeforeEndTime = timeToCheck.isBefore(endTime);
-        // Retorna verdadeiro se o horário a ser checado estiver entre os dois horários passados
-        return isAfterStartTime && isBeforeEndTime;
-    }
-
-//    private List<LocalTime> createArrayOfAvailableTimes() {
-//        List<LocalTime> availableTimes = new ArrayList<>();
-//        WorkSchedule workSchedule = parameterService.getTimeWork();
-//        LocalTime localDateTime = workSchedule.getStarTime();
-//        while (!localDateTime.equals(workSchedule.getEndTime())) {
-//            if(!(isBetween(localDateTime, workSchedule.getLunchStartTime(), workSchedule.getLunchEndTime()))){
-//                availableTimes.add(localDateTime);
-//            }
-//            localDateTime = localDateTime.plusMinutes(30);
-//        }
-//        return availableTimes;
-//    }
-
-    private void sortLocalTimeList(List<LocalTime> times) {
-        Collections.sort(times, (t1, t2) -> t1.getHour() - t2.getHour());
-    }
-
-
     private List<LocalTime> removeUnavailableTimes(List<LocalTime> availableTimes, List<Schedule> schedules) {
         for (Schedule schedule : schedules) {
             LocalTime start = schedule.getStartDate().toLocalTime();

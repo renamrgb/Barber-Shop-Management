@@ -92,7 +92,7 @@
                       style="margin-right: 1%"
                       @click="
                         () => {
-                          modalExcluir = true;
+                          modalEstornar = true;
                           id = item.id;
                         }
                       "
@@ -104,7 +104,14 @@
                       style="margin-right: 1%"
                       @click="this.alterar(item.id)"
                     >
-                    <CIcon icon="cil-clipboard" />
+                      <CIcon icon="cil-clipboard" />
+                    </CButton>
+                    <CButton
+                      color="light"
+                      style="margin-right: 1%"
+                      @click="toCallModalDele(item.id)"
+                    >
+                      <CIcon icon="cil-trash" size="x" />
                     </CButton>
                   </CTableDataCell>
                 </CTableRow>
@@ -121,10 +128,10 @@
     </CCol>
   </CRow>
   <CModal
-    :visible="modalExcluir"
+    :visible="modalEstornar"
     @close="
       () => {
-        modalExcluir = false;
+        modalEstornar = false;
       }
     "
   >
@@ -132,21 +139,19 @@
       dismiss
       @close="
         () => {
-          modalExcluir = false;
+          modalEstornar = false;
         }
       "
     >
-      <CModalTitle>Deseja excluir esse item?</CModalTitle>
+      <CModalTitle>Deseja estornar esse lançamento?</CModalTitle>
     </CModalHeader>
-    <CModalBody
-      >O item será excluído permanentemente do banco de dados.</CModalBody
-    >
+    <CModalBody>O saldo dos produtos serão decrementados no estoque</CModalBody>
     <CModalFooter>
       <CButton
         color="secondary"
         @click="
           () => {
-            modalExcluir = false;
+            modalEstornar = false;
           }
         "
         >Cancelar</CButton
@@ -155,6 +160,11 @@
     </CModalFooter>
   </CModal>
   <toast ref="toast" />
+  <ModalDelete
+    v-if="modalExcluir != undefined"
+    :modalExcluir="modalExcluir"
+    @confirmeDelete="deleteItem"
+  />
 </template>
 <script>
 import LancarProdutoService from "@/Services/LancarProdutoService";
@@ -163,8 +173,9 @@ import { CForm, CTableDataCell } from "@coreui/vue";
 import NextPageTable from "@/components/NextPageTable.vue";
 import DateNow from "@/util/dateNow.js";
 import FormatDateBr from "@/util/formatDateBr.js";
+import ModalDelete from "@/components/ModalDelete.vue";
 export default {
-  components: { Toast, CForm, NextPageTable, CTableDataCell },
+  components: { Toast, CForm, NextPageTable, CTableDataCell, ModalDelete },
   name: "Listar Lançamentos de Produtos",
   data() {
     return {
@@ -173,8 +184,8 @@ export default {
       service: new LancarProdutoService(),
       formatDateBr: new FormatDateBr(),
       itens: "",
+      modalEstornar: false,
       modalExcluir: false,
-      id: "",
       searchText: "",
       pageId: 0,
       searchText: "",
@@ -185,6 +196,21 @@ export default {
     };
   },
   methods: {
+    async deleteItem() {
+      const RESPONSE = await this.service.delete(this.id);
+      if (RESPONSE.status == 204)
+        this.$router.push(`/stock/listLaunchProducts`);
+      else if (RESPONSE.status == 400)
+        this.$refs.toast.createToastDanger(RESPONSE.message);
+      else
+        this.$refs.toast.createToastDanger("Ocorreu um erro ao excluir o item");
+      this.modalExcluir = false;
+      this.gelAll();
+    },
+    toCallModalDele(id) {
+      this.id = id;
+      this.modalExcluir = true;
+    },
     getDate() {
       this.filter.dtStart = this.dateNow.date(new Date(), 30, "-");
       this.filter.dtEnd = this.dateNow.dateNowISO();
@@ -214,13 +240,13 @@ export default {
     },
     async estornar() {
       const res = await this.service.reverse(this.id);
-      console.log(res);
       if (res.status != 200) {
         this.$refs.toast.createToastDanger(
           `Ocorreu um erro ao realizar a operação ${res}`
         );
       }
-      this.modalExcluir = false;
+      this.modalEstornar = false;
+      this.gelAll();
     },
   },
   mounted() {

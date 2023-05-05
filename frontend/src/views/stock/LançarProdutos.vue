@@ -284,7 +284,7 @@ export default {
     },
     formValidation() {
       let item = this.form;
-      let valid = true;      
+      let valid = true;
       if (item.supplier == "") {
         valid = false;
         this.$refs.toast.createToastDanger("Fornecedor é obrigatório");
@@ -294,23 +294,27 @@ export default {
         this.$refs.toast.createToastDanger(
           "É obrigatório selecionar pelo menos um produto"
         );
-      }          
+      }
       if (item.dateofPurchase == "") {
         valid = false;
         this.$refs.toast.createToastDanger("A data da compra é obrigatória");
       }
-      const now = new Date();      
-      const dateofPurchaseDate = new Date(this.form.nfe.dateofPurchase)
+      const now = new Date();
+      const dateofPurchaseDate = new Date(this.form.nfe.dateofPurchase);
       let difference = dateofPurchaseDate.getTime() - now.getTime();
-      let daysDifference = Math.round(difference / 86400000)  
+      let daysDifference = Math.round(difference / 86400000);
       console.log(daysDifference);
-      if(daysDifference <= -7){
+      if (daysDifference <= -7) {
         valid = false;
-        this.$refs.toast.createToastDanger("A data da compra não pode ser menor que o período de uma semana");
+        this.$refs.toast.createToastDanger(
+          "A data da compra não pode ser menor que o período de uma semana"
+        );
       }
-      if(daysDifference > -0){
+      if (daysDifference > -0) {
         valid = false;
-        this.$refs.toast.createToastDanger("A data da compra não pode ser maior que a data atual");
+        this.$refs.toast.createToastDanger(
+          "A data da compra não pode ser maior que a data atual"
+        );
       }
       if (item.valueNfe <= 0) {
         valid = false;
@@ -320,9 +324,10 @@ export default {
     },
     async salvar() {
       let res = await this.service.save(this.form);
-      if (res.status == 201)
+      if (res.status == 201) {
         this.$refs.toast.createToast("Produtos(s) lançados com sucesso.");
-      else
+        this.$router.push(`/stock/listLaunchProducts`);
+      } else
         this.$refs.toast.createToastDanger(
           "Ocorreu um erro ao lançar o produto"
         );

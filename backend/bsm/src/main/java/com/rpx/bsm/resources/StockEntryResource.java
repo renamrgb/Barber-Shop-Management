@@ -63,4 +63,10 @@ public class StockEntryResource {
         return ResponseEntity.ok().build();
     }
 
+    @DeleteMapping(value = "/{id}")
+    public ResponseEntity<Void> delete(@PathVariable Long id) {
+        service.delete(id);
+        return ResponseEntity.noContent().build();
+    }
+
 }
