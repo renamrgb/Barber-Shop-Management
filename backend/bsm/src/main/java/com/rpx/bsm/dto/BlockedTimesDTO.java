@@ -14,11 +14,13 @@ public class BlockedTimesDTO implements Serializable {
     private String description;
     private LocalDateTime startDate;
     private LocalDateTime endDate;
+    private ProfessionalDTO professional;
 
     public BlockedTimesDTO(BlockedTimes obj) {
         setId(obj.getId());
         setDescription(obj.getDescription());
         setEndDate(obj.getEndDate());
         setStartDate(obj.getStartDate());
+        setProfessional(new ProfessionalDTO(obj.getProfessional()));
     }
 }

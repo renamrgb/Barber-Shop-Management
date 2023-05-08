@@ -14,6 +14,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityNotFoundException;
+import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -38,6 +40,18 @@ public class BlockedTimesService {
     public BlockedTimes findById(Long id) {
         Optional<BlockedTimes> obj = repository.findById(id);
         return obj.get();
+    }
+
+    public List<BlockedTimes> findByDate(LocalDateTime date, Long professionalId){
+        LocalDateTime start = date.withHour(0).withMinute(0).withSecond(0);
+        LocalDateTime end = date.withHour(23).withMinute(59).withSecond(59);
+        List<BlockedTimes> timesList = repository.findByStartDateBetween(start, end, professionalId);
+        if(timesList.get(0).getStartDate().toLocalDate().equals(start.toLocalDate())){
+            for(BlockedTimes b : timesList){
+                b.getStartDate().withDayOfMonth(start.getDayOfMonth());
+            }
+        }
+        return timesList;
     }
 
     @Transactional

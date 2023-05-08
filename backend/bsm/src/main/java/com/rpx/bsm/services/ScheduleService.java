@@ -1,5 +1,6 @@
 package com.rpx.bsm.services;
 
+import com.rpx.bsm.entities.BlockedTimes;
 import com.rpx.bsm.entities.PaymentMethod;
 import com.rpx.bsm.entities.Schedule;
 import com.rpx.bsm.entities.ServiceItems;
@@ -22,7 +23,6 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Function;
@@ -38,6 +38,8 @@ public class ScheduleService {
     private ServiceItemsService serviceItemsService;
     @Autowired
     private LoyaltyCardService loyaltyCardService;
+    @Autowired
+    private BlockedTimesService blockedTimesService;
 
     public Schedule insert(ScheduleRecord record) {
         return repository.save(new Schedule(record));
@@ -54,9 +56,8 @@ public class ScheduleService {
         return obj.get();
     }
 
-    public List<Schedule> findByDayBetween(LocalDateTime startOfDay, LocalDateTime endOfDay, Long professionalId) {
+    private List<Schedule> findByDayBetween(LocalDateTime startOfDay, LocalDateTime endOfDay, Long professionalId) {
         LocalDateTime start = startOfDay.withHour(0).withMinute(0).withSecond(0).withNano(0);
-        LocalDateTime end = endOfDay.withHour(23).withMinute(59).withSecond(59).withNano(59);
         return repository.findByStartDateBetweenAndProfessional(start, endOfDay, professionalId);
     }
 
@@ -64,7 +65,10 @@ public class ScheduleService {
     public List<LocalTime> availableTimes(LocalDateTime startOfDay, LocalDateTime endOfDay, Long professionalId) {
         List<Schedule> timesNotAvailable = findByDayBetween(startOfDay, endOfDay, professionalId);
         List<LocalTime> availableTimes = createArrayOfAvailableTimes();
-        return removeUnavailableTimes(availableTimes, timesNotAvailable);
+        availableTimes = removeUnavailableTimes(availableTimes, timesNotAvailable);
+        List<BlockedTimes> blockedTimes = blockedTimesService.findByDate(startOfDay, professionalId);
+        availableTimes = removeBlockedSchedules(availableTimes, blockedTimes);
+        return availableTimes;
     }
 
     private List<LocalTime> removeUnavailableTimes(List<LocalTime> availableTimes, List<Schedule> schedules) {
@@ -77,7 +81,18 @@ public class ScheduleService {
                 .sorted()
                 .collect(Collectors.toList());
     }
-    
+
+    private List<LocalTime> removeBlockedSchedules(List<LocalTime> availableTimes, List<BlockedTimes> blockedTimes) {
+        for (BlockedTimes b : blockedTimes) {
+            LocalTime start = b.getStartDate().toLocalTime();
+            LocalTime end = b.getEndDate().toLocalTime();
+            removeUnavailableTimes(availableTimes, time -> (time.equals(start) || time.isAfter(start)), end);
+        }
+        return availableTimes.stream()
+                .sorted()
+                .collect(Collectors.toList());
+    }
+
     private List<LocalTime> createArrayOfAvailableTimes() {
         List<LocalTime> availableTimes = new ArrayList<>();
         WorkSchedule workSchedule = parameterService.getTimeWork();
@@ -100,7 +115,7 @@ public class ScheduleService {
         availableTimes.removeIf(time -> condition.apply(time) && time.isBefore(endTime));
     }
 
-    public List<Schedule> consultScheduledTimes(){
+    public List<Schedule> consultScheduledTimes() {
         return repository.findAll();
     }
 
@@ -110,10 +125,10 @@ public class ScheduleService {
             Schedule obj = repository.getReferenceById(id);
             loyaltyCardService.update(record.client().getLoyaltyCard());
             loyaltyCardService.setQtyUsed(record.client().getLoyaltyCard());
-            if(record.products().size() < obj.getServiceItems().size())
+            if (record.products().size() < obj.getServiceItems().size())
                 serviceItemsService.removenonCommonItems(obj.getServiceItems(), record.products());
 
-            if(record.payment() != null && record.startDate().toLocalDate().compareTo(LocalDate.now()) > 0)
+            if (record.payment() != null && record.startDate().toLocalDate().compareTo(LocalDate.now()) > 0)
                 throw new DefaultErrorException("Você não pode finalizar um atendimento futuro");
             obj = updateData(record, obj);
             return repository.save(obj);
@@ -121,6 +136,7 @@ public class ScheduleService {
             throw new ResourceNotFoundException(id);
         }
     }
+
     private Schedule updateData(ScheduleRecord record, Schedule obj) {
         obj.setProfessional(record.professional());
         obj.setCustomer(record.client());
@@ -128,12 +144,12 @@ public class ScheduleService {
         obj.setEndDate(record.endDate());
         obj.setStartDate(record.startDate());
         List<ServiceItems> serviceItems = new ArrayList<>();
-        for(ServiceItems s : record.products()){
+        for (ServiceItems s : record.products()) {
             s.setSchedule(obj);
             serviceItems.add(s);
         }
         obj.setServiceItems(serviceItems);
-        if(record.payment().getPaymentMethod().getId() != null){
+        if (record.payment().getPaymentMethod().getId() != null) {
             obj.getPaymentSchedule().setSchedule(obj);
             obj.getPaymentSchedule().setPaymentMethod(new PaymentMethod(record.payment().getPaymentMethod().getId()));
             obj.getPaymentSchedule().setAmount(record.payment().getAmount());
@@ -142,10 +158,11 @@ public class ScheduleService {
         }
         return obj;
     }
+
     public void delete(Long id) {
         try {
             Schedule obj = findById(id);
-            if(obj.getPaymentSchedule() != null)
+            if (obj.getPaymentSchedule() != null)
                 throw new DefaultErrorException("Não é permitido excluir atendimentos que já foram pagos");
         } catch (EmptyResultDataAccessException e) {
             throw new ResourceNotFoundException(id);
@@ -153,18 +170,19 @@ public class ScheduleService {
             throw new DatabaseException(e.getMessage());
         }
     }
+
     @Transactional
-    public void reverseService(Long id){
+    public void reverseService(Long id) {
         try {
             LocalDate dateNow = LocalDate.now();
             Schedule obj = repository.getReferenceById(id);
             int days = dateNow.compareTo(obj.getStartDate().toLocalDate());
-            if(days == 0){
+            if (days == 0) {
                 obj.getPaymentSchedule().setPaymentMethod(null);
                 obj.getPaymentSchedule().setAmount(null);
                 obj.getPaymentSchedule().setDiscount(null);
                 obj.getPaymentSchedule().setGrossvalue(null);
-            }else
+            } else
                 throw new DefaultErrorException("Não é permitido estornar atendimentos fora da data dele");
         } catch (EmptyResultDataAccessException e) {
             throw new ResourceNotFoundException(id);

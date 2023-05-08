@@ -33,6 +33,9 @@ public class Professional implements Serializable {
     private Set<Procedure> procedures = new HashSet<>();
     @OneToMany(mappedBy = "professional")
     private List<Schedule> schedules;
+    @OneToMany(mappedBy = "professional")
+    private List<BlockedTimes> blockedTimes;
+
     public Professional(Long id) {
         Id = id;
     }

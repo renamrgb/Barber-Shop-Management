@@ -25,17 +25,22 @@ public class BlockedTimes implements Serializable {
     private LocalDateTime endDate;
     @Column(nullable = false, columnDefinition = "VARCHAR(60)")
     private String description;
+    @ManyToOne
+    @JoinColumn(name = "professional_id")
+    private Professional professional;
 
     public BlockedTimes(BlockedTimesRecord r) {
         setDescription(r.description());
         setEndDate(r.endDate());
         setStartDate(r.startDate());
+        setProfessional(r.professional());
     }
 
-    public BlockedTimes(LocalDateTime startDate, LocalDateTime endDate, String description) {
+    public BlockedTimes(LocalDateTime startDate, LocalDateTime endDate, String description, Professional professional) {
         this.startDate = startDate;
         this.endDate = endDate;
         this.description = description;
+        this.professional = professional;
     }
 
     @Override

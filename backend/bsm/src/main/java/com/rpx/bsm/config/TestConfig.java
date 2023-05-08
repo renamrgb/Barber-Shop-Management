@@ -171,7 +171,12 @@ public class TestConfig implements CommandLineRunner {
         s2.setPaymentSchedule(new PaymentSchedule(s2));
         scheduleRepository.save(s2);
         /*============================================================================================================*/
-        BlockedTimes b1 = new BlockedTimes(LocalDateTime.now().withHour(8).withMinute(0).withSecond(0), LocalDateTime.now().withHour(9).withMinute(0).withSecond(0), "TESTE");
+        BlockedTimes b1 = new BlockedTimes(
+                LocalDateTime.now().withHour(8).withMinute(0).withSecond(0).withNano(0),
+                LocalDateTime.now().withHour(9).withMinute(0).withSecond(0).withNano(0),
+                "TESTE",
+                new Professional(1L)
+        );
         blockedTimesRepository.save(b1);
     }
 

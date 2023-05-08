@@ -1,9 +1,9 @@
-export default [  
+export default [
   {
     component: 'CNavGroup',
-    name: 'Agendamentos',
+    name: 'Atendimentos',
     icon: 'cil-calendar-check',
-    items: [  
+    items: [
       {
         component: 'CNavItem',
         name: 'Registrar',
@@ -13,7 +13,12 @@ export default [
         component: 'CNavItem',
         name: 'Consultar',
         to: '/schedule/get',
-      },    
+      },
+      {
+        component: 'CNavItem',
+        name: 'Bloqueio de horário',
+        to: '/schedule/block/get',
+      },
     ],
   },
   {
@@ -21,12 +26,12 @@ export default [
     name: 'Cadastros',
     to: '/forms',
     icon: 'cil-notes',
-    items: [  
+    items: [
       {
         component: 'CNavItem',
         name: 'Cliente',
         to: '/forms/cliente',
-      },    
+      },
       {
         component: 'CNavItem',
         name: 'Forma de pagamento',
@@ -41,7 +46,7 @@ export default [
         component: 'CNavItem',
         name: 'Procedimento',
         to: '/forms/procedimento',
-      }, 
+      },
       {
         component: 'CNavItem',
         name: 'Produtos',
@@ -51,30 +56,30 @@ export default [
         component: 'CNavItem',
         name: 'Profissional',
         to: '/forms/profissional',
-      },               
+      },
       {
         component: 'CNavItem',
         name: 'Produto/procedimento',
         to: '/forms/tipoProdutoProcedimento',
-      },       
+      },
       {
         component: 'CNavItem',
         name: 'Tipo de Despesa',
         to: '/forms/tipoDespesas',
       },
-    ],    
+    ],
   },
   {
     component: 'CNavGroup',
     name: 'Despesas',
     // to: '/forms',
     icon: 'cil-dollar',
-    items: [  
+    items: [
       {
         component: 'CNavItem',
         name: 'Registrar Despesa',
         to: '/expense',
-      },          
+      },
     ],
   },
   {
@@ -82,7 +87,7 @@ export default [
     name: 'Estoque',
     // to: '/forms',
     icon: 'cil-casino',
-    items: [  
+    items: [
       {
         component: 'CNavItem',
         name: 'Lançar Produto',
@@ -92,19 +97,19 @@ export default [
         component: 'CNavItem',
         name: 'Baixas de estoque',
         to: '/stockWriteOff',
-      },        
+      },
     ],
   },
   {
     component: 'CNavGroup',
     name: 'Configuração',
     icon: 'cil-cog',
-    items: [  
+    items: [
       {
         component: 'CNavItem',
         name: 'Parâmetros',
         to: '/settings/parameters',
-      },          
+      },
     ],
   },
-]
+];
