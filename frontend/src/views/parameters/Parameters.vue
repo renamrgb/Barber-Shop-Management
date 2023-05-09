@@ -58,7 +58,13 @@
               >
                 <div class="col">
                   <CFormLabel for="nome">* {{ e.parameter_name }}</CFormLabel>
-                  <div v-if="e.parameter_key == 'WORKS_ON_MONDAY' || e.parameter_key == 'WORKS_ON_SATURDAY'">                    
+                  <div
+                    v-if="
+                      e.parameter_key == 'WORKS_ON_MONDAY' ||
+                      e.parameter_key == 'WORKS_ON_SATURDAY' ||
+                      e.parameter_key == 'WORKS_ON_SUNDAY'
+                    "
+                  >
                     <CFormCheck
                       id="flexCheckChecked"
                       v-model="e.parameter_value"

@@ -11,7 +11,7 @@ export default class ScheduleService {
       );
       return res.data;
     } catch (error) {
-      return error;
+      return error.response.data;
     }
   }
   async save(item, dateStart, startTime) {

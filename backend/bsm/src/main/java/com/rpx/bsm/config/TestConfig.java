@@ -145,6 +145,7 @@ public class TestConfig implements CommandLineRunner {
         parameter.getParameterValues().add(new ParameterValue("Horário de encerramento", "END_TIME", "18:00", parameter));
         parameter.getParameterValues().add(new ParameterValue("Trabalha na segunda?", "WORKS_ON_MONDAY", "true", parameter));
         parameter.getParameterValues().add(new ParameterValue("Trabalha no sabado?", "WORKS_ON_SATURDAY", "true", parameter));
+        parameter.getParameterValues().add(new ParameterValue("Trabalha no domingo?", "WORKS_ON_SUNDAY", "false", parameter));
         parameter.getParameterValues().add(new ParameterValue("Horário inicial de trabalho no sábado", "SATURDAY_WORKING_HOURS", "08:00", parameter));
         parameter.getParameterValues().add(new ParameterValue("Horário final de trabalho no sábado", "END_OF_WORK_HOURS_ON_SATURDAY", "15:00", parameter));
         parameter.getParameterValues().add(new ParameterValue("Qtde de itens da cartela fidelidade", "QTY_LOYALYTY_CARD", "6", parameter));

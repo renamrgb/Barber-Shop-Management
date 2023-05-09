@@ -1,10 +1,7 @@
 package com.rpx.bsm.services;
 
 import com.rpx.bsm.dto.EventFullCalendarDTO;
-import com.rpx.bsm.entities.BlockedTimes;
-import com.rpx.bsm.entities.PaymentMethod;
-import com.rpx.bsm.entities.Schedule;
-import com.rpx.bsm.entities.ServiceItems;
+import com.rpx.bsm.entities.*;
 import com.rpx.bsm.records.ScheduleRecord;
 import com.rpx.bsm.records.util.WorkSchedule;
 import com.rpx.bsm.repositories.ScheduleRepository;
@@ -20,6 +17,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityNotFoundException;
+import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -64,12 +62,39 @@ public class ScheduleService {
 
     @Transactional
     public List<LocalTime> availableTimes(LocalDateTime startOfDay, LocalDateTime endOfDay, Long professionalId) {
+        Boolean isSaturday = validateDayOfTheWeek(startOfDay);
         List<Schedule> timesNotAvailable = findByDayBetween(startOfDay, endOfDay, professionalId);
-        List<LocalTime> availableTimes = createArrayOfAvailableTimes();
-        availableTimes = removeUnavailableTimes(availableTimes, timesNotAvailable);
+        List<LocalTime> availableTimes;
+        if (!isSaturday)
+            availableTimes = createArrayOfAvailableTimes();
+        else
+            availableTimes = createSaturdayArrayOfAvailableTimes();
         List<BlockedTimes> blockedTimes = blockedTimesService.findByDateAndProfessional(startOfDay, professionalId);
         availableTimes = removeBlockedSchedules(availableTimes, blockedTimes);
         return availableTimes;
+    }
+
+    private Boolean validateDayOfTheWeek(LocalDateTime date) {
+        ParameterValue parameterValue;
+        Boolean isSaturday = false;
+        if (date.getDayOfWeek() == DayOfWeek.MONDAY) {
+            parameterValue = parameterService.findByPameterKey("WORKS_ON_MONDAY");
+            if (parameterValue.getParameter_value() == "false")
+                throw new DefaultErrorException("Não é permitido realizar atendimentos no segunda-feira");
+        }
+        if (date.getDayOfWeek() == DayOfWeek.SATURDAY) {
+            parameterValue = parameterService.findByPameterKey("WORKS_ON_SATURDAY");
+            if (parameterValue.getParameter_value() == "false")
+                throw new DefaultErrorException("Não é permitido realizar atendimentos no sábado");
+            else
+                isSaturday = true;
+        }
+        if (date.getDayOfWeek() == DayOfWeek.SUNDAY) {
+            parameterValue = parameterService.findByPameterKey("WORKS_ON_SUNDAY");
+            if (parameterValue.getParameter_value() == "false")
+                throw new DefaultErrorException("Não é permitido realizar atendimentos no domingo");
+        }
+        return isSaturday;
     }
 
     private List<LocalTime> removeUnavailableTimes(List<LocalTime> availableTimes, List<Schedule> schedules) {
@@ -112,6 +137,24 @@ public class ScheduleService {
         return availableTimes;
     }
 
+    private List<LocalTime> createSaturdayArrayOfAvailableTimes() {
+        List<LocalTime> availableTimes = new ArrayList<>();
+        WorkSchedule workSchedule = parameterService.getSaturdayWorkTime();
+        LocalTime starTime = workSchedule.getStarTime();
+
+        while (!starTime.equals(workSchedule.getEndTime())) {
+            availableTimes.add(starTime);
+            starTime = starTime.plusMinutes(30);
+        }
+
+//        final LocalTime lunchStartTime = workSchedule.getLunchStartTime();
+//        final LocalTime lunchEndTime = workSchedule.getLunchEndTime();
+//
+//        removeUnavailableTimes(availableTimes, time -> time.isAfter(lunchStartTime.minusMinutes(30)), lunchEndTime);
+
+        return availableTimes;
+    }
+
     private void removeUnavailableTimes(List<LocalTime> availableTimes, Function<LocalTime, Boolean> condition, LocalTime endTime) {
         availableTimes.removeIf(time -> condition.apply(time) && time.isBefore(endTime));
     }
@@ -120,7 +163,7 @@ public class ScheduleService {
         List<BlockedTimes> blockedTimes = blockedTimesService.getAll();
         List<Schedule> schedules = repository.findAll();
         List<EventFullCalendarDTO> listDto = schedules.stream().map(x -> new EventFullCalendarDTO(x)).collect(Collectors.toList());
-        for (BlockedTimes b : blockedTimes){
+        for (BlockedTimes b : blockedTimes) {
             listDto.add(new EventFullCalendarDTO(b));
         }
 

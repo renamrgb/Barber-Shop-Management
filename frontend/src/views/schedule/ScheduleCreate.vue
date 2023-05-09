@@ -599,13 +599,17 @@ export default {
         this.date,
         this.form.professional.id
       );
-      this.availableTimes = [];
-      this.availableTimes.push("Selecione um horário");
-      RES.forEach((item) => {
-        this.availableTimes.push(item);
-      });
-      this.searchProceduresProfessional(this.form.professional.id);
-      this.carregarOptionsCustomer();
+      if (RES.status != 400) {
+        this.availableTimes = [];
+        this.availableTimes.push("Selecione um horário");
+        RES.forEach((item) => {
+          this.availableTimes.push(item);
+        });
+        this.searchProceduresProfessional(this.form.professional.id);
+        this.carregarOptionsCustomer();
+      } else {
+        this.$refs.toast.createToastDanger(RES.message);
+      }
     },
     async searchProceduresProfessional(id) {
       let res = await this.pService.buscarUm(id);
@@ -715,7 +719,7 @@ export default {
           this.form,
           this.payment
         );
-      }      
+      }
       if (res.status == 201) {
         this.$refs.toast.createToast("Atendimento registrado com sucesso!");
         this.$router.push(`/schedule/get`);

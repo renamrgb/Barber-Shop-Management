@@ -53,7 +53,7 @@ public class BlockedTimesService {
         LocalDateTime start = date.withHour(0).withMinute(0).withSecond(0);
         LocalDateTime end = date.withHour(23).withMinute(59).withSecond(59);
         List<BlockedTimes> timesList = repository.findByStartDateBetween(start, end, professionalId);
-        if (timesList.get(0).getStartDate().toLocalDate().equals(start.toLocalDate())) {
+        if (timesList.size() > 0 && timesList.get(0).getStartDate().toLocalDate().equals(start.toLocalDate())) {
             for (BlockedTimes b : timesList) {
                 b.getStartDate().withDayOfMonth(start.getDayOfMonth());
             }
