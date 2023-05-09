@@ -21,7 +21,6 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Validated
 @RestController
@@ -39,11 +38,9 @@ public class ScheduleResource {
     }
 
     @Transactional
-    @GetMapping()
+    @GetMapping
     public ResponseEntity<List<EventFullCalendarDTO>> consultScheduledTimes() {
-        List<Schedule> list = service.consultScheduledTimes();
-        List<EventFullCalendarDTO> listDto = list.stream().map(x -> new EventFullCalendarDTO(x)).collect(Collectors.toList());
-        return ResponseEntity.ok().body(listDto);
+        return ResponseEntity.ok().body(service.consultScheduledTimes());
     }
 
     @Transactional

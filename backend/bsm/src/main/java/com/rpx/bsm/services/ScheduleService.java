@@ -1,5 +1,6 @@
 package com.rpx.bsm.services;
 
+import com.rpx.bsm.dto.EventFullCalendarDTO;
 import com.rpx.bsm.entities.BlockedTimes;
 import com.rpx.bsm.entities.PaymentMethod;
 import com.rpx.bsm.entities.Schedule;
@@ -66,7 +67,7 @@ public class ScheduleService {
         List<Schedule> timesNotAvailable = findByDayBetween(startOfDay, endOfDay, professionalId);
         List<LocalTime> availableTimes = createArrayOfAvailableTimes();
         availableTimes = removeUnavailableTimes(availableTimes, timesNotAvailable);
-        List<BlockedTimes> blockedTimes = blockedTimesService.findByDate(startOfDay, professionalId);
+        List<BlockedTimes> blockedTimes = blockedTimesService.findByDateAndProfessional(startOfDay, professionalId);
         availableTimes = removeBlockedSchedules(availableTimes, blockedTimes);
         return availableTimes;
     }
@@ -115,8 +116,15 @@ public class ScheduleService {
         availableTimes.removeIf(time -> condition.apply(time) && time.isBefore(endTime));
     }
 
-    public List<Schedule> consultScheduledTimes() {
-        return repository.findAll();
+    public List<EventFullCalendarDTO> consultScheduledTimes() {
+        List<BlockedTimes> blockedTimes = blockedTimesService.getAll();
+        List<Schedule> schedules = repository.findAll();
+        List<EventFullCalendarDTO> listDto = schedules.stream().map(x -> new EventFullCalendarDTO(x)).collect(Collectors.toList());
+        for (BlockedTimes b : blockedTimes){
+            listDto.add(new EventFullCalendarDTO(b));
+        }
+
+        return listDto;
     }
 
     @Transactional

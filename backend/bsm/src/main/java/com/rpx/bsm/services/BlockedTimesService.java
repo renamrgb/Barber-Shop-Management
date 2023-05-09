@@ -4,6 +4,7 @@ import com.rpx.bsm.entities.BlockedTimes;
 import com.rpx.bsm.records.BlockedTimesRecord;
 import com.rpx.bsm.repositories.BlockedTimesRepository;
 import com.rpx.bsm.resources.exceptions.DatabaseException;
+import com.rpx.bsm.resources.exceptions.DefaultErrorException;
 import com.rpx.bsm.resources.exceptions.ResourceNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -24,7 +25,9 @@ public class BlockedTimesService {
     private BlockedTimesRepository repository;
 
     public BlockedTimes insert(BlockedTimesRecord record) {
-        return repository.save(new BlockedTimes(record));
+        if (formValidation(record))
+            return repository.save(new BlockedTimes(record));
+        return new BlockedTimes();
     }
 
     @Transactional
@@ -37,17 +40,21 @@ public class BlockedTimesService {
         return list;
     }
 
+    List<BlockedTimes> getAll(){
+        return repository.findAll();
+    }
+
     public BlockedTimes findById(Long id) {
         Optional<BlockedTimes> obj = repository.findById(id);
         return obj.get();
     }
 
-    public List<BlockedTimes> findByDate(LocalDateTime date, Long professionalId){
+    public List<BlockedTimes> findByDateAndProfessional(LocalDateTime date, Long professionalId) {
         LocalDateTime start = date.withHour(0).withMinute(0).withSecond(0);
         LocalDateTime end = date.withHour(23).withMinute(59).withSecond(59);
         List<BlockedTimes> timesList = repository.findByStartDateBetween(start, end, professionalId);
-        if(timesList.get(0).getStartDate().toLocalDate().equals(start.toLocalDate())){
-            for(BlockedTimes b : timesList){
+        if (timesList.get(0).getStartDate().toLocalDate().equals(start.toLocalDate())) {
+            for (BlockedTimes b : timesList) {
                 b.getStartDate().withDayOfMonth(start.getDayOfMonth());
             }
         }
@@ -80,6 +87,18 @@ public class BlockedTimesService {
         } catch (DataIntegrityViolationException e) {
             throw new DatabaseException(e.getMessage());
         }
+    }
+
+    public Boolean formValidation(BlockedTimesRecord r) {
+        Boolean valid = true;
+        System.out.println(r.endDate().toLocalTime().getMinute());
+        System.out.println(r.startDate().toLocalTime().getMinute());
+        if ((r.startDate().getMinute() != 00 || r.endDate().getMinute() != 00) && (r.startDate().getMinute() != 30 || r.endDate().getMinute() != 30))
+            throw new DefaultErrorException("Não é permitido números quebrados, apenas 30 ou 00 para o campo minuto");
+        if (r.startDate().isAfter(r.endDate()))
+            throw new DefaultErrorException("A data inicial deve ser menor que a data final");
+
+        return valid;
     }
 
 }

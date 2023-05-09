@@ -1,5 +1,5 @@
 import api from "@/Services/API/api";
-
+import FormatDateBr from "@/util/formatDateBr";
 export default class BlockedTimeService {
   url = "/blockedTimes";
 
@@ -12,11 +12,12 @@ export default class BlockedTimeService {
     }
   }
   async cadastrar(item) {
+    item = this.replaceItems(item);
     try {
-      const res = await api.post(this.url, this.replaceItem(item));
+      const res = await api.post(`${this.url}`, item);
       return res;
-    } catch (error) {
-      return error;
+    } catch (error) {      
+      return error.response.data;
     }
   }
   async excluir(id) {
@@ -27,14 +28,21 @@ export default class BlockedTimeService {
       return error;
     }
   }
-  async alterar(id, item) {
-    console.log(`${JSON.stringify(item)}`);
+  async getById(id) {
     try {
-      const res = await api.put(`${this.url}/${id}`, this.replaceItem(item));
+      const res = await api.get(`${this.url}/${id}`);
+      return res.data;
+    } catch (error) {
+      return error;
+    }
+  }
+  async alterar(id, item) {
+    try {
+      const res = await api.put(`${this.url}/${id}`, this.replaceItems(item));
       return res;
     } catch (error) {
       console.log(error);
-      return error;
+      return error.response.data;
     }
   }
   async search(pageId, description) {
@@ -46,5 +54,15 @@ export default class BlockedTimeService {
     } catch (error) {
       return error;
     }
+  }
+  replaceItems(item) {
+    let f = new FormatDateBr();
+    item.startDate = f.datetimeToStringBr(item.startDate);
+    item.endDate = f.datetimeToStringBr(item.endDate);
+    // item.startDate = item.startDate.replace("T", " ");
+    // item.endDate = item.endDate.replace("T", " ");
+    // item.startDate = item.startDate.replace("Z", " ");
+    // item.endDate = item.endDate.replace("Z", " ");
+    return item;
   }
 }

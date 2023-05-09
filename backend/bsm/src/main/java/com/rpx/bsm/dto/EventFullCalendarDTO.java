@@ -1,5 +1,6 @@
 package com.rpx.bsm.dto;
 
+import com.rpx.bsm.entities.BlockedTimes;
 import com.rpx.bsm.entities.Schedule;
 import lombok.Getter;
 import lombok.Setter;
@@ -24,5 +25,12 @@ public class EventFullCalendarDTO  implements Serializable {
             setBackgroundColor("red");
         else
             setBackgroundColor("blue");
+    }
+    public EventFullCalendarDTO(BlockedTimes obj) {
+        setId(obj.getId());
+        setTitle(obj.getDescription());
+        setStart(obj.getStartDate());
+        setEnd(obj.getEndDate());
+        setBackgroundColor("gray");
     }
 }

@@ -58,20 +58,28 @@
               >
                 <div class="col">
                   <CFormLabel for="nome">* {{ e.parameter_name }}</CFormLabel>
-                  <input
-                    v-if="e.parameter_key != 'DISCOUNT_LOYALYTY_CARD'"
-                    :name="e.parameter_key"
-                    :type="type(e)"
-                    class="form-control"
-                    v-model="e.parameter_value"
-                  />
-                  <CInputGroup
-                    class="mb-1"
-                    v-if="e.parameter_key == 'DISCOUNT_LOYALYTY_CARD'"
-                  >
-                    <CInputGroupText>R$</CInputGroupText>
-                    <CFormInput v-model.lazy="e.parameter_value"
-                  /></CInputGroup>
+                  <div v-if="e.parameter_key == 'WORKS_ON_MONDAY' || e.parameter_key == 'WORKS_ON_SATURDAY'">                    
+                    <CFormCheck
+                      id="flexCheckChecked"
+                      v-model="e.parameter_value"
+                    />
+                  </div>
+                  <div v-else>
+                    <input
+                      v-if="e.parameter_key != 'DISCOUNT_LOYALYTY_CARD'"
+                      :name="e.parameter_key"
+                      :type="type(e)"
+                      class="form-control"
+                      v-model="e.parameter_value"
+                    />
+                    <CInputGroup
+                      class="mb-1"
+                      v-if="e.parameter_key == 'DISCOUNT_LOYALYTY_CARD'"
+                    >
+                      <CInputGroupText>R$</CInputGroupText>
+                      <CFormInput v-model.lazy="e.parameter_value"
+                    /></CInputGroup>
+                  </div>
                 </div>
               </div>
             </CCardBody>

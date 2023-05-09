@@ -715,8 +715,7 @@ export default {
           this.form,
           this.payment
         );
-      }
-      console.log(`RES: ${JSON.stringify(res)}`);
+      }      
       if (res.status == 201) {
         this.$refs.toast.createToast("Atendimento registrado com sucesso!");
         this.$router.push(`/schedule/get`);
