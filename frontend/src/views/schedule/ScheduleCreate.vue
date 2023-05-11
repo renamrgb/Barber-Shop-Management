@@ -43,11 +43,7 @@
               >
             </div>
           </div>
-          <div
-            v-if="
-              availableTimes.length > 0 || time != undefined || id != undefined
-            "
-          >
+          <div v-if="availableTimes.length > 1">
             <div class="row mb-3">
               <div class="col">
                 <CFormLabel for="nome">{{ labelTimeAvaliabel }}</CFormLabel>
@@ -108,7 +104,7 @@
                 >
               </div>
             </div>
-            <div v-if="validForLaunchingProducts() || isFinite">
+            <div v-if="validForTherapy == undefined || validForTherapy == true">
               <div class="row mb-3" v-if="id != undefined && !isItFinished">
                 <div class="row">
                   <div class="col">
@@ -288,6 +284,11 @@
               </div>
             </div>
           </div>
+          <div v-else class="row mb-3">
+            <div class="col" style="color: red; text-align: center">
+              {{ msgRetornoSearchSchedules }}
+            </div>
+          </div>
           <div class="d-grid gap-2 d-md-flex justify-content-md-end">
             <CButton
               v-if="availableTimes.length > 0 && !isItFinished"
@@ -391,6 +392,8 @@ export default {
         price: 0,
       },
       productSelected: "",
+      validForTherapy: undefined,
+      msgRetornoSearchSchedules: undefined,
     };
   },
   computed: {
@@ -600,13 +603,19 @@ export default {
         this.form.professional.id
       );
       if (RES.status != 400) {
-        this.availableTimes = [];
-        this.availableTimes.push("Selecione um horário");
-        RES.forEach((item) => {
-          this.availableTimes.push(item);
-        });
-        this.searchProceduresProfessional(this.form.professional.id);
-        this.carregarOptionsCustomer();
+        console.log(`length: ${RES.length}`);
+        if (RES.length > 0) {
+          this.availableTimes = [];
+          this.availableTimes.push("Selecione um horário");
+          RES.forEach((item) => {
+            this.availableTimes.push(item);
+          });
+          this.searchProceduresProfessional(this.form.professional.id);
+          this.carregarOptionsCustomer();
+        } else {
+          this.availableTimes = [];
+          this.msgRetornoSearchSchedules = "Nenhum horário encontrado";
+        }
       } else {
         this.$refs.toast.createToastDanger(RES.message);
       }
@@ -780,7 +789,7 @@ export default {
         this.isItFinished = true;
       }
       this.carregarProductSelect();
-      this.validForLaunchingProducts();
+      this.validForTherapy = this.validForLaunchingProducts();
     },
   },
   mounted() {

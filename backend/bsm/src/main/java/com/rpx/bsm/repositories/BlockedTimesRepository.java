@@ -13,7 +13,7 @@ public interface BlockedTimesRepository extends JpaRepository<BlockedTimes, Long
 
     Page<BlockedTimes> findByDescription(String description, Pageable pageable);
 
-    @Query(value = "SELECT b FROM BlockedTimes b WHERE (b.endDate <= :end AND b.startDate >= :start) and b.professional.Id = :professionalId")
-    List<BlockedTimes> findByStartDateBetween(LocalDateTime start, LocalDateTime end, Long professionalId);
+    @Query(value = "SELECT b FROM BlockedTimes b WHERE b.professional.Id = :professionalId AND (:date BETWEEN b.startDate AND b.endDate)")
+    List<BlockedTimes> findByStartDateBetween(LocalDateTime date, Long professionalId);
 
 }

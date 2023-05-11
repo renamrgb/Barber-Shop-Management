@@ -16,6 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityNotFoundException;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -25,8 +26,7 @@ public class BlockedTimesService {
     private BlockedTimesRepository repository;
 
     public BlockedTimes insert(BlockedTimesRecord record) {
-        if (formValidation(record))
-            return repository.save(new BlockedTimes(record));
+        if (formValidation(record)) return repository.save(new BlockedTimes(record));
         return new BlockedTimes();
     }
 
@@ -40,7 +40,7 @@ public class BlockedTimesService {
         return list;
     }
 
-    List<BlockedTimes> getAll(){
+    List<BlockedTimes> getAll() {
         return repository.findAll();
     }
 
@@ -50,12 +50,16 @@ public class BlockedTimesService {
     }
 
     public List<BlockedTimes> findByDateAndProfessional(LocalDateTime date, Long professionalId) {
-        LocalDateTime start = date.withHour(0).withMinute(0).withSecond(0);
-        LocalDateTime end = date.withHour(23).withMinute(59).withSecond(59);
-        List<BlockedTimes> timesList = repository.findByStartDateBetween(start, end, professionalId);
-        if (timesList.size() > 0 && timesList.get(0).getStartDate().toLocalDate().equals(start.toLocalDate())) {
-            for (BlockedTimes b : timesList) {
-                b.getStartDate().withDayOfMonth(start.getDayOfMonth());
+        List<BlockedTimes> list = repository.findByStartDateBetween(date, professionalId);
+        List<BlockedTimes> timesList = new ArrayList<>();
+        for (BlockedTimes e: list) {
+            if(e.getStartDate().isBefore(e.getEndDate())){
+                timesList.add(new BlockedTimes(
+                        e.getStartDate(),
+                        e.getEndDate().withHour(23).withMinute(59),
+                        e.getDescription(),
+                        e.getProfessional()
+                ));
             }
         }
         return timesList;

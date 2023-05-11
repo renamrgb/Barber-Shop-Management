@@ -64,13 +64,12 @@ public class ScheduleService {
     public List<LocalTime> availableTimes(LocalDateTime startOfDay, LocalDateTime endOfDay, Long professionalId) {
         Boolean isSaturday = validateDayOfTheWeek(startOfDay);
         List<Schedule> timesNotAvailable = findByDayBetween(startOfDay, endOfDay, professionalId);
-        List<LocalTime> availableTimes;
-        if (!isSaturday)
-            availableTimes = createArrayOfAvailableTimes();
-        else
-            availableTimes = createSaturdayArrayOfAvailableTimes();
         List<BlockedTimes> blockedTimes = blockedTimesService.findByDateAndProfessional(startOfDay, professionalId);
+        List<LocalTime> availableTimes;
+        if (!isSaturday) availableTimes = createArrayOfAvailableTimes();
+        else availableTimes = createSaturdayArrayOfAvailableTimes();
         availableTimes = removeBlockedSchedules(availableTimes, blockedTimes);
+        availableTimes = removeUnavailableTimes(availableTimes, timesNotAvailable);
         return availableTimes;
     }
 
@@ -86,8 +85,7 @@ public class ScheduleService {
             parameterValue = parameterService.findByPameterKey("WORKS_ON_SATURDAY");
             if (parameterValue.getParameter_value() == "false")
                 throw new DefaultErrorException("Não é permitido realizar atendimentos no sábado");
-            else
-                isSaturday = true;
+            else isSaturday = true;
         }
         if (date.getDayOfWeek() == DayOfWeek.SUNDAY) {
             parameterValue = parameterService.findByPameterKey("WORKS_ON_SUNDAY");
@@ -103,9 +101,7 @@ public class ScheduleService {
             LocalTime end = schedule.getEndDate().toLocalTime();
             removeUnavailableTimes(availableTimes, time -> (time.equals(start) || time.isAfter(start)), end);
         }
-        return availableTimes.stream()
-                .sorted()
-                .collect(Collectors.toList());
+        return availableTimes.stream().sorted().collect(Collectors.toList());
     }
 
     private List<LocalTime> removeBlockedSchedules(List<LocalTime> availableTimes, List<BlockedTimes> blockedTimes) {
@@ -114,9 +110,7 @@ public class ScheduleService {
             LocalTime end = b.getEndDate().toLocalTime();
             removeUnavailableTimes(availableTimes, time -> (time.equals(start) || time.isAfter(start)), end);
         }
-        return availableTimes.stream()
-                .sorted()
-                .collect(Collectors.toList());
+        return availableTimes.stream().sorted().collect(Collectors.toList());
     }
 
     private List<LocalTime> createArrayOfAvailableTimes() {
@@ -213,7 +207,9 @@ public class ScheduleService {
     public void delete(Long id) {
         try {
             Schedule obj = findById(id);
-            if (obj.getPaymentSchedule() != null)
+            if (obj.getPaymentSchedule().getPaymentMethod() == null && obj.getPaymentSchedule().getAmount() == null && obj.getPaymentSchedule().getGrossvalue() == null)
+                repository.deleteById(id);
+            else
                 throw new DefaultErrorException("Não é permitido excluir atendimentos que já foram pagos");
         } catch (EmptyResultDataAccessException e) {
             throw new ResourceNotFoundException(id);
@@ -233,8 +229,7 @@ public class ScheduleService {
                 obj.getPaymentSchedule().setAmount(null);
                 obj.getPaymentSchedule().setDiscount(null);
                 obj.getPaymentSchedule().setGrossvalue(null);
-            } else
-                throw new DefaultErrorException("Não é permitido estornar atendimentos fora da data dele");
+            } else throw new DefaultErrorException("Não é permitido estornar atendimentos fora da data dele");
         } catch (EmptyResultDataAccessException e) {
             throw new ResourceNotFoundException(id);
         } catch (DataIntegrityViolationException e) {
