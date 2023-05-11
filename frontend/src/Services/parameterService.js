@@ -14,7 +14,7 @@ export default class ParameterService {
   async save(data) {
     try {
       const res = await api.put(`${this.url}/1`, data);
-      return res.data;
+      return res;
     } catch (error) {
       return error;
     }

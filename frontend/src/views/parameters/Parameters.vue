@@ -65,8 +65,7 @@
                       e.parameter_key == 'WORKS_ON_SUNDAY'
                     "
                   >
-                    <CFormCheck
-                      id="flexCheckChecked"
+                    <CFormCheck                      
                       v-model="e.parameter_value"
                     />
                   </div>
@@ -148,9 +147,12 @@ export default {
       this.parameter = await this.service.getParamerter();
     },
     async save() {
-      let res = await this.service.save(this.parameter);
-      console.log(res);
-      debugger;
+      let res = await this.service.save(this.parameter);      
+      if (res.status == 200) this.$refs.toast.createToast("Salvo com sucesso");
+      else
+        this.$refs.toast.createToastDanger(
+          "Ocorreu um erro ao realizar a operação"
+        );
     },
   },
   mounted() {
