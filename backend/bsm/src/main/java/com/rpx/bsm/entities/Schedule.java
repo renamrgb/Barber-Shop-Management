@@ -1,5 +1,6 @@
 package com.rpx.bsm.entities;
 
+import com.rpx.bsm.entities.interfaces.UnavailableHours;
 import com.rpx.bsm.records.ScheduleRecord;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -17,7 +18,7 @@ import java.util.Set;
 @Entity
 @NoArgsConstructor
 @Table(name = "schedules")
-public class Schedule {
+public class Schedule implements UnavailableHours {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
