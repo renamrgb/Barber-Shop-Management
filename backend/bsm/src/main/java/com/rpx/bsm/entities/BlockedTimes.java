@@ -1,5 +1,6 @@
 package com.rpx.bsm.entities;
 
+import com.rpx.bsm.entities.interfaces.UnavailableHours;
 import com.rpx.bsm.records.BlockedTimesRecord;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -15,7 +16,7 @@ import java.util.Objects;
 @Getter
 @Setter
 @NoArgsConstructor
-public class BlockedTimes implements Serializable {
+public class BlockedTimes implements Serializable, UnavailableHours {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;

@@ -2,6 +2,7 @@ package com.rpx.bsm.services;
 
 import com.rpx.bsm.dto.EventFullCalendarDTO;
 import com.rpx.bsm.entities.*;
+import com.rpx.bsm.entities.interfaces.UnavailableHours;
 import com.rpx.bsm.records.ScheduleRecord;
 import com.rpx.bsm.records.util.WorkSchedule;
 import com.rpx.bsm.repositories.ScheduleRepository;
@@ -68,8 +69,8 @@ public class ScheduleService {
         List<LocalTime> availableTimes;
         if (!isSaturday) availableTimes = createArrayOfAvailableTimes();
         else availableTimes = createSaturdayArrayOfAvailableTimes();
-        availableTimes = removeBlockedSchedules(availableTimes, blockedTimes);
-        availableTimes = removeUnavailableTimes(availableTimes, timesNotAvailable);
+        removeUnavailableTimes(availableTimes, blockedTimes);
+        removeUnavailableTimes(availableTimes, timesNotAvailable);
         return availableTimes;
     }
 
@@ -95,22 +96,12 @@ public class ScheduleService {
         return isSaturday;
     }
 
-    private List<LocalTime> removeUnavailableTimes(List<LocalTime> availableTimes, List<Schedule> schedules) {
-        for (Schedule schedule : schedules) {
-            LocalTime start = schedule.getStartDate().toLocalTime();
-            LocalTime end = schedule.getEndDate().toLocalTime();
+    private <T extends UnavailableHours> void removeUnavailableTimes(List<LocalTime> availableTimes, List<T> unavailables) {
+        for (T unavailable : unavailables) {
+            LocalTime start = unavailable.getStartDate().toLocalTime();
+            LocalTime end = unavailable.getEndDate().toLocalTime();
             removeUnavailableTimes(availableTimes, time -> (time.equals(start) || time.isAfter(start)), end);
         }
-        return availableTimes.stream().sorted().collect(Collectors.toList());
-    }
-
-    private List<LocalTime> removeBlockedSchedules(List<LocalTime> availableTimes, List<BlockedTimes> blockedTimes) {
-        for (BlockedTimes b : blockedTimes) {
-            LocalTime start = b.getStartDate().toLocalTime();
-            LocalTime end = b.getEndDate().toLocalTime();
-            removeUnavailableTimes(availableTimes, time -> (time.equals(start) || time.isAfter(start)), end);
-        }
-        return availableTimes.stream().sorted().collect(Collectors.toList());
     }
 
     private List<LocalTime> createArrayOfAvailableTimes() {
