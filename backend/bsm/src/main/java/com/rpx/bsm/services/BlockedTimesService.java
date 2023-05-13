@@ -16,7 +16,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityNotFoundException;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -50,19 +49,7 @@ public class BlockedTimesService {
     }
 
     public List<BlockedTimes> findByDateAndProfessional(LocalDateTime date, Long professionalId) {
-        List<BlockedTimes> list = repository.findByStartDateBetween(date, professionalId);
-        List<BlockedTimes> timesList = new ArrayList<>();
-        for (BlockedTimes e: list) {
-            if(e.getStartDate().isBefore(e.getEndDate())){
-                timesList.add(new BlockedTimes(
-                        e.getStartDate(),
-                        e.getEndDate().withHour(23).withMinute(59),
-                        e.getDescription(),
-                        e.getProfessional()
-                ));
-            }
-        }
-        return timesList;
+        return repository.findByStartDateBetween(date, professionalId);
     }
 
     @Transactional
