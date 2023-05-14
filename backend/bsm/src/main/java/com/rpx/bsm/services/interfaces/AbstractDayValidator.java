@@ -14,7 +14,7 @@ public abstract class AbstractDayValidator {
 
     private final ParameterService parameterService;
 
-    public void validateDay() {
+    public final void validateDay() {
         ParameterValue parameterValue = parameterService.findByPameterKey(getParameterkey());
         this.validParameterIsFalse(parameterValue, getErrorMessage());
     }
