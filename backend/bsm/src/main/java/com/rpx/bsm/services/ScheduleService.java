@@ -1,13 +1,19 @@
 package com.rpx.bsm.services;
 
 import com.rpx.bsm.dto.EventFullCalendarDTO;
-import com.rpx.bsm.entities.*;
+import com.rpx.bsm.entities.BlockedTimes;
+import com.rpx.bsm.entities.PaymentMethod;
+import com.rpx.bsm.entities.Schedule;
+import com.rpx.bsm.entities.ServiceItems;
 import com.rpx.bsm.records.ScheduleRecord;
 import com.rpx.bsm.records.util.WorkSchedule;
 import com.rpx.bsm.repositories.ScheduleRepository;
 import com.rpx.bsm.resources.exceptions.DatabaseException;
 import com.rpx.bsm.resources.exceptions.DefaultErrorException;
 import com.rpx.bsm.resources.exceptions.ResourceNotFoundException;
+import com.rpx.bsm.services.interfaces.AbstractDayValidator;
+import com.rpx.bsm.services.interfaces.DayValidator;
+import com.rpx.bsm.services.interfaces.implabs.SaturdayValidatorImplAbstract;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
@@ -17,7 +23,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityNotFoundException;
-import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -39,6 +44,10 @@ public class ScheduleService {
     private LoyaltyCardService loyaltyCardService;
     @Autowired
     private BlockedTimesService blockedTimesService;
+    @Autowired
+    private List<DayValidator> dayValidators;
+    @Autowired
+    private List<AbstractDayValidator> absDayValidators;
 
     public Schedule insert(ScheduleRecord record) {
         return repository.save(new Schedule(record));
@@ -62,7 +71,7 @@ public class ScheduleService {
 
     @Transactional
     public List<LocalTime> availableTimes(LocalDateTime startOfDay, LocalDateTime endOfDay, Long professionalId) {
-        Boolean isSaturday = validateDayOfTheWeek(startOfDay);
+        boolean isSaturday = validateDayOfTheWeek(startOfDay);
         List<Schedule> timesNotAvailable = findByDayBetween(startOfDay, endOfDay, professionalId);
         List<BlockedTimes> blockedTimes = blockedTimesService.findByDateAndProfessional(startOfDay, professionalId);
         List<LocalTime> availableTimes;
@@ -74,25 +83,22 @@ public class ScheduleService {
     }
 
     private Boolean validateDayOfTheWeek(LocalDateTime date) {
-        ParameterValue parameterValue;
-        Boolean isSaturday = false;
-        if (date.getDayOfWeek() == DayOfWeek.MONDAY) {
-            parameterValue = parameterService.findByPameterKey("WORKS_ON_MONDAY");
-            if (parameterValue.getParameter_value() == "false")
-                throw new DefaultErrorException("Não é permitido realizar atendimentos no segunda-feira");
-        }
-        if (date.getDayOfWeek() == DayOfWeek.SATURDAY) {
-            parameterValue = parameterService.findByPameterKey("WORKS_ON_SATURDAY");
-            if (parameterValue.getParameter_value() == "false")
-                throw new DefaultErrorException("Não é permitido realizar atendimentos no sábado");
-            else isSaturday = true;
-        }
-        if (date.getDayOfWeek() == DayOfWeek.SUNDAY) {
-            parameterValue = parameterService.findByPameterKey("WORKS_ON_SUNDAY");
-            if (parameterValue.getParameter_value() == "false")
-                throw new DefaultErrorException("Não é permitido realizar atendimentos no domingo");
-        }
-        return isSaturday;
+//        Optional<DayValidator> dayValidator = dayValidators.stream()
+//                .filter(val -> val.isForDayOfWeek(date.getDayOfWeek()))
+//                .findFirst();
+//
+//        dayValidator.ifPresent(val -> val.validateDay(date));
+//
+//        return dayValidator.isPresent() && dayValidator.get() instanceof SaturdayValidator;
+
+        Optional<AbstractDayValidator> abstractDayValidator = absDayValidators
+                .stream()
+                .filter(val -> val.isForDayOfWeek(date.getDayOfWeek()))
+                .findFirst();
+
+        abstractDayValidator.ifPresent(AbstractDayValidator::validateDay);
+
+        return abstractDayValidator.isPresent() && abstractDayValidator.get() instanceof SaturdayValidatorImplAbstract;
     }
 
     private List<LocalTime> removeUnavailableTimes(List<LocalTime> availableTimes, List<Schedule> schedules) {
