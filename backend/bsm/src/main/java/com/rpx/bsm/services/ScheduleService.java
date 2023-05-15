@@ -144,14 +144,12 @@ public class ScheduleService {
         availableTimes.removeIf(time -> condition.apply(time) && time.isBefore(endTime));
     }
 
-    public List<EventFullCalendarDTO> consultScheduledTimes() {
-        List<BlockedTimes> blockedTimes = blockedTimesService.getAll();
-        List<Schedule> schedules = repository.findAll();
+    public List<EventFullCalendarDTO> consultScheduledTimes(Long professionalId) {
+        List<BlockedTimes> blockedTimes = blockedTimesService.findByProfessional(professionalId);
+        List<Schedule> schedules = findByProfessional(professionalId);
         List<EventFullCalendarDTO> listDto = schedules.stream().map(x -> new EventFullCalendarDTO(x)).collect(Collectors.toList());
-        for (BlockedTimes b : blockedTimes) {
+        for (BlockedTimes b : blockedTimes)
             listDto.add(new EventFullCalendarDTO(b));
-        }
-
         return listDto;
     }
 
@@ -160,10 +158,10 @@ public class ScheduleService {
         try {
             Schedule obj = repository.getReferenceById(id);
             loyaltyCardService.update(record.client().getLoyaltyCard());
+            record.client().getLoyaltyCard().setCustomer(record.client());
             loyaltyCardService.setQtyUsed(record.client().getLoyaltyCard());
             if (record.products().size() < obj.getServiceItems().size())
                 serviceItemsService.removenonCommonItems(obj.getServiceItems(), record.products());
-
             if (record.payment() != null && record.startDate().toLocalDate().compareTo(LocalDate.now()) > 0)
                 throw new DefaultErrorException("Você não pode finalizar um atendimento futuro");
             obj = updateData(record, obj);
@@ -226,6 +224,10 @@ public class ScheduleService {
         } catch (DataIntegrityViolationException e) {
             throw new DatabaseException(e.getMessage());
         }
+    }
+
+    private List<Schedule> findByProfessional(Long id){
+        return repository.findByProfessional(id);
     }
 
 }

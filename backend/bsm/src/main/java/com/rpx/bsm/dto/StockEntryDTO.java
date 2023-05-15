@@ -7,7 +7,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import javax.persistence.*;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -28,7 +27,6 @@ public class StockEntryDTO implements Serializable {
         setId(obj.getId());
         setSupplier(obj.getSupplier());
         setNfe(obj.getNfe());
-        setReversed(obj.getReversed());
         products = new ArrayList<>();
         if (obj.getProducts() != null)
             for (StockEntryProducts e : obj.getProducts())

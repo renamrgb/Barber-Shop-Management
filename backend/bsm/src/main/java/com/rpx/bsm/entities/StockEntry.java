@@ -1,12 +1,9 @@
 package com.rpx.bsm.entities;
 
-import com.rpx.bsm.records.ExpenseRecord;
 import com.rpx.bsm.records.StockEntryRecord;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.hibernate.annotations.Fetch;
-import org.hibernate.annotations.FetchMode;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -29,11 +26,6 @@ public class StockEntry implements Serializable {
     private List<StockEntryProducts> products;
     @OneToOne(mappedBy = "stockEntry", cascade = CascadeType.ALL)
     private Nfe nfe;
-    private Boolean reversed;
-    //@ManyToOne
-    //@JoinColumn(name = "expense_id")
-    //@Fetch(FetchMode.JOIN)
-    //private Expense expenseStockEntry;
 
     public StockEntry(StockEntryRecord r) {
         setSupplier(r.supplier());
@@ -42,7 +34,6 @@ public class StockEntry implements Serializable {
         for(int i=0; i<r.products().size(); i++){
             this.products.add(new StockEntryProducts(r.products().get(i), this));
         }
-        this.reversed = false;
     }
 
     @Override

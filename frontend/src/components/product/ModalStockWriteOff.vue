@@ -159,8 +159,7 @@ export default {
     },
     async save() {
       this.form.product.id = this.id;
-      let res = await this.stockWriteOffService.save(this.form);
-      console.log(res.response);
+      let res = await this.stockWriteOffService.save(this.form);      
       if (res.status == 201) {
         this.$refs.toast.createToast("Baixa registrada com sucesso");
         this.$router.push("/forms/produto");

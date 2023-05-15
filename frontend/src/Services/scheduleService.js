@@ -85,9 +85,9 @@ export default class ScheduleService {
     var tempoTotalEmMinutos = horasEmMinutos + minutos + segundosEmMinutos;
     return tempoTotalEmMinutos;
   }
-  async consultScheduledTimes() {
+  async consultScheduledTimes(idProfessional) {
     try {
-      const RES = await api.get(`${this.url}`);
+      const RES = await api.get(`${this.url}?professional=${idProfessional}`);
       return RES.data;
     } catch (error) {
       return error;

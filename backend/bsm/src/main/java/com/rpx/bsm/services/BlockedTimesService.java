@@ -47,9 +47,15 @@ public class BlockedTimesService {
         Optional<BlockedTimes> obj = repository.findById(id);
         return obj.get();
     }
-
+    public List<BlockedTimes> findByProfessional(Long id) {
+        return repository.findByProfessional(id);
+    }
     public List<BlockedTimes> findByDateAndProfessional(LocalDateTime date, Long professionalId) {
-        return repository.findByStartDateBetween(date, professionalId);
+        List<BlockedTimes> list = repository.findByStartDateBetween(date, professionalId);
+        for (BlockedTimes e : list)
+            if (!e.getStartDate().toLocalDate().equals(e.getEndDate().toLocalDate()))
+                e.setEndDate(e.getEndDate().withHour(23).withMinute(59));
+        return list;
     }
 
     @Transactional

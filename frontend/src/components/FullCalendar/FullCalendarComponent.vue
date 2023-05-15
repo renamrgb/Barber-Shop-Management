@@ -5,7 +5,6 @@ import dayGridPlugin from "@fullcalendar/daygrid";
 import timeGridPlugin from "@fullcalendar/timegrid";
 import ptBrLocale from "@fullcalendar/core/locales/pt-br";
 import interactionPlugin from "@fullcalendar/interaction";
-import { INITIAL_EVENTS, createEventId } from "./event-utils";
 import ParameterService from "@/Services/parameterService";
 export default {
   props: {
@@ -16,6 +15,11 @@ export default {
   },
   components: {
     FullCalendar,
+  },
+  watch: {
+    schedules() {
+      this.calendarOptions.events = this.schedules;
+    },
   },
   data() {
     return {
@@ -42,14 +46,10 @@ export default {
         select: this.handleDateSelect,
         eventClick: this.handleEventClick,
         eventsSet: this.handleEvents,
-        /* você pode atualizar um banco de dados remoto quando eles disparam:
-        eventAdd:
-        eventChange:
-        eventRemove:
-        */
         slotLabelInterval: "00:30",
         slotMinTime: "08:00:00", // Define o horário de início do calendário como 8h
         slotMaxTime: "18:00:00", // Define o horário de término do calendário como 18h
+        events: [],
       },
       currentEvents: [],
     };
@@ -83,7 +83,7 @@ export default {
     this.setSlotTime();
   },
   created() {
-    this.calendarOptions.initialEvents = this.schedules;
+    this.calendarOptions.events = this.schedules;
   },
 };
 </script>

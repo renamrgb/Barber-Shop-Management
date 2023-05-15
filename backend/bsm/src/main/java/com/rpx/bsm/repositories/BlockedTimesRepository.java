@@ -16,4 +16,7 @@ public interface BlockedTimesRepository extends JpaRepository<BlockedTimes, Long
     @Query(value = "SELECT * FROM BLOCKED_TIMES WHERE PROFESSIONAL_ID = :professionalId AND (CAST(:date AS DATE) BETWEEN CAST(START_DATE AS DATE) AND CAST(END_DATE AS DATE))", nativeQuery = true)
     List<BlockedTimes> findByStartDateBetween(LocalDateTime date, Long professionalId);
 
+    @Query("SELECT b FROM BlockedTimes b WHERE b.professional.Id = :id")
+    List<BlockedTimes> findByProfessional(Long id);
+
 }

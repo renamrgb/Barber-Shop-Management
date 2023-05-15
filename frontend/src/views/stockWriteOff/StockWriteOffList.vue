@@ -9,25 +9,30 @@
         </CCardHeader>
         <CCardBody>
           <div class="row mb-3">
-            <div class="col-md-12 mx-auto">
-              <div class="input-group">
-                <input
-                  class="form-control border-end-0 border rounded-pill"
-                  type="search"
-                  placeholder="Motivo da baixa..."
-                  id="example-search-input"
-                  v-model="searchText"
-                />
-                <span class="input-group-append">
-                  <button
-                    class="btn btn-outline-secondary bg-dark border-bottom-0 border rounded-pill ms-n5"
-                    type="button"
-                    @click="find"
-                  >
-                    <CIcon icon="cil-magnifying-glass" size="x" />
-                  </button>
-                </span>
-              </div>
+            <div class="col-md-9">
+              <input
+                type="text"
+                class="form-control border-end-0 border rounded-pill"
+                placeholder="Pesquisar"
+                v-model="searchText"
+              />
+            </div>
+            <div class="col-md-2">
+              <select
+                class="form-control border-end-0 border rounded-pill"
+                v-model="opSearch"
+              >
+                <option value="title">Produto</option>
+                <option value="reason">Motivo da baixa</option>
+              </select>
+            </div>
+            <div class="col-md-1">
+              <button
+                type="button"
+                class="btn btn-outline-secondary bg-dark border-bottom-0 border rounded-pill ms-n5"
+              >
+                <CIcon icon="cil-magnifying-glass" size="x" @click="find" />
+              </button>
             </div>
           </div>
           <CCard>
@@ -64,7 +69,9 @@
               <CTableHead class="table-dark">
                 <CTableRow>
                   <CTableHeaderCell scope="col">#</CTableHeaderCell>
-                  <CTableHeaderCell scope="col">Motivo da baixa</CTableHeaderCell>
+                  <CTableHeaderCell scope="col"
+                    >Motivo da baixa</CTableHeaderCell
+                  >
                   <CTableHeaderCell scope="col">Qtde</CTableHeaderCell>
                   <CTableHeaderCell scope="col">Data</CTableHeaderCell>
                   <CTableHeaderCell scope="col"></CTableHeaderCell>
@@ -73,7 +80,7 @@
               <CTableBody>
                 <CTableRow v-for="item in this.itens" :key="item.id">
                   <CTableHeaderCell scope="row">{{ item.id }}</CTableHeaderCell>
-                  <CTableDataCell>{{ item.product.title }}</CTableDataCell>
+                  <CTableDataCell>{{ item.reason }}</CTableDataCell>
                   <CTableDataCell>{{ item.qty }}</CTableDataCell>
                   <CTableDataCell>{{
                     formatDateBr.toDateBr(item.record)
@@ -126,6 +133,7 @@ export default {
       searchText: "",
       pageId: 0,
       searchText: "",
+      opSearch: "title",
       filter: {
         dtStart: "",
         dtEnd: "",
@@ -134,7 +142,7 @@ export default {
   },
   methods: {
     async deleteItem() {
-      const RESPONSE = await this.service.delete(this.id);      
+      const RESPONSE = await this.service.delete(this.id);
       if (RESPONSE.status == 204) this.$router.push(`/stockWriteOff`);
       else
         this.$refs.toast.createToastDanger("Ocorreu um erro ao excluir o item");
@@ -147,6 +155,7 @@ export default {
     },
     async find() {
       let res = await this.service.find(
+        this.opSearch,
         this.searchText,
         this.filter,
         this.pageId

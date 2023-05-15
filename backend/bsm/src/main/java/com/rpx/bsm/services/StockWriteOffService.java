@@ -34,22 +34,28 @@ public class StockWriteOffService {
         stockService.decrementStock(product.getId(), qty);
     }
 
-    public Page<StockWriteOff> find(Pageable pageable, String title, String dtStartString, String dtEndString) {
+    public Page<StockWriteOff> find(Pageable pageable, String title, String reason, String dtStartString, String dtEndString) {
         Page<StockWriteOff> list = null;
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
         LocalDate dtStart = LocalDate.parse(dtStartString, formatter);
         LocalDate dtEnd = LocalDate.parse(dtEndString, formatter);
 
-        if (title.isEmpty()) list = repository.findByRecordBetween(pageable, dtStart, dtEnd);
-        else
+        if (title.isEmpty() && reason.isEmpty())
+            list = repository.findByRecordBetween(pageable, dtStart, dtEnd);
+        if (!title.isEmpty() && reason.isEmpty())
             list = repository.findByTitleAndBetween(pageable, title, dtStart, dtEnd);
+        if (!title.isEmpty() && !reason.isEmpty())
+            list = repository.findByTitleAndReasonAndBetween(pageable, title, reason, dtStart, dtEnd);
+        if (!reason.isEmpty() && title.isEmpty())
+            list = repository.findByReasonAndBetween(pageable, reason, dtStart, dtEnd);
         return list;
     }
+
     @Transactional
-    public void delete(Long id){
+    public void delete(Long id) {
         try {
             StockWriteOff obj = repository.getReferenceById(id);
-            if(obj != null){
+            if (obj != null) {
                 stockService.addStock(obj.getProduct().getId(), obj.getQty());
                 repository.deleteById(id);
             }

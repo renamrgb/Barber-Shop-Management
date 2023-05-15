@@ -2,10 +2,7 @@ package com.rpx.bsm.services;
 
 import com.rpx.bsm.entities.LoyaltyCard;
 import com.rpx.bsm.entities.ParameterValue;
-import com.rpx.bsm.entities.Product;
 import com.rpx.bsm.repositories.LoyaltyCardRepository;
-import com.rpx.bsm.repositories.ProductRepository;
-import com.rpx.bsm.resources.exceptions.DefaultErrorException;
 import com.rpx.bsm.resources.exceptions.ResourceNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -27,6 +24,7 @@ public class LoyaltyCardService {
             obj.setQuantityUsed(obj.getQuantityUsed() + 1);
             obj.setPoints(0L);
         }
+        update(obj);
     }
 
     @Transactional
