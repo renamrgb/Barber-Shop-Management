@@ -63,25 +63,22 @@ public class StockEntryService {
     }
 
     @Transactional
-    public void reverse(Long id) {
+    public void reverse(StockEntry obj) {
         try {
-            StockEntry entity = repository.getReferenceById(id);
-            List<StockEntryProducts> products = entity.getProducts();
+            List<StockEntryProducts> products = obj.getProducts();
             for (StockEntryProducts p : products) {
                 stockService.decrementStock(p.getProduct().getId(), p.getQuantity());
             }
-            entity.setReversed(true);
-            repository.save(entity);
         } catch (EntityNotFoundException e) {
-            throw new ResourceNotFoundException(id);
+            throw new ResourceNotFoundException(obj.getId());
         }
     }
 
     public void delete(Long id) {
         try {
             StockEntry obj = findById((id));
-            if (obj.getReversed()) repository.deleteById(id);
-            else throw new DatabaseException("Não é permitido excluir itens que não foram estornados");
+            reverse(obj);
+            repository.deleteById(id);
         } catch (EmptyResultDataAccessException e) {
             throw new ResourceNotFoundException(id);
         } catch (DataIntegrityViolationException e) {

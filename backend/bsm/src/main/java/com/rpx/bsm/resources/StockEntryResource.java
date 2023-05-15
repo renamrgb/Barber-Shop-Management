@@ -1,14 +1,8 @@
 package com.rpx.bsm.resources;
 
-import com.rpx.bsm.dto.ExpenseDTO;
-import com.rpx.bsm.dto.InstallmentDTO;
-import com.rpx.bsm.dto.ProfessionalDTO;
 import com.rpx.bsm.dto.StockEntryDTO;
-import com.rpx.bsm.entities.*;
-import com.rpx.bsm.records.ExpenseRecord;
-import com.rpx.bsm.records.PayOffExpenseBody;
+import com.rpx.bsm.entities.StockEntry;
 import com.rpx.bsm.records.StockEntryRecord;
-import com.rpx.bsm.services.ExpenseService;
 import com.rpx.bsm.services.StockEntryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -55,12 +49,6 @@ public class StockEntryResource {
         StockEntry obj = service.insert(r);
         URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(obj.getId()).toUri();
         return ResponseEntity.created(uri).body(new StockEntryDTO(obj));
-    }
-
-    @PostMapping(value = "/reverse/{id}")
-    public ResponseEntity<Void> reverse(@PathVariable Long id) {
-        service.reverse(id);
-        return ResponseEntity.ok().build();
     }
 
     @DeleteMapping(value = "/{id}")

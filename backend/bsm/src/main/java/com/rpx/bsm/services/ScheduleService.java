@@ -77,8 +77,8 @@ public class ScheduleService {
         List<LocalTime> availableTimes;
         if (!isSaturday) availableTimes = createArrayOfAvailableTimes();
         else availableTimes = createSaturdayArrayOfAvailableTimes();
-        availableTimes = removeBlockedSchedules(availableTimes, blockedTimes);
-        availableTimes = removeUnavailableTimes(availableTimes, timesNotAvailable);
+        removeUnavailableTimes(availableTimes, blockedTimes);
+        removeUnavailableTimes(availableTimes, timesNotAvailable);
         return availableTimes;
     }
 
@@ -101,22 +101,12 @@ public class ScheduleService {
         return abstractDayValidator.isPresent() && abstractDayValidator.get() instanceof SaturdayValidatorImplAbstract;
     }
 
-    private List<LocalTime> removeUnavailableTimes(List<LocalTime> availableTimes, List<Schedule> schedules) {
-        for (Schedule schedule : schedules) {
-            LocalTime start = schedule.getStartDate().toLocalTime();
-            LocalTime end = schedule.getEndDate().toLocalTime();
+    private <T extends UnavailableHours> void removeUnavailableTimes(List<LocalTime> availableTimes, List<T> unavailables) {
+        for (T unavailable : unavailables) {
+            LocalTime start = unavailable.getStartDate().toLocalTime();
+            LocalTime end = unavailable.getEndDate().toLocalTime();
             removeUnavailableTimes(availableTimes, time -> (time.equals(start) || time.isAfter(start)), end);
         }
-        return availableTimes.stream().sorted().collect(Collectors.toList());
-    }
-
-    private List<LocalTime> removeBlockedSchedules(List<LocalTime> availableTimes, List<BlockedTimes> blockedTimes) {
-        for (BlockedTimes b : blockedTimes) {
-            LocalTime start = b.getStartDate().toLocalTime();
-            LocalTime end = b.getEndDate().toLocalTime();
-            removeUnavailableTimes(availableTimes, time -> (time.equals(start) || time.isAfter(start)), end);
-        }
-        return availableTimes.stream().sorted().collect(Collectors.toList());
     }
 
     private List<LocalTime> createArrayOfAvailableTimes() {
@@ -159,14 +149,12 @@ public class ScheduleService {
         availableTimes.removeIf(time -> condition.apply(time) && time.isBefore(endTime));
     }
 
-    public List<EventFullCalendarDTO> consultScheduledTimes() {
-        List<BlockedTimes> blockedTimes = blockedTimesService.getAll();
-        List<Schedule> schedules = repository.findAll();
+    public List<EventFullCalendarDTO> consultScheduledTimes(Long professionalId) {
+        List<BlockedTimes> blockedTimes = blockedTimesService.findByProfessional(professionalId);
+        List<Schedule> schedules = findByProfessional(professionalId);
         List<EventFullCalendarDTO> listDto = schedules.stream().map(x -> new EventFullCalendarDTO(x)).collect(Collectors.toList());
-        for (BlockedTimes b : blockedTimes) {
+        for (BlockedTimes b : blockedTimes)
             listDto.add(new EventFullCalendarDTO(b));
-        }
-
         return listDto;
     }
 
@@ -175,10 +163,10 @@ public class ScheduleService {
         try {
             Schedule obj = repository.getReferenceById(id);
             loyaltyCardService.update(record.client().getLoyaltyCard());
+            record.client().getLoyaltyCard().setCustomer(record.client());
             loyaltyCardService.setQtyUsed(record.client().getLoyaltyCard());
             if (record.products().size() < obj.getServiceItems().size())
                 serviceItemsService.removenonCommonItems(obj.getServiceItems(), record.products());
-
             if (record.payment() != null && record.startDate().toLocalDate().compareTo(LocalDate.now()) > 0)
                 throw new DefaultErrorException("Você não pode finalizar um atendimento futuro");
             obj = updateData(record, obj);
@@ -241,6 +229,10 @@ public class ScheduleService {
         } catch (DataIntegrityViolationException e) {
             throw new DatabaseException(e.getMessage());
         }
+    }
+
+    private List<Schedule> findByProfessional(Long id){
+        return repository.findByProfessional(id);
     }
 
 }

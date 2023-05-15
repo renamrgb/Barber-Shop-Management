@@ -85,20 +85,7 @@
                   <CTableDataCell>{{
                     formatDateBr.toDateBr(item.nfe.dateofPurchase)
                   }}</CTableDataCell>
-                  <CTableDataCell>
-                    <CButton
-                      v-if="item.reversed == false"
-                      color="light"
-                      style="margin-right: 1%"
-                      @click="
-                        () => {
-                          modalEstornar = true;
-                          id = item.id;
-                        }
-                      "
-                    >
-                      Estornar
-                    </CButton>
+                  <CTableDataCell>                    
                     <CButton
                       color="light"
                       style="margin-right: 1%"
@@ -126,39 +113,7 @@
         </CCardBody>
       </CCard>
     </CCol>
-  </CRow>
-  <CModal
-    :visible="modalEstornar"
-    @close="
-      () => {
-        modalEstornar = false;
-      }
-    "
-  >
-    <CModalHeader
-      dismiss
-      @close="
-        () => {
-          modalEstornar = false;
-        }
-      "
-    >
-      <CModalTitle>Deseja estornar esse lançamento?</CModalTitle>
-    </CModalHeader>
-    <CModalBody>O saldo dos produtos serão decrementados no estoque</CModalBody>
-    <CModalFooter>
-      <CButton
-        color="secondary"
-        @click="
-          () => {
-            modalEstornar = false;
-          }
-        "
-        >Cancelar</CButton
-      >
-      <CButton color="primary" @click="this.estornar()">Confirmar</CButton>
-    </CModalFooter>
-  </CModal>
+  </CRow>  
   <toast ref="toast" />
   <ModalDelete
     v-if="modalExcluir != undefined"
@@ -183,8 +138,7 @@ export default {
       dateNow: new DateNow(),
       service: new LancarProdutoService(),
       formatDateBr: new FormatDateBr(),
-      itens: "",
-      modalEstornar: false,
+      itens: "",      
       modalExcluir: false,
       searchText: "",
       pageId: 0,
@@ -212,8 +166,8 @@ export default {
       this.modalExcluir = true;
     },
     getDate() {
-      this.filter.dtStart = this.dateNow.date(new Date(), 30, "-");
-      this.filter.dtEnd = this.dateNow.dateNowISO();
+      this.filter.dtStart = this.dateNow.date(new Date(), 15, "-");
+      this.filter.dtEnd = this.dateNow.date(new Date(), 15, "+");
     },
     async getBySupplier() {
       let itensPaged = await this.service.getByDescriptionPaged(
@@ -237,17 +191,7 @@ export default {
     payOffExpense(item) {
       this.$refs.quitarDespesa.visibleLiveDemo = true;
       this.$refs.quitarDespesa.expense = item;
-    },
-    async estornar() {
-      const res = await this.service.reverse(this.id);
-      if (res.status != 200) {
-        this.$refs.toast.createToastDanger(
-          `Ocorreu um erro ao realizar a operação ${res}`
-        );
-      }
-      this.modalEstornar = false;
-      this.gelAll();
-    },
+    },    
   },
   mounted() {
     this.getDate();

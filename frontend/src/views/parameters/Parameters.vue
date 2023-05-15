@@ -57,7 +57,6 @@
                 :key="e.id"
               >
                 <div class="col">
-                  <CFormLabel for="nome">* {{ e.parameter_name }}</CFormLabel>
                   <div
                     v-if="
                       e.parameter_key == 'WORKS_ON_MONDAY' ||
@@ -65,8 +64,23 @@
                       e.parameter_key == 'WORKS_ON_SUNDAY'
                     "
                   >
-                    <CFormCheck                      
-                      v-model="e.parameter_value"
+                    <CFormSwitch
+                      v-if="e.parameter_key == 'WORKS_ON_MONDAY'"
+                      name="formSwitchCheckDefault"
+                      :label="e.parameter_name"
+                      v-model="listFormSwitch[0].parameter_value"
+                    />
+                    <CFormSwitch
+                      v-if="e.parameter_key == 'WORKS_ON_SATURDAY'"
+                      name="formSwitchCheckDefault"
+                      :label="e.parameter_name"
+                      v-model="listFormSwitch[1].parameter_value"
+                    />
+                    <CFormSwitch
+                      v-if="e.parameter_key == 'WORKS_ON_SUNDAY'"
+                      name="formSwitchCheckDefault"
+                      :label="e.parameter_name"
+                      v-model="listFormSwitch[2].parameter_value"
                     />
                   </div>
                   <div v-else>
@@ -122,6 +136,23 @@ export default {
           cnpj: "",
         },
       },
+      listFormSwitch: [
+        {
+          parameter_name: "Trabalha na segunda?",
+          parameter_key: "WORKS_ON_MONDAY",
+          parameter_value: "",
+        },
+        {
+          parameter_name: "Trabalha no sabado?",
+          parameter_key: "WORKS_ON_SATURDAY",
+          parameter_value: "",
+        },
+        {
+          parameter_name: "Trabalha no domingo?",
+          parameter_key: "WORKS_ON_SUNDAY",
+          parameter_value: "",
+        },
+      ],
     };
   },
   validations() {
@@ -137,6 +168,19 @@ export default {
     };
   },
   methods: {
+    loadListFormSwitch() {      
+      let j = 0, i=0, parameterValues = this.parameter.parameterValues;      
+      while (j<this.listFormSwitch.length) {                
+        if (parameterValues[i].parameter_key == this.listFormSwitch[j].parameter_key) {
+          if(parameterValues[i].parameter_value == 'true')
+            this.listFormSwitch[j].parameter_value = true;
+          else
+            this.listFormSwitch[j].parameter_value = false;
+          j++;          
+        }   
+        i++     
+      }
+    },    
     type(item) {
       if (item.parameter_key == "QTY_LOYALYTY_CARD") return "number";
       else if (item.parameter_key == "DISCOUNT_LOYALYTY_CARD") return "text";
@@ -145,9 +189,21 @@ export default {
     submitForm() {},
     async getParameter() {
       this.parameter = await this.service.getParamerter();
+      this.loadListFormSwitch();      
+    },
+    async listToParameterValues(){
+      let j = 0, i=0, parameterValues = this.parameter.parameterValues;      
+      while (j<this.listFormSwitch.length) {                
+        if (parameterValues[i].parameter_key == this.listFormSwitch[j].parameter_key) {          
+          parameterValues[i].parameter_value = this.listFormSwitch[j].parameter_value;
+          j++;          
+        }   
+        i++     
+      }      
     },
     async save() {
-      let res = await this.service.save(this.parameter);      
+      await this.listToParameterValues();
+      let res = await this.service.save(this.parameter);
       if (res.status == 200) this.$refs.toast.createToast("Salvo com sucesso");
       else
         this.$refs.toast.createToastDanger(

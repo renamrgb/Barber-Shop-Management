@@ -28,7 +28,7 @@ public class EventFullCalendarDTO  implements Serializable {
     }
     public EventFullCalendarDTO(BlockedTimes obj) {
         setId(obj.getId());
-        setTitle(obj.getDescription());
+        setTitle(obj.getDescription()+" - "+obj.getProfessional().getUser().getName());
         setStart(obj.getStartDate());
         setEnd(obj.getEndDate());
         setBackgroundColor("gray");

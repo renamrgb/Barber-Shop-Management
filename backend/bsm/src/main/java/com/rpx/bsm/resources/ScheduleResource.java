@@ -39,8 +39,8 @@ public class ScheduleResource {
 
     @Transactional
     @GetMapping
-    public ResponseEntity<List<EventFullCalendarDTO>> consultScheduledTimes() {
-        return ResponseEntity.ok().body(service.consultScheduledTimes());
+    public ResponseEntity<List<EventFullCalendarDTO>> consultScheduledTimes(@RequestParam("professional") Long professionalId) {
+        return ResponseEntity.ok().body(service.consultScheduledTimes(professionalId));
     }
 
     @Transactional

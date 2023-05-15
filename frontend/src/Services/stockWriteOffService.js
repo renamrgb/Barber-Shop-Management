@@ -11,10 +11,10 @@ export default class StockWriteOffService {
       return error;
     }
   }
-  async find(title, filter, pageId) {
+  async find(opSearch,title, filter, pageId) {
     try {      
       let filtro = `${this.url}?dtStart=${filter.dtStart}&dtEnd=${filter.dtEnd}&page=${pageId}`;            
-      if (title != "") filtro = filtro + `&title=${title}`;     
+      if (title != "") filtro = filtro + `&${opSearch}=${title}`;     
       const res = await api.get(filtro);
       return res.data;
     } catch (error) {

@@ -43,7 +43,7 @@
               >
             </div>
           </div>
-          <div v-if="availableTimes.length > 1">
+          <div v-if="!(time == undefined && id == undefined) || availableTimes.length > 0">
             <div class="row mb-3">
               <div class="col">
                 <CFormLabel for="nome">{{ labelTimeAvaliabel }}</CFormLabel>
@@ -298,7 +298,7 @@
               >Confirmar</CButton
             >
             <CButton
-              v-if="isItFinished"
+              v-if="isItFinished && canRevert()"
               color="primary"
               class="me-md-2"
               @click="reverseService"
@@ -396,7 +396,7 @@ export default {
       msgRetornoSearchSchedules: undefined,
     };
   },
-  computed: {
+  computed: {    
     calculateTotal() {
       let total = parseFloat(0);
       for (const ELEMENT of this.form.products) {
@@ -463,6 +463,12 @@ export default {
     },
   },
   methods: {
+    canRevert(){
+      let valid = false;
+      const DIFFERENCE_IN_DAYS = this.dateNow.compareDates(this.date);
+      if (DIFFERENCE_IN_DAYS == 0) valid = true;      
+      return valid;
+    },
     async reverseService() {
       const RESPONSE = await this.scheduleService.reverseService(this.id);
       if (RESPONSE.status == 200) {
@@ -474,7 +480,7 @@ export default {
     validForLaunchingProducts() {
       let valid = false;
       const DIFFERENCE_IN_DAYS = this.dateNow.compareDates(this.date);
-      if (DIFFERENCE_IN_DAYS == 0) valid = true;
+      if (DIFFERENCE_IN_DAYS >= 0) valid = true;      
       return valid;
     },
     applyDiscount(discount) {

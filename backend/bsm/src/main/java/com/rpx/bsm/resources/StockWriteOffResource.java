@@ -30,10 +30,11 @@ public class StockWriteOffResource {
     public ResponseEntity<Page<StockWriteOffDTO>> getAll(
             Pageable pageable,
             @RequestParam(name = "title", defaultValue = "") String title,
+            @RequestParam(name = "reason", defaultValue = "") String reason,
             @RequestParam(name = "dtStart", defaultValue = "") String dtStart,
             @RequestParam(name = "dtEnd", defaultValue = "") String dtEnd
     ){
-        Page<StockWriteOff> list = service.find(pageable, title, dtStart, dtEnd);
+        Page<StockWriteOff> list = service.find(pageable, title, reason, dtStart, dtEnd);
         Page<StockWriteOffDTO> listDto = list.map(x -> new StockWriteOffDTO(x));
         return ResponseEntity.ok().body(listDto);
     }
